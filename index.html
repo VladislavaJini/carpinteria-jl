@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Carpintería JL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8B5A2B;
+            --primary-dark: #5C3A21;
+            --secondary: #D4A373;
+            --bg: #F4F1EA;
+            --card-bg: #FFFFFF;
+            --text: #2C2C2C;
+            --text-light: #6C757D;
+            --danger: #D90429;
+            --success: #2B9348;
+            --border: #E5E0D8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text); padding-bottom: 80px; max-width: 480px; margin: 0 auto; position: relative; min-height: 100vh; }
+        header { background: var(--primary-dark); color: white; padding: 16px 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        header h1 { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        header p { font-size: 0.8rem; color: var(--secondary); margin-top: 2px; }
+        .container { padding: 16px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Cards & UI */
+        .card { background: var(--card-bg); border-radius: 12px; padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid var(--border); }
+        .card-title { font-size: 1rem; font-weight: 600; color: var(--primary-dark); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Alerts */
+        .alert-box { background: #FDEED9; border-left: 4px solid #E07A5F; padding: 12px; border-radius: 8px; margin-bottom: 14px; font-size: 0.85rem; color: #78350F; }
+        
+        /* Forms */
+        .form-group { margin-bottom: 12px; }
+        label { display: block; font-size: 0.8rem; font-weight: 500; color: var(--text-light); margin-bottom: 4px; }
+        input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; background: #FAFAFA; color: var(--text); outline: none; transition: border 0.2s; }
+        input:focus, select:focus { border-color: var(--primary); background: white; }
+        
+        /* Buttons */
+        .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 4px rgba(139,90,43,0.3); transition: background 0.2s; }
+        .btn:active { transform: scale(0.98); }
+        .btn-success { background: var(--success); box-shadow: 0 2px 4px rgba(43,147,72,0.3); }
+        .btn-secondary { background: var(--secondary); color: var(--primary-dark); box-shadow: none; }
+        .btn-sm { padding: 6px 12px; font-size: 0.8rem; width: auto; }
+        
+        /* Lists & Tables */
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .item-row:last-child { border-bottom: none; }
+        .item-info h4 { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+        .item-info p { font-size: 0.8rem; color: var(--text-light); }
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+        .badge-ok { background: #E1F5FE; color: #0288D1; }
+        .badge-low { background: #FFEBEE; color: #C62828; }
+        
+        /* Bottom Nav */
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -4px 10px rgba(0,0,0,0.08); z-index: 1000; max-width: 480px; margin: 0 auto; border-top: 1px solid var(--border); }
+        .nav-item { text-align: center; color: var(--text-light); font-size: 0.7rem; font-weight: 500; cursor: pointer; flex: 1; transition: color 0.2s; }
+        .nav-item i { font-size: 1.2rem; display: block; margin-bottom: 2px; }
+        .nav-item.active { color: var(--primary); font-weight: 700; }
+        
+        .flex-row { display: flex; gap: 8px; }
+        .flex-row > * { flex: 1; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1><i class="fa-solid fa-hammer"></i> Carpintería JL</h1>
+        <p>Control de Stock, Presupuestos y Caja</p>
+    </header>
+
+    <div class="container">
+        <!-- STOCK TAB -->
+        <div id="tab-stock" class="tab-content active">
+            <div id="stock-alerts"></div>
+            <div class="card">
+                <div class="card-title">Inventario de Materiales <button class="btn btn-sm" onclick="openModal('modal-material')"><i class="fa-solid fa-plus"></i> Nuevo</button></div>
+                <div id="stock-list"></div>
+            </div>
+        </div>
+
+        <!-- RECETAS TAB -->
+        <div id="tab-muebles" class="tab-content">
+            <div class="card">
+                <div class="card-title">Recetas de Mesitas de Luz <button class="btn btn-sm" onclick="openModal('modal-mueble')"><i class="fa-solid fa-plus"></i> Nueva</button></div>
+                <div id="muebles-list"></div>
+            </div>
+        </div>
+
+        <!-- PRESUPUESTOS TAB -->
+        <div id="tab-presupuesto" class="tab-content">
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-calculator"></i> Armar Presupuesto</div>
+                <div class="form-group">
+                    <label>Seleccionar Modelo</label>
+                    <select id="p-mueble" onchange="calcularPresupuesto()"></select>
+                </div>
+                <div class="form-group">
+                    <label>Cantidad a Fabricar</label>
+                    <input type="number" id="p-cant" value="1" min="1" oninput="calcularPresupuesto()">
+                </div>
+                
+                <div style="background: #F9F8F6; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
+                    <h4 style="font-size:0.85rem; margin-bottom:8px; color:var(--primary-dark);">Costos de Insumos (Editables)</h4>
+                    <div id="p-insumos-edits"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Mano de Obra (Total $)</label>
+                    <input type="number" id="p-MO" value="15000" oninput="calcularPresupuesto()">
+                </div>
+                <div class="form-group">
+                    <label>Flete / Lustre / Extras ($)</label>
+                    <input type="number" id="p-extras" value="5000" oninput="calcularPresupuesto()">
+                </div>
+                <div class="form-group">
+                    <label>Margen de Ganancia (%)</label>
+                    <input type="number" id="p-ganancia" value="40" oninput="calcularPresupuesto()">
+                </div>
+                <div class="form-group">
+                    <label><input type="checkbox" id="actualizar-stock-precio" checked> Actualizar precios de costos en stock general</label>
+                </div>
+
+                <div style="background: var(--primary-dark); color: white; padding: 14px; border-radius: 8px; text-align: center; margin-bottom: 12px;">
+                    <div style="font-size: 0.8rem; color: var(--secondary);">PRECIO FINAL SUGERIDO</div>
+                    <div id="p-total" style="font-size: 1.5rem; font-weight: 700; margin-top: 4px;">$0</div>
+                </div>
+
+                <button class="btn btn-success" onclick="enviarPresupuestoWhatsApp()"><i class="fa-brands fa-whatsapp"></i> Enviar Presupuesto y Vender</button>
+            </div>
+        </div>
+
+        <!-- CAJA TAB -->
+        <div id="tab-caja" class="tab-content">
+            <div class="card" style="background: linear-gradient(135deg, #5C3A21, #8B5A2B); color: white;">
+                <div style="font-size: 0.85rem; opacity: 0.9;">Balance Actual en Caja</div>
+                <div id="caja-saldo" style="font-size: 1.8rem; font-weight: 700; margin: 6px 0;">$0</div>
+                <div class="flex-row" style="margin-top: 12px;">
+                    <button class="btn btn-sm btn-success" onclick="openModal('modal-gasto')"><i class="fa-solid fa-minus"></i> Registrar Gasto</button>
+                    <button class="btn btn-sm" style="background:white; color:var(--primary);" onclick="openModal('modal-ingreso')"><i class="fa-solid fa-plus"></i> Otro Ingreso</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">Movimientos Recientes</div>
+                <div id="caja-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="switchTab('stock', this)"><i class="fa-solid fa-boxes-stacked"></i> Stock</div>
+        <div class="nav-item" onclick="switchTab('muebles', this)"><i class="fa-solid fa-chair"></i> Muebles</div>
+        <div class="nav-item" onclick="switchTab('presupuesto', this)"><i class="fa-solid fa-file-invoice-dollar"></i> Presupuesto</div>
+        <div class="nav-item" onclick="switchTab('caja', this)"><i class="fa-solid fa-cash-register"></i> Caja</div>
+    </div>
+
+    <!-- MODALS -->
+    <div id="modal-material" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center; padding:16px;">
+        <div class="card" style="width:100%; max-width:400px; margin:0;">
+            <div class="card-title">Nuevo Material <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('modal-material')"></i></div>
+            <div class="form-group"><label>Nombre</label><input type="text" id="m-nombre" placeholder="Ej. Tornillo 3x30"></div>
+            <div class="form-group"><label>Categoría</label><select id="m-cat"><option value="Madera">Madera</option><option value="Herraje">Herraje</option><option value="Insumo">Insumo</option></select></div>
+            <div class="flex-row">
+                <div class="form-group"><label>Cantidad</label><input type="number" id="m-cant" value="100"></div>
+                <div class="form-group"><label>Unidad</label><input type="text" id="m-unidad" value="u"></div>
+            </div>
+            <div class="flex-row">
+                <div class="form-group"><label>Costo Unitario ($)</label><input type="number" id="m-costo" value="50"></div>
+                <div class="form-group"><label>Stock Mínimo</label><input type="number" id="m-min" value="20"></div>
+            </div>
+            <button class="btn" onclick="guardarMaterial()">Guardar Material</button>
+        </div>
+    </div>
+
+    <script>
+        // Data Store
+        let db = JSON.parse(localStorage.getItem('carpinteria_jl_db')) || {
+            stock: [
+                { id: 1, nombre: 'Placa Melamina 18mm Blanco', cat: 'Madera', cant: 12, unidad: 'placas', costo: 45000, min: 3 },
+                { id: 2, nombre: 'Tabla Pino 1x4 (3m)', cat: 'Madera', cant: 25, unidad: 'tiras', costo: 6000, min: 5 },
+                { id: 3, nombre: 'Tornillos Autoperforantes 3x30', cat: 'Herraje', cant: 350, unidad: 'u', costo: 30, min: 100 },
+                { id: 4, nombre: 'Clavos para fondo 1"', cat: 'Herraje', cant: 500, unidad: 'u', costo: 15, min: 200 },
+                { id: 5, nombre: 'Escuadras Metálicas 2"', cat: 'Herraje', cant: 18, unidad: 'u', costo: 350, min: 8 },
+                { id: 6, nombre: 'Correderas telescópicas 35cm', cat: 'Herraje', cant: 12, unidad: 'pares', costo: 3200, min: 4 }
+            ],
+            muebles: [
+                {
+                    id: 1, nombre: 'Mesita Clásica Pino (1 cajón)',
+                    materiales: [{ id: 2, cant: 1.5 }, { id: 3, cant: 30 }, { id: 4, cant: 20 }, { id: 5, cant: 4 }, { id: 6, cant: 1 }]
+                },
+                {
+                    id: 2, nombre: 'Mesita Melamina 2 Cajones',
+                    materiales: [{ id: 1, cant: 0.3 }, { id: 3, cant: 50 }, { id: 4, cant: 30 }, { id: 6, cant: 2 }]
+                }
+            ],
+            caja: [
+                { fecha: '2026-10-15', desc: 'Venta Mesita Clásica', tipo: 'ingreso', monto: 85000 },
+                { fecha: '2026-10-14', desc: 'Compra Tornillos y Escuadras', tipo: 'gasto', monto: 12000 }
+            ]
+        };
+
+        function saveDB() {
+            localStorage.setItem('carpinteria_jl_db', JSON.stringify(db));
+            renderAll();
+        }
+
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            el.classList.add('active');
+            if(tabId === 'presupuesto') initPresupuestoSelect();
+        }
+
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        function renderStock() {
+            let html = '';
+            let alerts = '';
+            let lowCount = 0;
+
+            db.stock.forEach(item => {
+                let isLow = item.cant <= item.min;
+                if(isLow) {
+                    lowCount++;
+                    alerts += `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><span>⚠️ <b>${item.nombre}</b> stock bajo (${item.cant} ${item.unidad})</span></div>`;
+                }
+                html += `
+                <div class="item-row">
+                    <div class="item-info">
+                        <h4>${item.nombre}</h4>
+                        <p>$${item.costo.toLocaleString()} c/u • <span class="badge ${isLow ? 'badge-low' : 'badge-ok'}">${item.cant} ${item.unidad}</span></p>
+                    </div>
+                    <div style="display:flex; gap:6px; align-items:center;">
+                        <button class="btn btn-sm btn-secondary" onclick="modStock(${item.id}, -1)">-</button>
+                        <span style="font-weight:600; min-width:24px; text-align:center;">${item.cant}</span>
+                        <button class="btn btn-sm btn-secondary" onclick="modStock(${item.id}, 1)">+</button>
+                    </div>
+                </div>`;
+            });
+
+            document.getElementById('stock-list').innerHTML = html;
+            let alertContainer = document.getElementById('stock-alerts');
+            if(lowCount > 0) {
+                alertContainer.innerHTML = `<div class="alert-box"><div style="font-weight:700; margin-bottom:4px;"><i class="fa-solid fa-triangle-exclamation"></i> Alertas de Stock (${lowCount})</div>${alerts}</div>`;
+                alertContainer.style.display = 'block';
+            } else {
+                alertContainer.style.display = 'none';
+            }
+        }
+
+        function modStock(id, delta) {
+            let item = db.stock.find(s => s.id === id);
+            if(item) {
+                item.cant = Math.max(0, item.cant + delta);
+                saveDB();
+            }
+        }
+
+        function guardarMaterial() {
+            let nombre = document.getElementById('m-nombre').value;
+            if(!nombre) return alert('Ingresá un nombre');
+            db.stock.push({
+                id: Date.now(),
+                nombre: nombre,
+                cat: document.getElementById('m-cat').value,
+                cant: parseFloat(document.getElementById('m-cant').value) || 0,
+                unidad: document.getElementById('m-unidad').value || 'u',
+                costo: parseFloat(document.getElementById('m-costo').value) || 0,
+                min: parseFloat(document.getElementById('m-min').value) || 10
+            });
+            closeModal('modal-material');
+            saveDB();
+        }
+
+        function renderMuebles() {
+            let html = '';
+            db.muebles.forEach(m => {
+                let mats = m.materiales.map(x => {
+                    let mat = db.stock.find(s => s.id === x.id);
+                    return mat ? `${x.cant} ${mat.unidad} de ${mat.nombre}` : '';
+                }).join(' • ');
+
+                html += `
+                <div class="item-row" style="flex-direction:column; align-items:flex-start; gap:4px; padding:12px 0;">
+                    <h4 style="color:var(--primary-dark); font-size:0.95rem;">${m.nombre}</h4>
+                    <p style="font-size:0.8rem; color:var(--text-light);">${mats}</p>
+                </div>`;
+            });
+            document.getElementById('muebles-list').innerHTML = html;
+        }
+
+        function initPresupuestoSelect() {
+            let sel = document.getElementById('p-mueble');
+            sel.innerHTML = db.muebles.map(m => `<option value="${m.id}">${m.nombre}</option>`).join('');
+            calcularPresupuesto();
+        }
+
+        function calcularPresupuesto() {
+            let muebleId = parseInt(document.getElementById('p-mueble').value);
+            let cantMuebles = parseInt(document.getElementById('p-cant').value) || 1;
+            let mueble = db.muebles.find(m => m.id === muebleId);
+            if(!mueble) return;
+
+            let editsContainer = document.getElementById('p-insumos-edits');
+            editsContainer.innerHTML = '';
+            let costoInsumosTotal = 0;
+
+            mueble.materiales.forEach((item, idx) => {
+                let mat = db.stock.find(s => s.id === item.id);
+                if(!mat) return;
+                let reqCant = item.cant * cantMuebles;
+                
+                editsContainer.innerHTML += `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:0.85rem;">
+                    <span>${mat.nombre} (${reqCant} ${mat.unidad})</span>
+                    <input type="number" id="costo-mat-${item.id}" value="${mat.costo}" style="width:90px; padding:4px 8px;" oninput="calcularPresupuesto()">
+                </div>`;
+
+                let costoInput = document.getElementById(`costo-mat-${item.id}`);
+                let costoActual = costoInput ? parseFloat(costoInput.value) || mat.costo : mat.costo;
+                costoInsumosTotal += costoActual * reqCant;
+            });
+
+            let manoObra = parseFloat(document.getElementById('p-MO').value) || 0;
+            let extras = parseFloat(document.getElementById('p-extras').value) || 0;
+            let gananciaPct = parseFloat(document.getElementById('p-ganancia').value) || 0;
+
+            let costoTotal = costoInsumosTotal + manoObra + extras;
+            let precioFinal = costoTotal * (1 + (gananciaPct / 100));
+
+            document.getElementById('p-total').innerText = '$' + Math.round(precioFinal).toLocaleString();
+        }
+
+        function enviarPresupuestoWhatsApp() {
+            let muebleId = parseInt(document.getElementById('p-mueble').value);
+            let cantMuebles = parseInt(document.getElementById('p-cant').value) || 1;
+            let mueble = db.muebles.find(m => m.id === muebleId);
+            let precioFinal = document.getElementById('p-total').innerText;
+
+            // Actualizar costos si está tildado
+            let actualizar = document.getElementById('actualizar-stock-precio').checked;
+            mueble.materiales.forEach(item => {
+                let input = document.getElementById(`costo-mat-${item.id}`);
+                if(input) {
+                    let nuevoCosto = parseFloat(input.value) || 0;
+                    let mat = db.stock.find(s => s.id === item.id);
+                    if(mat) {
+                        if(actualizar) mat.costo = nuevoCosto;
+                        mat.cant = Math.max(0, mat.cant - (item.cant * cantMuebles));
+                    }
+                }
+            });
+
+            // Registrar Venta en Caja
+            let montoVenta = parseFloat(document.getElementById('p-total').innerText.replace('$', '').replace(/\./g, '')) || 0;
+            db.caja.unshift({
+                fecha: new Date().toISOString().split('T')[0],
+                desc: `Venta: ${cantMuebles}x ${mueble.nombre}`,
+                tipo: 'ingreso',
+                monto: montoVenta
+            });
+
+            saveDB();
+
+            let mensaje = `Hola! Te envío el presupuesto de ${cantMuebles}x *${mueble.nombre}* de Carpintería JL:\n\n*Precio Total:* ${precioFinal}\n\nQuedo a disposición para coordinar detalles y seña. Muchas gracias!`;
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mensaje)}`);
+        }
+
+        function renderCaja() {
+            let saldo = 0;
+            let html = '';
+            db.caja.forEach(mov => {
+                if(mov.tipo === 'ingreso') saldo += mov.monto;
+                else saldo -= mov.monto;
+
+                html += `
+                <div class="item-row">
+                    <div class="item-info">
+                        <h4>${mov.desc}</h4>
+                        <p>${mov.fecha}</p>
+                    </div>
+                    <div style="font-weight:700; color:${mov.tipo === 'ingreso' ? 'var(--success)' : 'var(--danger)'};">
+                        ${mov.tipo === 'ingreso' ? '+' : '-'}$${mov.monto.toLocaleString()}
+                    </div>
+                </div>`;
+            });
+            document.getElementById('caja-saldo').innerText = '$' + saldo.toLocaleString();
+            document.getElementById('caja-list').innerHTML = html;
+        }
+
+        function renderAll() {
+            renderStock();
+            renderMuebles();
+            renderCaja();
+        }
+
+        renderAll();
+    </script>
+</body>
+</html>
