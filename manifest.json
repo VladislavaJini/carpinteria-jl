@@ -1,0 +1,13 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "Carpinteria JL",
+  "orientation": "portrait",
+  "scope": "/",
+  "short_name": "Carpinteria JL",
+  "start_url": "/",
+  "theme_color": "#ffffff",
+  "id": "Carpinteria JL",
+  "lang": "es"
+}
