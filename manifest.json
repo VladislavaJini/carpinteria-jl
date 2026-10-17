@@ -1,13 +1,17 @@
 {
-  "background_color": "#ffffff",
-  "dir": "ltr",
+  "name": "Carpintería JL",
+  "short_name": "Carpintería JL",
+  "start_url": "./",
   "display": "standalone",
-  "name": "Carpinteria JL",
-  "orientation": "portrait",
-  "scope": "/",
-  "short_name": "Carpinteria JL",
-  "start_url": "/",
-  "theme_color": "#ffffff",
-  "id": "Carpinteria JL",
-  "lang": "es"
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "description": "App de carpintería y control de stock",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/Vladoislavajini/carpinteria-jl/main/MJP39.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
