@@ -1,1283 +1,1883 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <link rel="manifest" href="manifest.json">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Carpintería JL // VOID System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --bg-void: #000000;
-            --panel-void: #000000;
-            --primary-neon: #00F0FF; /* Cyan neón */
-            --accent-neon: #FF0055;  /* Magenta neón */
-            --amber-neon: #FFB700;   /* Ámbar neón */
-            --purple-neon: #BC13FE;  /* Violeta neón */
-            --success-neon: #00FF66; /* Verde neón */
-            --danger-neon: #FF003C;  /* Rojo neón */
-            --text-main: #FFFFFF;
-            --text-muted: #666666;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Carpintería JL - Melamina Pro</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000">
+  <style>
+    :root {
+      --bg: #000000;
+      --card: #06090e;
+      --cyan: #00f3ff;
+      --pink: #ff0055;
+      --yellow: #ffbe0b;
+      --green: #00ff66;
+      --text: #e0fbfc;
+      --muted: #5c7c8a;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Courier New', Courier, monospace;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding-bottom: 40px;
+      overflow-x: hidden;
+    }
+    /* BARRA SUPERIOR */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.94);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--cyan);
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.25);
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .menu-btn {
+      background: #000;
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      font-size: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.35);
+      font-weight: bold;
+    }
+    .menu-btn:active {
+      background: var(--cyan);
+      color: #000;
+    }
+    .brand-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--cyan);
+      text-shadow: 0 0 8px var(--cyan);
+      letter-spacing: 1px;
+    }
+    .brand-sub {
+      font-size: 10px;
+      color: var(--pink);
+      letter-spacing: 1px;
+      display: block;
+    }
+    .backup-btns {
+      display: flex;
+      gap: 6px;
+    }
+    .btn-top {
+      background: #000;
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      padding: 6px 10px;
+      font-size: 11px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 0 6px rgba(0, 243, 255, 0.2);
+    }
+    .btn-top.warn {
+      border-color: var(--yellow);
+      color: var(--yellow);
+      box-shadow: 0 0 6px rgba(255, 190, 11, 0.2);
+    }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; -webkit-tap-highlight-color: transparent; }
-        html, body { background-color: var(--bg-void); color: var(--text-main); }
-        body { padding-bottom: 95px; max-width: 480px; margin: 0 auto; position: relative; min-height: 100vh; border-left: 1px solid #151515; border-right: 1px solid #151515; }
+    /* MENU LATERAL DESPLEGABLE (ARRIBA A LA IZQUIERDA) */
+    .drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.82);
+      z-index: 200;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .drawer-overlay.open {
+      display: block;
+      opacity: 1;
+    }
+    .drawer {
+      position: fixed;
+      top: 0;
+      left: -290px;
+      width: 275px;
+      height: 100%;
+      background: #030508;
+      border-right: 2px solid var(--cyan);
+      box-shadow: 0 0 25px rgba(0, 243, 255, 0.4);
+      z-index: 201;
+      transition: left 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      padding: 18px 14px;
+      overflow-y: auto;
+    }
+    .drawer.open {
+      left: 0;
+    }
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 14px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+    }
+    .drawer-title {
+      color: var(--cyan);
+      font-weight: bold;
+      font-size: 15px;
+      text-shadow: 0 0 6px var(--cyan);
+    }
+    .close-drawer {
+      background: transparent;
+      border: 1px solid var(--pink);
+      color: var(--pink);
+      width: 30px;
+      height: 30px;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .nav-item {
+      background: #080c11;
+      border: 1px solid rgba(0, 243, 255, 0.25);
+      color: var(--text);
+      padding: 12px;
+      margin-bottom: 8px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-align: left;
+      transition: 0.15s;
+    }
+    .nav-item.active {
+      background: rgba(0, 243, 255, 0.15);
+      border-color: var(--cyan);
+      color: var(--cyan);
+      box-shadow: 0 0 12px rgba(0, 243, 255, 0.35);
+    }
 
-        /* HUD Header */
-        header { background: var(--bg-void); border-bottom: 1px solid var(--primary-neon); padding: 12px 16px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 25px rgba(0, 240, 255, 0.25); }
-        .header-top { display: flex; justify-content: space-between; align-items: center; }
-        header h1 { font-family: 'Share Tech Mono', monospace; font-size: 1.15rem; color: var(--primary-neon); text-shadow: 0 0 12px var(--primary-neon), 0 0 25px rgba(0, 240, 255, 0.6); letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
-        header p { font-family: 'Share Tech Mono', monospace; font-size: 0.68rem; color: var(--accent-neon); text-shadow: 0 0 10px var(--accent-neon); text-transform: uppercase; letter-spacing: 2px; margin-top: 2px; }
-        
-        .backup-btns { display: flex; gap: 6px; align-items: center; }
-        .sys-btn { font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; background: #000000; border: 1px solid var(--primary-neon); padding: 4px 7px; color: var(--primary-neon); text-shadow: 0 0 6px var(--primary-neon); border-radius: 2px; cursor: pointer; box-shadow: 0 0 8px rgba(0, 240, 255, 0.25); }
-        .sys-btn:active { background: var(--primary-neon); color: #000; }
+    /* CONTENEDORES Y SECCIONES */
+    .container {
+      padding: 14px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+    }
+    .section-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      background: #060a0f;
+      border-left: 3px solid var(--cyan);
+      border-radius: 4px;
+    }
+    .section-banner h2 {
+      font-size: 15px;
+      color: var(--cyan);
+      text-shadow: 0 0 6px rgba(0, 243, 255, 0.5);
+    }
 
-        .container { padding: 14px; background: var(--bg-void); }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: voidFade 0.2s ease; }
+    /* TARJETAS Y CAJAS NEON */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .stat-box {
+      background: var(--card);
+      border: 1px solid var(--cyan);
+      border-radius: 6px;
+      padding: 12px;
+      text-align: center;
+      box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.1);
+    }
+    .stat-box.pink {
+      border-color: var(--pink);
+      box-shadow: inset 0 0 10px rgba(255, 0, 85, 0.1);
+    }
+    .stat-box.green {
+      border-color: var(--green);
+      box-shadow: inset 0 0 10px rgba(0, 255, 102, 0.1);
+    }
+    .stat-box.yellow {
+      border-color: var(--yellow);
+      box-shadow: inset 0 0 10px rgba(255, 190, 11, 0.1);
+    }
+    .stat-label {
+      font-size: 10px;
+      color: var(--muted);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+    .stat-val {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--cyan);
+      text-shadow: 0 0 8px var(--cyan);
+    }
+    .stat-box.pink .stat-val { color: var(--pink); text-shadow: 0 0 8px var(--pink); }
+    .stat-box.green .stat-val { color: var(--green); text-shadow: 0 0 8px var(--green); }
+    .stat-box.yellow .stat-val { color: var(--yellow); text-shadow: 0 0 8px var(--yellow); }
 
-        @keyframes voidFade {
-            from { opacity: 0; transform: translateY(3px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    .neon-card {
+      background: var(--card);
+      border: 1px solid rgba(0, 243, 255, 0.4);
+      border-left: 3px solid var(--cyan);
+      border-radius: 6px;
+      padding: 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 0 12px rgba(0, 243, 255, 0.1);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .card-title {
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--cyan);
+      text-transform: uppercase;
+    }
 
-        /* Tarjetas en VOID */
-        .card { background: var(--panel-void); border: 1px solid #1A1A1A; border-radius: 3px; padding: 14px; margin-bottom: 14px; position: relative; box-shadow: 0 0 20px rgba(0, 240, 255, 0.05); }
-        .card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--primary-neon); box-shadow: 0 0 12px var(--primary-neon), 0 0 20px var(--primary-neon); }
-        
-        .card.neon-magenta::before { background: var(--accent-neon); box-shadow: 0 0 12px var(--accent-neon), 0 0 20px var(--accent-neon); }
-        .card.neon-amber::before { background: var(--amber-neon); box-shadow: 0 0 12px var(--amber-neon), 0 0 20px var(--amber-neon); }
-        .card.neon-purple::before { background: var(--purple-neon); box-shadow: 0 0 12px var(--purple-neon), 0 0 20px var(--purple-neon); }
-        .card.neon-green::before { background: var(--success-neon); box-shadow: 0 0 12px var(--success-neon), 0 0 20px var(--success-neon); }
+    /* INPUTS Y BOTONES */
+    input, select, textarea {
+      width: 100%;
+      background: #020406;
+      border: 1px solid var(--cyan);
+      color: var(--text);
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin-bottom: 10px;
+      outline: none;
+    }
+    input:focus, select:focus {
+      box-shadow: 0 0 8px rgba(0, 243, 255, 0.5);
+    }
+    label {
+      font-size: 11px;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+    .btn {
+      background: #000;
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      padding: 9px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow: 0 0 8px rgba(0, 243, 255, 0.2);
+    }
+    .btn:active {
+      background: var(--cyan);
+      color: #000;
+    }
+    .btn-yellow {
+      border-color: var(--yellow);
+      color: var(--yellow);
+      box-shadow: 0 0 8px rgba(255, 190, 11, 0.2);
+    }
+    .btn-pink {
+      border-color: var(--pink);
+      color: var(--pink);
+      box-shadow: 0 0 8px rgba(255, 0, 85, 0.2);
+    }
+    .btn-green {
+      border-color: var(--green);
+      color: var(--green);
+      box-shadow: 0 0 8px rgba(0, 255, 102, 0.2);
+    }
+    .btn-block {
+      width: 100%;
+      padding: 12px;
+      font-size: 13px;
+      margin-top: 6px;
+    }
 
-        .card-title { font-family: 'Share Tech Mono', monospace; font-size: 0.92rem; font-weight: 700; color: var(--primary-neon); text-shadow: 0 0 10px var(--primary-neon); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; border-bottom: 1px dashed #222222; padding-bottom: 8px; }
+    /* ITEMS DE INVENTARIO */
+    .stock-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .stock-info {
+      flex: 1;
+      min-width: 140px;
+    }
+    .stock-name {
+      font-size: 14px;
+      font-weight: bold;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .stock-sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      font-size: 11px;
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      border-radius: 4px;
+      margin-left: 6px;
+    }
+    .stock-controls {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .qty-btn {
+      background: #000;
+      border: 1px solid var(--yellow);
+      color: var(--yellow);
+      padding: 6px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .qty-btn.neg10 { border-color: var(--pink); color: var(--pink); }
+    .qty-btn.pos10 { border-color: var(--cyan); color: var(--cyan); }
+    .qty-val {
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--cyan);
+      min-width: 36px;
+      text-align: center;
+      text-shadow: 0 0 6px var(--cyan);
+    }
 
-        /* Alertas */
-        .alert-box { background: #000000; border: 1px solid var(--danger-neon); border-left: 4px solid var(--danger-neon); box-shadow: 0 0 15px rgba(255, 0, 60, 0.25); padding: 10px; border-radius: 2px; margin-bottom: 12px; font-size: 0.8rem; color: #FF809E; font-family: 'Share Tech Mono', monospace; }
-
-        /* Inputs */
-        .form-group { margin-bottom: 10px; }
-        label { display: block; font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: #888888; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-        input, select, textarea { width: 100%; padding: 9px 10px; border: 1px solid #262626; background: #000000; color: var(--text-main); font-family: 'Share Tech Mono', monospace; font-size: 0.88rem; border-radius: 2px; outline: none; transition: all 0.2s; }
-        input:focus, select:focus { border-color: var(--primary-neon); box-shadow: 0 0 12px rgba(0, 240, 255, 0.5), inset 0 0 8px rgba(0, 240, 255, 0.15); color: var(--primary-neon); }
-
-        /* Botones Neón */
-        .btn { width: 100%; padding: 11px; background: #000000; border: 1px solid var(--primary-neon); color: var(--primary-neon); font-family: 'Share Tech Mono', monospace; font-size: 0.85rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; border-radius: 2px; text-shadow: 0 0 8px var(--primary-neon); box-shadow: 0 0 12px rgba(0, 240, 255, 0.25), inset 0 0 8px rgba(0, 240, 255, 0.1); transition: all 0.15s; }
-        .btn:active { background: var(--primary-neon); color: #000000; text-shadow: none; transform: scale(0.97); }
-        
-        .btn-success { border-color: var(--success-neon); color: var(--success-neon); text-shadow: 0 0 8px var(--success-neon); box-shadow: 0 0 12px rgba(0, 255, 102, 0.25), inset 0 0 8px rgba(0, 255, 102, 0.1); }
-        .btn-success:active { background: var(--success-neon); color: #000000; }
-
-        .btn-secondary { border-color: var(--amber-neon); color: var(--amber-neon); text-shadow: 0 0 8px var(--amber-neon); box-shadow: 0 0 10px rgba(255, 183, 0, 0.2), inset 0 0 6px rgba(255, 183, 0, 0.08); }
-        .btn-secondary:active { background: var(--amber-neon); color: #000000; }
-
-        .btn-danger-neon { border-color: var(--danger-neon); color: var(--danger-neon); text-shadow: 0 0 8px var(--danger-neon); box-shadow: 0 0 10px rgba(255, 0, 60, 0.2), inset 0 0 6px rgba(255, 0, 60, 0.08); }
-        .btn-danger-neon:active { background: var(--danger-neon); color: #000000; }
-
-        .btn-purple { border-color: var(--purple-neon); color: var(--purple-neon); text-shadow: 0 0 8px var(--purple-neon); box-shadow: 0 0 12px rgba(188, 19, 254, 0.25), inset 0 0 8px rgba(188, 19, 254, 0.1); }
-        .btn-purple:active { background: var(--purple-neon); color: #000000; }
-
-        .btn-sm { padding: 4px 7px; font-size: 0.68rem; width: auto; min-width: 28px; }
-
-        /* Filas de items */
-        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid #141414; gap: 8px; }
-        .item-row:last-child { border-bottom: none; }
-        .item-info h4 { font-size: 0.92rem; font-weight: 600; color: #FFFFFF; text-shadow: 0 0 4px rgba(255,255,255,0.2); }
-        .item-info p { font-size: 0.73rem; color: #777777; font-family: 'Share Tech Mono', monospace; margin-top: 2px; }
-        
-        .badge { padding: 2px 6px; border-radius: 2px; font-size: 0.65rem; font-family: 'Share Tech Mono', monospace; font-weight: 700; text-transform: uppercase; display: inline-block; }
-        .badge-ok { background: #000000; color: var(--primary-neon); border: 1px solid var(--primary-neon); text-shadow: 0 0 6px var(--primary-neon); box-shadow: 0 0 8px rgba(0, 240, 255, 0.25); }
-        .badge-low { background: #000000; color: var(--danger-neon); border: 1px solid var(--danger-neon); text-shadow: 0 0 6px var(--danger-neon); box-shadow: 0 0 8px rgba(255, 0, 60, 0.35); }
-        .badge-warn { background: #000000; color: var(--amber-neon); border: 1px solid var(--amber-neon); text-shadow: 0 0 6px var(--amber-neon); box-shadow: 0 0 8px rgba(255, 183, 0, 0.3); }
-        .badge-success { background: #000000; color: var(--success-neon); border: 1px solid var(--success-neon); text-shadow: 0 0 6px var(--success-neon); box-shadow: 0 0 8px rgba(0, 255, 102, 0.3); }
-
-        /* Barra de navegación inferior (6 pestañas) */
-        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #000000; border-top: 1px solid var(--primary-neon); display: flex; justify-content: space-around; padding: 8px 2px; z-index: 1000; max-width: 480px; margin: 0 auto; box-shadow: 0 -5px 25px rgba(0, 240, 255, 0.25); }
-        .nav-item { text-align: center; color: #555555; font-family: 'Share Tech Mono', monospace; font-size: 0.52rem; cursor: pointer; flex: 1; text-transform: uppercase; transition: all 0.2s; }
-        .nav-item i { font-size: 0.95rem; display: block; margin-bottom: 3px; }
-        .nav-item.active { color: var(--primary-neon); text-shadow: 0 0 10px var(--primary-neon), 0 0 18px var(--primary-neon); }
-
-        .flex-row { display: flex; gap: 8px; }
-        .flex-row > * { flex: 1; }
-
-        /* Modales */
-        .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0, 0, 0, 0.95); backdrop-filter: blur(5px); z-index:2000; align-items:center; justify-content:center; padding:16px; }
-        
-        /* Estadísticas rápidas */
-        .quick-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-        .stat-box { background: #000000; border: 1px solid var(--primary-neon); padding: 10px; border-radius: 3px; text-align: center; box-shadow: 0 0 12px rgba(0,240,255,0.15), inset 0 0 10px rgba(0,240,255,0.05); }
-        .stat-box span { font-family: 'Share Tech Mono', monospace; font-size: 0.63rem; color: #777777; display: block; margin-bottom: 2px; }
-        .stat-box strong { font-family: 'Share Tech Mono', monospace; font-size: 1.15rem; color: var(--primary-neon); text-shadow: 0 0 10px var(--primary-neon); }
-
-        /* Cartel de VIAJE COSTO */
-        .viaje-display { background: #000000; border: 1px solid var(--purple-neon); padding: 16px; border-radius: 3px; text-align: center; margin: 14px 0; box-shadow: 0 0 20px rgba(188, 19, 254, 0.3), inset 0 0 15px rgba(188, 19, 254, 0.1); }
-        .viaje-display .label-cartel { font-family: 'Share Tech Mono', monospace; font-size: 0.85rem; color: var(--purple-neon); letter-spacing: 2px; text-shadow: 0 0 8px var(--purple-neon); }
-        .viaje-display .valor-cartel { font-family: 'Share Tech Mono', monospace; font-size: 2rem; font-weight: 700; color: #FFFFFF; text-shadow: 0 0 12px var(--purple-neon), 0 0 25px var(--purple-neon); margin-top: 4px; }
-
-        /* Tarjeta de Venta en Historial */
-        .venta-card { background: #000000; border: 1px solid #1F1F1F; border-left: 3px solid var(--accent-neon); padding: 10px; margin-bottom: 10px; border-radius: 2px; }
-        .venta-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
-        .venta-title { font-weight: 700; font-size: 0.95rem; color: #FFF; text-shadow: 0 0 6px rgba(255,0,85,0.4); }
-        .venta-loc { font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--purple-neon); text-shadow: 0 0 6px var(--purple-neon); margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
-        .venta-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #1A1A1A; padding-top: 6px; margin-top: 6px; font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; }
-    </style>
+    /* VENTANA PLACAS Y PLANO NEON */
+    .placa-canvas-wrap {
+      background: #020305;
+      border: 1px solid rgba(0, 243, 255, 0.35);
+      border-radius: 6px;
+      padding: 12px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    canvas#placaCanvas {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      border: 2px solid var(--cyan);
+      box-shadow: 0 0 15px rgba(0, 243, 255, 0.35);
+      background: #05080c;
+      display: block;
+      margin: 8px auto;
+    }
+    .corte-preview-live {
+      background: rgba(0, 255, 102, 0.08);
+      border: 1px dashed var(--green);
+      color: var(--green);
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 13px;
+      margin-bottom: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .corte-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0a0f16;
+      border-left: 3px solid var(--pink);
+      padding: 9px 10px;
+      margin-bottom: 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .status-pill {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      border: 1px solid;
+    }
+    .st-armado { border-color: var(--yellow); color: var(--yellow); }
+    .st-listo { border-color: var(--cyan); color: var(--cyan); }
+    .st-entregado { border-color: var(--green); color: var(--green); }
+  </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-top">
+  <!-- BARRA SUPERIOR CON BOTÓN DE MENÚ A LA IZQUIERDA -->
+  <header>
+    <div class="header-left">
+      <button class="menu-btn" onclick="toggleDrawer()" title="Abrir Menú">☰</button>
+      <div>
+        <div class="brand-title">&gt;_ CARPINTERÍA JL</div>
+        <span class="brand-sub">SYS.VER // 7.0.MESITA-PRO</span>
+      </div>
+    </div>
+    <div class="backup-btns">
+      <button class="btn-top" onclick="exportBackup()">⬇ BACKUP</button>
+      <button class="btn-top warn" onclick="document.getElementById('importFile').click()">⬆</button>
+      <input type="file" id="importFile" style="display:none" accept=".json" onchange="importBackup(event)">
+    </div>
+  </header>
+
+  <!-- MENÚ DESPLEGABLE (ARRIBA A LA IZQUIERDA) -->
+  <div id="drawerOverlay" class="drawer-overlay" onclick="toggleDrawer()"></div>
+  <nav id="drawer" class="drawer">
+    <div class="drawer-header">
+      <span class="drawer-title">&gt;_ MENÚ PRINCIPAL</span>
+      <button class="close-drawer" onclick="toggleDrawer()">✕</button>
+    </div>
+    <button class="nav-item active" id="nav-mesita" onclick="switchTab('mesita')">✨ MESITA VARIABLE</button>
+    <button class="nav-item" id="nav-placas" onclick="switchTab('placas')">📐 PLACAS Y CORTES</button>
+    <button class="nav-item" id="nav-stock" onclick="switchTab('stock')">📦 STOCK MELAMINA</button>
+    <button class="nav-item" id="nav-valor" onclick="switchTab('valor')">🏷️ COSTOS Y FILOS</button>
+    <button class="nav-item" id="nav-muebles" onclick="switchTab('muebles')">🪑 RECETAS MUEBLES</button>
+    <button class="nav-item" id="nav-presup" onclick="switchTab('presup')">🧾 PRESUPUESTOS</button>
+    <button class="nav-item" id="nav-caja" onclick="switchTab('caja')">💰 CAJA Y PEDIDOS</button>
+    <button class="nav-item" id="nav-viaje" onclick="switchTab('viaje')">🚚 VIAJE / FLETE</button>
+  </nav>
+
+  <div class="container">
+
+    <!-- ==========================================
+         1. VENTANA: MESITA VARIABLE (NUEVA)
+         ========================================== -->
+    <section id="sec-mesita" class="section active">
+      <div class="section-banner">
+        <h2>✨ CALCULADORA DE MESITA CON TECHO VARIABLE</h2>
+      </div>
+
+      <div class="neon-card">
+        <div class="card-header">
+          <span class="card-title">1. CONFIGURAR PEDIDO DE MESITA</span>
+          <button class="btn btn-yellow" onclick="toggleEditBaseMesita()">✏️ EDITAR MEDIDAS ESTÁNDAR</button>
+        </div>
+
+        <!-- PANEL EDITABLE DE MEDIDAS BASE DE LA MESITA NORMAL -->
+        <div id="editBaseMesitaBox" style="display:none; margin-bottom:14px; padding:12px; background:#03060a; border:1px dashed var(--yellow); border-radius:6px;">
+          <div style="color:var(--yellow); font-weight:bold; font-size:12px; margin-bottom:10px;">
+            ⚙️ MEDIDAS DE TU MESITA ESTÁNDAR (SE GUARDAN COMO BASE):
+          </div>
+          <div class="grid-2">
             <div>
-                <h1><i class="fa-solid fa-terminal" style="color:var(--accent-neon); text-shadow: 0 0 10px var(--accent-neon);"></i> CARPINTERÍA JL</h1>
-                <p>SYS.VER // 5.0.MELAMINA-PRO</p>
+              <label>PROFUNDIDAD TECHO ESTÁNDAR (MM):</label>
+              <input type="number" id="bm_techoProf" value="335">
             </div>
-            <div class="backup-btns">
-                <button class="sys-btn" onclick="exportarBackup()" title="Guardar Copia de Seguridad"><i class="fa-solid fa-download"></i> BACKUP</button>
-                <button class="sys-btn" style="border-color:var(--amber-neon); color:var(--amber-neon); text-shadow:0 0 6px var(--amber-neon);" onclick="document.getElementById('import-file').click()" title="Cargar Copia"><i class="fa-solid fa-upload"></i></button>
-                <input type="file" id="import-file" style="display:none" accept=".json" onchange="importarBackup(event)">
+            <div>
+              <label>ANCHO TECHO ESTÁNDAR (MM):</label>
+              <input type="number" id="bm_techoAncho" value="400">
             </div>
-        </div>
-    </header>
-
-    <div class="container">
-        <!-- 1. STOCK TAB -->
-        <div id="tab-stock" class="tab-content active">
-            <div id="stock-alerts"></div>
-            
-            <div class="quick-stats">
-                <div class="stat-box">
-                    <span>ITEMS EN STOCK</span>
-                    <strong id="stat-total-items">0</strong>
-                </div>
-                <div class="stat-box" style="border-color: var(--danger-neon); box-shadow: 0 0 12px rgba(255,0,60,0.15), inset 0 0 10px rgba(255,0,60,0.05);">
-                    <span>ALERTAS BAJAS</span>
-                    <strong id="stat-low-alerts" style="color:var(--danger-neon); text-shadow:0 0 10px var(--danger-neon);">0</strong>
-                </div>
+          </div>
+          <div class="grid-2">
+            <div>
+              <label>PISO ESTÁNDAR (PROF x ANCHO MM):</label>
+              <div style="display:flex; gap:4px;">
+                <input type="number" id="bm_pisoProf" value="335" placeholder="Prof">
+                <input type="number" id="bm_pisoAncho" value="400" placeholder="Ancho">
+              </div>
             </div>
-
-            <div class="card">
-                <div class="card-title">
-                    Inventario Melamina & Herrajes
-                    <div style="display:flex; gap:6px;">
-                        <button class="btn btn-sm btn-secondary" onclick="openModal('modal-editar-nombres')"><i class="fa-solid fa-pen"></i> EDITAR</button>
-                        <button class="btn btn-sm" onclick="openModal('modal-material')"><i class="fa-solid fa-plus"></i> NEW</button>
-                    </div>
-                </div>
-                <div id="stock-list"></div>
+            <div>
+              <label>2 LATERALES (PROF x ALTO MM):</label>
+              <div style="display:flex; gap:4px;">
+                <input type="number" id="bm_latProf" value="335" placeholder="Prof">
+                <input type="number" id="bm_latAlto" value="550" placeholder="Alto">
+              </div>
             </div>
-        </div>
-
-        <!-- 2. VALOR TAB -->
-        <div id="tab-valor" class="tab-content">
-            <div class="card neon-amber">
-                <div class="card-title" style="color:var(--amber-neon); text-shadow: 0 0 10px var(--amber-neon);"><i class="fa-solid fa-tags"></i> Gestión de Costos & Filo</div>
-                
-                <div style="background: #000000; border: 1px solid #222222; padding: 12px; border-radius: 3px; margin-bottom: 14px; box-shadow: 0 0 12px rgba(0,240,255,0.08);">
-                    <div style="font-family:'Share Tech Mono', monospace; font-size:0.82rem; color:var(--primary-neon); text-shadow: 0 0 8px var(--primary-neon); margin-bottom:10px;">STOCK Y COSTO DE TAPACANTOS (FILO)</div>
-                    <div class="flex-row">
-                        <div class="form-group">
-                            <label>Filo Negro (Metros)</label>
-                            <input type="number" id="filo-negro-cant" value="50" oninput="guardarFiloData()">
-                        </div>
-                        <div class="form-group">
-                            <label>Costo Negro ($/m)</label>
-                            <input type="number" id="filo-negro-costo" value="450" oninput="guardarFiloData()">
-                        </div>
-                    </div>
-                    <div class="flex-row">
-                        <div class="form-group">
-                            <label>Filo Blanco (Metros)</label>
-                            <input type="number" id="filo-blanco-cant" value="50" oninput="guardarFiloData()">
-                        </div>
-                        <div class="form-group">
-                            <label>Costo Blanco ($/m)</label>
-                            <input type="number" id="filo-blanco-costo" value="450" oninput="guardarFiloData()">
-                        </div>
-                    </div>
-                </div>
-
-                <div style="font-family:'Share Tech Mono', monospace; font-size:0.82rem; color:var(--amber-neon); text-shadow: 0 0 8px var(--amber-neon); margin-bottom:10px;">ACTUALIZAR PRECIOS DE INSUMOS</div>
-                <div id="valor-materiales-list"></div>
+          </div>
+          <div class="grid-2">
+            <div>
+              <label>FRENTE CAJÓN (ALTO x ANCHO MM):</label>
+              <div style="display:flex; gap:4px;">
+                <input type="number" id="bm_cajFrenteAlto" value="160" placeholder="Alto">
+                <input type="number" id="bm_cajFrenteAncho" value="364" placeholder="Ancho">
+              </div>
             </div>
-        </div>
-
-        <!-- 3. MUEBLES TAB -->
-        <div id="tab-muebles" class="tab-content">
-            <div class="card neon-magenta">
-                <div class="card-title" style="color:var(--accent-neon); text-shadow: 0 0 10px var(--accent-neon);">Recetas de Muebles <button class="btn btn-sm btn-secondary" onclick="openModal('modal-mueble')"><i class="fa-solid fa-plus"></i> NEW</button></div>
-                <div id="muebles-list"></div>
+            <div>
+              <label>2 LAT. CAJÓN (PROF x ALTO MM):</label>
+              <div style="display:flex; gap:4px;">
+                <input type="number" id="bm_cajLatProf" value="300" placeholder="Prof">
+                <input type="number" id="bm_cajLatAlto" value="120" placeholder="Alto">
+              </div>
             </div>
-
-            <!-- NUEVA HERRAMIENTA MELAMINA: Calculador de Filo por Cortes -->
-            <div class="card">
-                <div class="card-title"><i class="fa-solid fa-ruler-combined"></i> Calculador de Filo por Piezas</div>
-                <p style="font-size:0.75rem; color:#888; margin-bottom:10px; font-family:'Share Tech Mono', monospace;">Ingresá las medidas de una tabla en cm para saber cuántos metros de filo lleva tu mueble.</p>
-                <div class="flex-row">
-                    <div class="form-group">
-                        <label>Largo (cm)</label>
-                        <input type="number" id="calc-largo" value="50" oninput="calcularFiloPieza()">
-                    </div>
-                    <div class="form-group">
-                        <label>Ancho (cm)</label>
-                        <input type="number" id="calc-ancho" value="40" oninput="calcularFiloPieza()">
-                    </div>
-                    <div class="form-group">
-                        <label>Cant. Tablas</label>
-                        <input type="number" id="calc-piezas" value="4" oninput="calcularFiloPieza()">
-                    </div>
-                </div>
-                <div class="flex-row">
-                    <div class="form-group">
-                        <label>Lados Largos con filo</label>
-                        <select id="calc-lados-l" onchange="calcularFiloPieza()">
-                            <option value="1" selected>1 Lado (Frente)</option>
-                            <option value="2">2 Lados</option>
-                            <option value="0">Ninguno</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Lados Anchos con filo</label>
-                        <select id="calc-lados-a" onchange="calcularFiloPieza()">
-                            <option value="0">Ninguno</option>
-                            <option value="1">1 Lado</option>
-                            <option value="2" selected>2 Lados (Cantos)</option>
-                        </select>
-                    </div>
-                </div>
-                <div style="background:#000; border:1px dashed var(--primary-neon); padding:10px; text-align:center; font-family:'Share Tech Mono', monospace;">
-                    <span style="font-size:0.75rem; color:#888;">TOTAL FILO NECESARIO (+10% desperdicio):</span><br>
-                    <strong id="calc-filo-res" style="font-size:1.3rem; color:var(--primary-neon); text-shadow:0 0 8px var(--primary-neon);">5.72 metros</strong>
-                </div>
+          </div>
+          <div class="grid-2">
+            <div>
+              <label>CONTRAFRENTE CAJÓN (ALTO x ANCHO):</label>
+              <div style="display:flex; gap:4px;">
+                <input type="number" id="bm_cajContraAlto" value="120" placeholder="Alto">
+                <input type="number" id="bm_cajContraAncho" value="310" placeholder="Ancho">
+              </div>
             </div>
+            <div>
+              <label>FONDO MDF 3MM (ALTO x ANCHO):</label>
+              <div style="display:flex; gap:4px;">
+                <input type="number" id="bm_fondoAlto" value="550" placeholder="Alto">
+                <input type="number" id="bm_fondoAncho" value="400" placeholder="Ancho">
+              </div>
+            </div>
+          </div>
+          <div class="grid-3">
+            <div>
+              <label>PRECIO MDF 3MM ($):</label>
+              <input type="number" id="bm_precioMdf" value="24000">
+            </div>
+            <div>
+              <label>HERRAJES/CORRED. ($):</label>
+              <input type="number" id="bm_herrajes" value="6500">
+            </div>
+            <div>
+              <label>MANO DE OBRA ($):</label>
+              <input type="number" id="bm_manoObra" value="25000">
+            </div>
+          </div>
+          <button class="btn btn-green btn-block" onclick="saveBaseMesita()">💾 GUARDAR MEDIDAS ESTÁNDAR</button>
         </div>
 
-        <!-- 4. PRESUPUESTO TAB -->
-        <div id="tab-presupuesto" class="tab-content">
-            <div class="card neon-amber">
-                <div class="card-title" style="color:var(--amber-neon); text-shadow: 0 0 10px var(--amber-neon);"><i class="fa-solid fa-calculator"></i> Calculadora & Venta</div>
-                
-                <div class="flex-row">
-                    <div class="form-group" style="flex: 2;">
-                        <label>Seleccionar Modelo</label>
-                        <select id="p-mueble" onchange="calcularPresupuesto()"></select>
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label>Cantidad</label>
-                        <input type="number" id="p-cant" value="1" min="1" oninput="calcularPresupuesto()">
-                    </div>
-                </div>
-
-                <!-- Datos del Cliente y Viaje para el Historial -->
-                <div style="background: #000000; border: 1px solid var(--purple-neon); padding: 10px; border-radius: 3px; margin-bottom: 12px; box-shadow: 0 0 10px rgba(188, 19, 254, 0.15);">
-                    <label style="color:var(--purple-neon); text-shadow: 0 0 6px var(--purple-neon); margin-bottom:8px;"><i class="fa-solid fa-map-pin"></i> DESTINO Y SEÑA DEL PEDIDO</label>
-                    <div class="flex-row">
-                        <div class="form-group">
-                            <label>Cliente (Opcional)</label>
-                            <input type="text" id="p-cliente" placeholder="Ej. Juan / Meli">
-                        </div>
-                        <div class="form-group">
-                            <label>Localidad / Destino Viaje</label>
-                            <input type="text" id="p-destino" placeholder="Ej. Morón / Ramos">
-                        </div>
-                    </div>
-                    <div class="flex-row">
-                        <div class="form-group" style="margin-bottom:0;">
-                            <label>Seña Recibida ($)</label>
-                            <input type="number" id="p-sena" value="0" min="0" oninput="calcularPresupuesto()">
-                        </div>
-                        <div class="form-group" style="margin-bottom:0;">
-                            <label>Estado Inicial</label>
-                            <select id="p-estado">
-                                <option value="En Armado">🔨 En Armado</option>
-                                <option value="Listo">📦 Listo p/ Entregar</option>
-                                <option value="Entregado" selected>✅ Entregado y Cobrado</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                
-                <div style="background: #000000; border: 1px solid #222222; padding: 10px; border-radius: 3px; margin-bottom: 12px;">
-                    <label style="color:var(--primary-neon); text-shadow: 0 0 8px var(--primary-neon); margin-bottom:8px;">Costos de Insumos (Editables al momento)</label>
-                    <div id="p-insumos-edits"></div>
-                </div>
-
-                <div class="flex-row">
-                    <div class="form-group">
-                        <label>Mano de Obra ($)</label>
-                        <input type="number" id="p-MO" value="15000" oninput="calcularPresupuesto()">
-                    </div>
-                    <div class="form-group">
-                        <label>Viaje / Flete ($)</label>
-                        <input type="number" id="p-extras" value="5000" oninput="calcularPresupuesto()">
-                    </div>
-                    <div class="form-group">
-                        <label>Ganancia (%)</label>
-                        <input type="number" id="p-ganancia" value="40" oninput="calcularPresupuesto()">
-                    </div>
-                </div>
-
-                <div class="form-group" style="display:flex; align-items:center; gap:8px; margin-top:4px;">
-                    <input type="checkbox" id="actualizar-stock-precio" checked style="width:auto;">
-                    <label style="display:inline; margin:0; font-size:0.68rem; color:#AAAAAA;">Actualizar costos modificados en el stock general</label>
-                </div>
-
-                <div style="background: #000000; border: 1px solid var(--primary-neon); padding: 12px; border-radius: 3px; text-align: center; margin: 12px 0; box-shadow: 0 0 20px rgba(0,240,255,0.25), inset 0 0 12px rgba(0,240,255,0.1);">
-                    <div style="font-family:'Share Tech Mono', monospace; font-size: 0.72rem; color: var(--primary-neon); text-shadow: 0 0 6px var(--primary-neon);">PRECIO FINAL SUGERIDO</div>
-                    <div id="p-total" style="font-family:'Share Tech Mono', monospace; font-size: 1.8rem; font-weight: 700; color: #FFFFFF; margin-top: 2px; text-shadow: 0 0 12px var(--primary-neon), 0 0 25px var(--primary-neon);"><span>$0</span></div>
-                    <div id="p-resto-info" style="font-family:'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--amber-neon); margin-top: 4px; display:none;">Resta cobrar en la entrega: $0</div>
-                </div>
-
-                <div class="flex-row">
-                    <button class="btn" onclick="registrarVentaDirecta()"><i class="fa-solid fa-check"></i> Guardar Venta</button>
-                    <button class="btn btn-success" onclick="enviarPresupuestoWhatsApp()"><i class="fa-brands fa-whatsapp"></i> WhatsApp & Vender</button>
-                </div>
+        <!-- MEDIDA DEL TECHO PEDIDA POR EL CLIENTE -->
+        <div style="background:#081018; border:1px solid var(--cyan); padding:12px; border-radius:6px; margin-bottom:12px;">
+          <div style="color:var(--cyan); font-weight:bold; font-size:12px; margin-bottom:8px;">
+            📏 MEDIDA DEL TECHO QUE PIDE EL CLIENTE (EN MM):
+          </div>
+          <div class="grid-2" style="margin-bottom:4px;">
+            <div>
+              <label>PROFUNDIDAD TECHO (MM):</label>
+              <input type="number" id="var_techoProf" value="335" oninput="calcMesitaVariable()">
             </div>
+            <div>
+              <label>LARGO / ANCHO TECHO (MM):</label>
+              <input type="number" id="var_techoAncho" value="400" oninput="calcMesitaVariable()">
+            </div>
+          </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:4px;">
+            <button class="btn" style="padding:5px 8px; font-size:11px;" onclick="setQuickTecho(335, 400)">Estándar 335x400</button>
+            <button class="btn btn-yellow" style="padding:5px 8px; font-size:11px;" onclick="setQuickTecho(335, 600)">Especial 335x600</button>
+            <button class="btn btn-pink" style="padding:5px 8px; font-size:11px;" onclick="setQuickTecho(335, 700)">Especial 335x700</button>
+          </div>
         </div>
 
-        <!-- 5. CAJA & HISTORIAL DE VENTAS TAB -->
-        <div id="tab-caja" class="tab-content">
-            <div class="card neon-green">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <div style="font-family:'Share Tech Mono', monospace; font-size: 0.72rem; color: var(--success-neon); text-shadow: 0 0 6px var(--success-neon);">DINERO EN CAJA REAL</div>
-                        <div id="caja-saldo" style="font-family:'Share Tech Mono', monospace; font-size: 1.9rem; font-weight: 700; color: #FFFFFF; margin: 4px 0; text-shadow: 0 0 12px var(--success-neon), 0 0 25px var(--success-neon);">$0</div>
-                    </div>
-                    <div style="text-align:right;">
-                        <div style="font-family:'Share Tech Mono', monospace; font-size: 0.65rem; color: var(--amber-neon);">POR COBRAR (ENTREGAS)</div>
-                        <div id="caja-por-cobrar" style="font-family:'Share Tech Mono', monospace; font-size: 1.1rem; font-weight: 700; color: var(--amber-neon); text-shadow: 0 0 8px var(--amber-neon);">$0</div>
-                    </div>
-                </div>
-                <div class="flex-row" style="margin-top: 10px;">
-                    <button class="btn btn-sm btn-danger-neon" onclick="openModal('modal-gasto')"><i class="fa-solid fa-minus"></i> Anotar Gasto</button>
-                    <button class="btn btn-sm btn-success" onclick="openModal('modal-ingreso')"><i class="fa-solid fa-plus"></i> Ingreso Extra</button>
-                </div>
-            </div>
+        <!-- VARIABLE DE ENSANCHE (SOLO TECHO vs MUEBLE COMPLETO) -->
+        <label>¿QUÉ SE ENSANCHA AL CAMBIAR LA MEDIDA DEL TECHO?</label>
+        <select id="var_modoEnsanche" onchange="calcMesitaVariable()">
+          <option value="solo_techo">MODO 1: Solo se ensancha el TECHO (Piso y Cajón quedan estándar)</option>
+          <option value="completo">MODO 2: Se ensancha TODO (Techo + Piso + Cajón + Fondo)</option>
+        </select>
 
-            <!-- NUEVA SECCIÓN: HISTORIAL DE VENTAS Y ENTREGAS -->
-            <div class="card neon-magenta">
-                <div class="card-title" style="color:var(--accent-neon); text-shadow: 0 0 10px var(--accent-neon);">
-                    <span><i class="fa-solid fa-clipboard-list"></i> Historial de Ventas y Viajes</span>
-                    <button class="btn btn-sm btn-secondary" onclick="openModal('modal-nueva-venta-manual')"><i class="fa-solid fa-plus"></i> Manual</button>
-                </div>
-                <div id="ventas-historial-list"></div>
-            </div>
+        <!-- PLACA Y DOBLE VARIABLE DE FILO (MESA VS CAJÓN) -->
+        <label>PLACA DE MELAMINA 18MM A USAR:</label>
+        <select id="var_placaId" onchange="calcMesitaVariable()"></select>
 
-            <div class="card">
-                <div class="card-title">Movimientos de Caja (Ingresos / Gastos)</div>
-                <div id="caja-list"></div>
-            </div>
+        <div class="grid-2">
+          <div>
+            <label>FILO ESTRUCTURA (MESA/TECHO):</label>
+            <select id="var_filoEstructura" onchange="calcMesitaVariable()">
+              <option value="negro" selected>FILO NEGRO</option>
+              <option value="blanco">FILO BLANCO</option>
+            </select>
+          </div>
+          <div>
+            <label>FILO DEL CAJÓN (INTERIOR/FRENTE):</label>
+            <select id="var_filoCajon" onchange="calcMesitaVariable()">
+              <option value="blanco" selected>FILO BLANCO (Siempre)</option>
+              <option value="negro">FILO NEGRO</option>
+            </select>
+          </div>
         </div>
 
-        <!-- 6. VIAJE TAB -->
-        <div id="tab-viaje" class="tab-content">
-            <div class="card neon-purple">
-                <div class="card-title" style="color:var(--purple-neon); text-shadow: 0 0 10px var(--purple-neon);">
-                    <span><i class="fa-solid fa-truck-fast"></i> Calculadora de Viaje</span>
-                </div>
+        <!-- RESUMEN DE COSTOS Y PRECIO SUGERIDO -->
+        <div class="grid-2" style="margin-top:8px;">
+          <div class="stat-box pink">
+            <div class="stat-label">COSTO TOTAL MATERIALES</div>
+            <div class="stat-val" id="resMesitaCosto">$0</div>
+            <div style="font-size:10px; color:var(--muted); margin-top:4px;" id="resMesitaDifTxt">Medida estándar</div>
+          </div>
+          <div class="stat-box green">
+            <div class="stat-label">PRECIO VENTA PRESUPUESTO</div>
+            <div class="stat-val" id="resMesitaVenta">$0</div>
+            <div style="font-size:10px; color:var(--muted); margin-top:4px;" id="resMesitaManoTxt">Incluye mano de obra</div>
+          </div>
+        </div>
 
-                <div class="form-group">
-                    <label><i class="fa-solid fa-location-dot" style="color:var(--primary-neon);"></i> Dirección de Inicio (Taller / Origen)</label>
-                    <input type="text" id="v-origen" placeholder="Ej. Villa Luzuriaga, La Matanza" oninput="guardarViajeData()">
-                </div>
+        <!-- DESGLOSE DETALLADO DE PIEZAS Y FILOS -->
+        <div style="margin-top:12px; border-top:1px solid rgba(0,243,255,0.2); padding-top:10px;">
+          <div class="card-title" style="margin-bottom:8px;">DESGLOSE AUTOMÁTICO DE CORTES Y FILOS:</div>
+          <div id="desgloseMesitaList"></div>
+        </div>
 
-                <div class="form-group">
-                    <label><i class="fa-solid fa-flag-checkered" style="color:var(--accent-neon);"></i> Ubicación de Entrega (Destino)</label>
-                    <input type="text" id="v-destino" placeholder="Ej. Morón / Ramos Mejía / Ituzaingó" oninput="guardarViajeData()">
-                </div>
+        <div class="grid-2" style="margin-top:12px;">
+          <button class="btn btn-yellow" onclick="enviarCortesMesitaAPlaca()">✂️ MANDAR CORTES AL PLANO DE PLACA</button>
+          <button class="btn btn-green" onclick="pasarMesitaAPresupuesto()">🧾 PASAR AL PRESUPUESTO</button>
+        </div>
+      </div>
+    </section>
 
-                <button class="btn btn-sm" style="width:100%; margin-bottom:14px; border-color:var(--primary-neon); color:var(--primary-neon);" onclick="abrirRutaGoogleMaps()">
-                    <i class="fa-solid fa-map-location-dot"></i> Ver Ruta y Km en Google Maps
-                </button>
+    <!-- ==========================================
+         2. VENTANA: PLACAS Y CORTES
+         ========================================== -->
+    <section id="sec-placas" class="section">
+      <div class="section-banner">
+        <h2>📐 PLACAS Y OPTIMIZADOR DE CORTES</h2>
+      </div>
 
-                <div class="flex-row">
-                    <div class="form-group">
-                        <label>Valor x Kilómetro ($)</label>
-                        <input type="number" id="v-precio-km" value="800" min="0" oninput="calcularViaje()">
-                    </div>
-                    <div class="form-group">
-                        <label>Cantidad de Km</label>
-                        <input type="number" id="v-cant-km" value="10" min="0" step="0.5" oninput="calcularViaje()">
-                    </div>
-                </div>
+      <div class="neon-card">
+        <div class="card-header">
+          <span class="card-title">1. SELECCIONAR TIPO DE PLACA</span>
+          <div style="display:flex; gap:6px;">
+            <button class="btn btn-yellow" onclick="toggleEditPlaca()">✏️ EDITAR</button>
+            <button class="btn" onclick="toggleNewPlaca()">+ NUEVA</button>
+          </div>
+        </div>
 
-                <!-- Cartel VIAJE COSTO -->
-                <div class="viaje-display">
-                    <div class="label-cartel">VIAJE COSTO</div>
-                    <div id="v-costo-total" class="valor-cartel">$8.000</div>
-                </div>
+        <label>MENÚ DESPLEGABLE DE PLACAS:</label>
+        <select id="placaSelect" onchange="onPlacaChange()"></select>
 
-                <button class="btn btn-purple" onclick="pasarViajeAPresupuesto()">
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Pasar Costo y Destino a Presupuesto
-                </button>
+        <!-- FORMULARIO EDITAR PLACA ACTUAL -->
+        <div id="editPlacaBox" style="display:none; margin-top:10px; padding-top:10px; border-top:1px dashed var(--yellow);">
+          <label>NOMBRE DE LA PLACA:</label>
+          <input type="text" id="editPlacaName">
+          <div class="grid-2">
+            <div>
+              <label>ANCHO (MM):</label>
+              <input type="number" id="editPlacaW">
             </div>
-        </div>
-    </div>
-
-    <!-- 6 TABS BOTTOM NAVIGATION -->
-    <div class="nav-bar">
-        <div class="nav-item active" onclick="switchTab('stock', this)"><i class="fa-solid fa-boxes-stacked"></i> Stock</div>
-        <div class="nav-item" onclick="switchTab('valor', this)"><i class="fa-solid fa-tags"></i> Valor</div>
-        <div class="nav-item" onclick="switchTab('muebles', this)"><i class="fa-solid fa-chair"></i> Muebles</div>
-        <div class="nav-item" onclick="switchTab('presupuesto', this)"><i class="fa-solid fa-file-invoice-dollar"></i> Presup.</div>
-        <div class="nav-item" onclick="switchTab('caja', this)"><i class="fa-solid fa-cash-register"></i> Caja</div>
-        <div class="nav-item" onclick="switchTab('viaje', this)"><i class="fa-solid fa-truck-fast"></i> Viaje</div>
-    </div>
-
-    <!-- MODAL EDITAR NOMBRES DE MATERIALES -->
-    <div id="modal-editar-nombres" class="modal-overlay">
-        <div class="card" style="width:100%; max-width:400px; margin:0;">
-            <div class="card-title">Editar Nombres <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('modal-editar-nombres')"></i></div>
-            <div id="editar-nombres-list" style="max-height: 300px; overflow-y: auto; margin-bottom: 12px;"></div>
-            <button class="btn" onclick="closeModal('modal-editar-nombres'); renderAll();">Listo / Guardar</button>
-        </div>
-    </div>
-
-    <!-- MODAL EDITAR RECETA DE MUEBLE -->
-    <div id="modal-editar-receta" class="modal-overlay">
-        <div class="card neon-magenta" style="width:100%; max-width:420px; margin:0;">
-            <div class="card-title" style="color:var(--accent-neon); text-shadow:0 0 8px var(--accent-neon);">Editar Receta <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('modal-editar-receta')"></i></div>
-            <input type="hidden" id="edit-mueble-id">
-            <div class="form-group">
-                <label>Nombre del Mueble</label>
-                <input type="text" id="edit-mueble-nombre">
+            <div>
+              <label>ALTO (MM):</label>
+              <input type="number" id="editPlacaH">
             </div>
-            <div class="flex-row">
-                <div class="form-group">
-                    <label>Metros de Filo</label>
-                    <input type="number" id="edit-mueble-filo" step="0.1">
-                </div>
-                <div class="form-group">
-                    <label>Tipo de Filo</label>
-                    <select id="edit-mueble-filotipo">
-                        <option value="negro">Negro</option>
-                        <option value="blanco">Blanco</option>
-                    </select>
-                </div>
+          </div>
+          <label>PRECIO DE LA PLACA ENTERA ($):</label>
+          <input type="number" id="editPlacaPrice">
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-green" style="flex:1;" onclick="saveEditPlaca()">💾 GUARDAR CAMBIOS</button>
+            <button class="btn btn-pink" onclick="deleteCurrentPlaca()">🗑️ BORRAR</button>
+          </div>
+        </div>
+
+        <!-- FORMULARIO AGREGAR NUEVA PLACA -->
+        <div id="newPlacaBox" style="display:none; margin-top:10px; padding-top:10px; border-top:1px dashed var(--cyan);">
+          <label>NOMBRE DE NUEVA PLACA:</label>
+          <input type="text" id="newPlacaName" placeholder="Ej: PLACA GRIS HUMO 18MM">
+          <div class="grid-2">
+            <div>
+              <label>ANCHO (MM):</label>
+              <input type="number" id="newPlacaW" value="2750">
             </div>
-            <div style="font-family:'Share Tech Mono', monospace; font-size:0.8rem; color:var(--primary-neon); text-shadow:0 0 6px var(--primary-neon); margin: 8px 0;">CANTIDADES DE INSUMOS QUE LLEVA:</div>
-            <div id="edit-mueble-materiales-list" style="max-height: 220px; overflow-y: auto; margin-bottom: 12px; background: #000000; padding: 8px; border: 1px solid #222;"></div>
-            <button class="btn btn-secondary" onclick="guardarRecetaModificada()">Guardar Cambios</button>
-        </div>
-    </div>
-
-    <!-- MODAL NUEVO MATERIAL -->
-    <div id="modal-material" class="modal-overlay">
-        <div class="card" style="width:100%; max-width:400px; margin:0;">
-            <div class="card-title">Nuevo Material <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('modal-material')"></i></div>
-            <div class="form-group"><label>Nombre</label><input type="text" id="m-nombre" placeholder="Ej. Tapatornillos Negro"></div>
-            <div class="form-group"><label>Categoría</label><select id="m-cat"><option value="Madera Melamina">Madera Melamina</option><option value="Herraje">Herraje</option><option value="Insumo">Insumo</option></select></div>
-            <div class="flex-row">
-                <div class="form-group"><label>Cantidad</label><input type="number" id="m-cant" value="100"></div>
-                <div class="form-group"><label>Unidad</label><input type="text" id="m-unidad" value="u"></div>
+            <div>
+              <label>ALTO (MM):</label>
+              <input type="number" id="newPlacaH" value="1830">
             </div>
-            <div class="flex-row">
-                <div class="form-group"><label>Costo Unitario ($)</label><input type="number" id="m-costo" value="20"></div>
-                <div class="form-group"><label>Stock Mínimo</label><input type="number" id="m-min" value="50"></div>
+          </div>
+          <label>PRECIO PLACA ENTERA ($):</label>
+          <input type="number" id="newPlacaPrice" placeholder="146000">
+          <button class="btn btn-green btn-block" onclick="addNewPlaca()">+ CREAR PLACA</button>
+        </div>
+      </div>
+
+      <!-- DIBUJO NEÓN DE LA PLACA Y CORTES -->
+      <div class="neon-card" id="placaDetalleMenu">
+        <div class="card-header">
+          <span class="card-title" id="viewPlacaTitle">PLACA BLANCA</span>
+          <span class="badge" id="viewPlacaPrice" style="font-size:14px; border-color:var(--green); color:var(--green);">$146.000</span>
+        </div>
+
+        <div class="placa-canvas-wrap">
+          <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--cyan); margin-bottom:4px;">
+            <span id="viewPlacaDims">MEDIDA: 2750 x 1830 mm</span>
+            <span id="viewPlacaM2">5.03 m²</span>
+          </div>
+          <canvas id="placaCanvas" width="550" height="366"></canvas>
+          <div style="font-size:11px; color:var(--muted); margin-top:4px;">
+            Vista previa a escala en tiempo real (Recortes en Rosa Neón / Libre en Negro)
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="stat-box pink">
+            <div class="stat-label">VALOR USADO EN CORTES</div>
+            <div class="stat-val" id="statUsadoValor">$0</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:4px;" id="statUsadoPct">0% de la placa</div>
+          </div>
+          <div class="stat-box green">
+            <div class="stat-label">RESTANTE DE PLACA</div>
+            <div class="stat-val" id="statRestoValor">$146.000</div>
+            <div style="font-size:11px; color:var(--muted); margin-top:4px;" id="statRestoPct">100% libre</div>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid rgba(0,243,255,0.25); padding-top:12px; margin-top:8px;">
+          <div class="card-title" style="margin-bottom:10px;">2. CALCULAR Y AGREGAR CORTE (EN MILÍMETROS)</div>
+          <div class="grid-2" style="margin-bottom:4px;">
+            <div>
+              <label>LARGO / ANCHO (MM):</label>
+              <input type="number" id="corteW" placeholder="Ej: 335" oninput="updateLiveCutCost()">
             </div>
-            <button class="btn" onclick="guardarMaterial()">Guardar Material</button>
-        </div>
-    </div>
-
-    <!-- MODAL NUEVO MUEBLE -->
-    <div id="modal-mueble" class="modal-overlay">
-        <div class="card neon-magenta" style="width:100%; max-width:400px; margin:0;">
-            <div class="card-title" style="color:var(--accent-neon); text-shadow:0 0 8px var(--accent-neon);">Nueva Receta <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('modal-mueble')"></i></div>
-            <div class="form-group"><label>Nombre del Mueble</label><input type="text" id="mu-nombre" placeholder="Ej. Mesita Flotante Negra 18mm"></div>
-            <div class="form-group"><label>Metros de Filo Usados</label><input type="number" id="mu-filo" step="0.1" value="3.5"></div>
-            <div class="form-group"><label>Tipo de Filo</label><select id="mu-filo-tipo"><option value="negro">Negro</option><option value="blanco">Blanco</option></select></div>
-            <button class="btn btn-secondary" onclick="guardarMuebleReceta()">Guardar Receta</button>
-        </div>
-    </div>
-
-    <!-- MODAL VENTA MANUAL PARA EL HISTORIAL -->
-    <div id="modal-nueva-venta-manual" class="modal-overlay">
-        <div class="card neon-magenta" style="width:100%; max-width:400px; margin:0;">
-            <div class="card-title" style="color:var(--accent-neon);">Anotar Venta en Historial <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('modal-nueva-venta-manual')"></i></div>
-            <div class="form-group"><label>¿Qué se vendió?</label><input type="text" id="vm-desc" placeholder="Ej. 3 Mesitas Melamina Blanca"></div>
-            <div class="form-group"><label>¿A dónde fue el viaje / entrega?</label><input type="text" id="vm-destino" placeholder="Ej. Morón"></div>
-            <div class="flex-row">
-                <div class="form-group"><label>Precio Total ($)</label><input type="number" id="vm-total" value="90000"></div>
-                <div class="form-group"><label>Costo Viaje ($)</label><input type="number" id="vm-viaje" value="8000"></div>
+            <div>
+              <label>ALTO / ANCHO (MM):</label>
+              <input type="number" id="corteH" placeholder="Ej: 400" oninput="updateLiveCutCost()">
             </div>
-            <button class="btn btn-success" onclick="guardarVentaManual()">Guardar en Historial y Caja</button>
+          </div>
+          <div class="grid-2" style="margin-bottom:6px;">
+            <div>
+              <label>CANTIDAD DE PIEZAS:</label>
+              <input type="number" id="corteQty" value="1" min="1" oninput="updateLiveCutCost()">
+            </div>
+            <div>
+              <label>ETIQUETA (OPCIONAL):</label>
+              <input type="text" id="corteTag" placeholder="Ej: Techo Mesita">
+            </div>
+          </div>
+
+          <div id="liveCutPreview" class="corte-preview-live">
+            Ingresá las medidas arriba (ej: 335 x 400) para ver cuánto sale el recorte.
+          </div>
+
+          <button class="btn btn-block" onclick="agregarCorteAPlaca()">✂️ SUMAR CORTE A LA PLACA</button>
         </div>
-    </div>
 
-    <!-- MODAL NUEVO GASTO -->
-    <div id="modal-gasto" class="modal-overlay">
-        <div class="card" style="width:100%; max-width:400px; margin:0;">
-            <div class="card-title" style="color:var(--danger-neon); text-shadow:0 0 8px var(--danger-neon);">Registrar Gasto <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('modal-gasto')"></i></div>
-            <div class="form-group"><label>Descripción</label><input type="text" id="g-desc" placeholder="Ej. Compra de melamina"></div>
-            <div class="form-group"><label>Monto ($)</label><input type="number" id="g-monto" value="5000"></div>
-            <button class="btn btn-danger-neon" onclick="guardarGastoMov()">Registrar Gasto</button>
+        <div style="margin-top:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span class="card-title">CORTES CARGADOS EN LA PLACA</span>
+            <button class="btn btn-pink" style="padding:4px 8px; font-size:10px;" onclick="limpiarCortesPlaca()">LIMPIAR PLACA</button>
+          </div>
+          <div id="listaCortesPlaca"></div>
         </div>
-    </div>
+      </div>
+    </section>
 
-    <!-- MODAL NUEVO INGRESO -->
-    <div id="modal-ingreso" class="modal-overlay">
-        <div class="card neon-green" style="width:100%; max-width:400px; margin:0;">
-            <div class="card-title" style="color:var(--success-neon); text-shadow:0 0 8px var(--success-neon);">Registrar Ingreso <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('modal-ingreso')"></i></div>
-            <div class="form-group"><label>Descripción</label><input type="text" id="i-desc" placeholder="Ej. Venta mostrador o seña"></div>
-            <div class="form-group"><label>Monto ($)</label><input type="number" id="i-monto" value="10000"></div>
-            <button class="btn btn-success" onclick="guardarIngresoMov()">Registrar Ingreso</button>
+    <!-- ==========================================
+         3. VENTANA: STOCK MELAMINA Y HERRAJES
+         ========================================== -->
+    <section id="sec-stock" class="section">
+      <div class="grid-2">
+        <div class="stat-box">
+          <div class="stat-label">ITEMS EN STOCK</div>
+          <div class="stat-val" id="totalItemsCount">0</div>
         </div>
-    </div>
+        <div class="stat-box pink">
+          <div class="stat-label">ALERTAS BAJAS</div>
+          <div class="stat-val" id="lowStockCount">0</div>
+        </div>
+      </div>
 
-    <script>
-        let db = JSON.parse(localStorage.getItem('carpinteria_jl_db')) || {
-            stock: [
-                { id: 1, nombre: 'Placa Melamina 18mm Blanco', cat: 'Madera Melamina', cant: 12, unidad: 'placas', costo: 45000, min: 3 },
-                { id: 2, nombre: 'Placa Melamina 18mm Negro', cat: 'Madera Melamina', cant: 10, unidad: 'placas', costo: 47000, min: 3 },
-                { id: 7, nombre: 'Plus / MDF 3mm (Fondos)', cat: 'Madera Melamina', cant: 8, unidad: 'placas', costo: 14000, min: 2 },
-                { id: 3, nombre: 'Tornillos Autoperforantes 3x30', cat: 'Herraje', cant: 350, unidad: 'u', costo: 30, min: 100 },
-                { id: 4, nombre: 'Clavos para fondo 1"', cat: 'Herraje', cant: 500, unidad: 'u', costo: 15, min: 200 },
-                { id: 5, nombre: 'Escuadras Metálicas 2"', cat: 'Herraje', cant: 18, unidad: 'u', costo: 350, min: 8 },
-                { id: 6, nombre: 'Correderas telescópicas 35cm', cat: 'Herraje', cant: 12, unidad: 'pares', costo: 3200, min: 4 },
-                { id: 8, nombre: 'Tapatornillos Adhesivos Blancos', cat: 'Insumo', cant: 200, unidad: 'u', costo: 15, min: 50 },
-                { id: 9, nombre: 'Tapatornillos Adhesivos Negros', cat: 'Insumo', cant: 200, unidad: 'u', costo: 15, min: 50 }
-            ],
-            filo: {
-                negroCant: 50, negroCosto: 450,
-                blancoCant: 50, blancoCosto: 450
-            },
-            viaje: {
-                origen: 'Villa Luzuriaga',
-                destino: 'Morón',
-                precioKm: 800,
-                cantKm: 10
-            },
-            muebles: [
-                {
-                    id: 1, nombre: 'Mesita Melamina Blanco 18mm',
-                    filoMetros: 3.5, filoTipo: 'blanco',
-                    materiales: [{ id: 1, cant: 0.3 }, { id: 7, cant: 0.15 }, { id: 3, cant: 30 }, { id: 4, cant: 20 }, { id: 5, cant: 4 }, { id: 6, cant: 1 }, { id: 8, cant: 12 }]
-                },
-                {
-                    id: 2, nombre: 'Mesita Melamina Negro 18mm',
-                    filoMetros: 3.5, filoTipo: 'negro',
-                    materiales: [{ id: 2, cant: 0.3 }, { id: 7, cant: 0.15 }, { id: 3, cant: 30 }, { id: 4, cant: 20 }, { id: 5, cant: 4 }, { id: 6, cant: 1 }, { id: 9, cant: 12 }]
-                }
-            ],
-            ventas: [
-                {
-                    id: 101,
-                    fecha: '2026-10-15',
-                    producto: '3x Mesita Melamina Blanco 18mm',
-                    cliente: 'Cliente',
-                    destino: 'Morón',
-                    costoViaje: 6400,
-                    total: 135000,
-                    pagado: 135000,
-                    estado: 'Entregado'
-                }
-            ],
-            caja: [
-                { fecha: '2026-10-15', desc: 'Venta: 3x Mesita Melamina Blanco (Viaje a Morón)', tipo: 'ingreso', monto: 135000 },
-                { fecha: '2026-10-14', desc: 'Compra Tornillos y Escuadras', tipo: 'gasto', monto: 12000 }
-            ]
-        };
+      <div class="neon-card">
+        <div class="card-header">
+          <span class="card-title">INVENTARIO MELAMINA &amp; HERRAJES</span>
+          <div style="display:flex; gap:6px;">
+            <button class="btn btn-yellow" onclick="toggleEditStockMode()">✏️ EDITAR</button>
+            <button class="btn" onclick="toggleNewStockBox()">+ NEW</button>
+          </div>
+        </div>
 
-        // Migraciones suaves por si el usuario ya tenía datos guardados en el navegador
-        if(!db.filo) db.filo = { negroCant: 50, negroCosto: 450, blancoCant: 50, blancoCosto: 450 };
-        if(!db.viaje) db.viaje = { origen: 'Villa Luzuriaga', destino: 'Morón', precioKm: 800, cantKm: 10 };
-        if(!db.ventas) {
-            db.ventas = [
-                { id: 101, fecha: '2026-10-15', producto: '3x Mesita Melamina Blanco 18mm', cliente: 'Cliente', destino: 'Morón', costoViaje: 6400, total: 135000, pagado: 135000, estado: 'Entregado' }
-            ];
+        <div id="newStockBox" style="display:none; margin-bottom:14px; padding-bottom:12px; border-bottom:1px dashed var(--cyan);">
+          <label>NOMBRE DEL INSUMO:</label>
+          <input type="text" id="newStockName" placeholder="Ej: Correderas Telescópicas 35cm">
+          <div class="grid-2">
+            <div>
+              <label>PRECIO UNITARIO ($):</label>
+              <input type="number" id="newStockPrice" placeholder="4500">
+            </div>
+            <div>
+              <label>CANTIDAD INICIAL:</label>
+              <input type="number" id="newStockQty" value="10">
+            </div>
+          </div>
+          <label>UNIDAD (PLACAS / U / M):</label>
+          <input type="text" id="newStockUnit" value="U">
+          <button class="btn btn-green btn-block" onclick="addStockItem()">+ GUARDAR INSUMO</button>
+        </div>
+
+        <div id="stockListContainer"></div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         4. VENTANA: COSTOS Y FILOS
+         ========================================== -->
+    <section id="sec-valor" class="section">
+      <div class="neon-card">
+        <div class="card-header">
+          <span class="card-title">CONTROL DE FILO MELAMÍNICO (BLANCO / NEGRO)</span>
+        </div>
+        <div class="grid-2">
+          <div>
+            <label>ROLLO FILO BLANCO (METROS):</label>
+            <input type="number" id="filoBlancoM" onchange="saveFilos()">
+            <label>COSTO POR METRO BLANCO ($):</label>
+            <input type="number" id="filoBlancoPrecio" onchange="saveFilos()">
+          </div>
+          <div>
+            <label>ROLLO FILO NEGRO (METROS):</label>
+            <input type="number" id="filoNegroM" onchange="saveFilos()">
+            <label>COSTO POR METRO NEGRO ($):</label>
+            <input type="number" id="filoNegroPrecio" onchange="saveFilos()">
+          </div>
+        </div>
+      </div>
+
+      <div class="neon-card">
+        <div class="card-header">
+          <span class="card-title">VALORIZACIÓN TOTAL DEL TALLER</span>
+        </div>
+        <div class="stat-box green" style="margin-bottom:10px;">
+          <div class="stat-label">CAPITAL INVERTIDO EN MATERIALES</div>
+          <div class="stat-val" id="totalCapitalStock">$0</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         5. VENTANA: RECETAS DE MUEBLES
+         ========================================== -->
+    <section id="sec-muebles" class="section">
+      <div class="neon-card">
+        <div class="card-header">
+          <span class="card-title">RECETAS DE MUEBLES Y CAPACIDAD DE ARMADO</span>
+          <button class="btn" onclick="toggleNewReceta()">+ NUEVO MUEBLE</button>
+        </div>
+
+        <div id="newRecetaBox" style="display:none; margin-bottom:12px; padding-bottom:12px; border-bottom:1px dashed var(--cyan);">
+          <label>NOMBRE DEL MUEBLE:</label>
+          <input type="text" id="recName" placeholder="Ej: Mesita de Luz Flotante">
+          <div class="grid-2">
+            <div>
+              <label>PLACAS 18MM NECESARIAS:</label>
+              <input type="number" step="0.1" id="recPlacas" value="0.5">
+            </div>
+            <div>
+              <label>TORNILLOS NECESARIOS:</label>
+              <input type="number" id="recTornillos" value="24">
+            </div>
+          </div>
+          <label>PRECIO DE VENTA SUGERIDO ($):</label>
+          <input type="number" id="recVenta" placeholder="65000">
+          <button class="btn btn-green btn-block" onclick="addReceta()">💾 GUARDAR RECETA</button>
+        </div>
+
+        <div id="recetasList"></div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         6. VENTANA: PRESUPUESTOS + WHATSAPP
+         ========================================== -->
+    <section id="sec-presup" class="section">
+      <div class="neon-card">
+        <div class="card-header">
+          <span class="card-title">CALCULADORA DE PRESUPUESTO</span>
+        </div>
+        <label>CLIENTE:</label>
+        <input type="text" id="presCliente" placeholder="Nombre del cliente">
+        <label>DETALLE DEL MUEBLE:</label>
+        <input type="text" id="presMueble" placeholder="Ej: Mesita con Techo 335x700mm">
+        <div class="grid-2">
+          <div>
+            <label>COSTO MATERIALES ($):</label>
+            <input type="number" id="presCosto" value="0" oninput="calcPresup()">
+          </div>
+          <div>
+            <label>MANO DE OBRA / GANANCIA ($):</label>
+            <input type="number" id="presMano" value="0" oninput="calcPresup()">
+          </div>
+        </div>
+        <div class="grid-2">
+          <div>
+            <label>COSTO FLETE ($):</label>
+            <input type="number" id="presFlete" value="0" oninput="calcPresup()">
+          </div>
+          <div>
+            <label>SEÑA ADELANTADA ($):</label>
+            <input type="number" id="presSena" value="0" oninput="calcPresup()">
+          </div>
+        </div>
+
+        <div class="stat-box green" style="margin:12px 0;">
+          <div class="stat-label">TOTAL PRESUPUESTO</div>
+          <div class="stat-val" id="presTotalTxt">$0</div>
+          <div style="font-size:12px; color:var(--yellow); margin-top:4px;" id="presRestoTxt">Saldo a cobrar en entrega: $0</div>
+        </div>
+
+        <div class="grid-2">
+          <button class="btn btn-green" onclick="enviarPresupWhatsApp()">📲 ENVIAR WHATSAPP</button>
+          <button class="btn" onclick="registrarPedidoDesdePresup()">💾 GUARDAR EN CAJA</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         7. VENTANA: CAJA, SEÑAS Y ENTREGAS
+         ========================================== -->
+    <section id="sec-caja" class="section">
+      <div class="grid-2">
+        <div class="stat-box green">
+          <div class="stat-label">CAJA COBRADA</div>
+          <div class="stat-val" id="cajaCobradaVal">$0</div>
+        </div>
+        <div class="stat-box pink">
+          <div class="stat-label">SALDOS POR COBRAR</div>
+          <div class="stat-val" id="cajaDeudaVal">$0</div>
+        </div>
+      </div>
+
+      <div class="neon-card">
+        <div class="card-header">
+          <span class="card-title">HISTORIAL DE PEDIDOS Y ENTREGAS</span>
+        </div>
+        <div id="pedidosList"></div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         8. VENTANA: VIAJE / FLETE
+         ========================================== -->
+    <section id="sec-viaje" class="section">
+      <div class="neon-card">
+        <div class="card-header">
+          <span class="card-title">CALCULADORA DE FLETE POR KM</span>
+        </div>
+        <label>DIRECCIÓN / LOCALIDAD DE ENTREGA:</label>
+        <input type="text" id="viajeDestino" placeholder="Ej: San Justo, Buenos Aires">
+        <div class="grid-2">
+          <div>
+            <label>DISTANCIA (KM):</label>
+            <input type="number" id="viajeKm" value="10" oninput="calcViaje()">
+          </div>
+          <div>
+            <label>PRECIO POR KM ($):</label>
+            <input type="number" id="viajePrecioKm" value="1200" oninput="calcViaje()">
+          </div>
+        </div>
+
+        <div class="stat-box" style="margin:12px 0;">
+          <div class="stat-label">COSTO ESTIMADO DEL ENVÍO</div>
+          <div class="stat-val" id="viajeTotalTxt">$12.000</div>
+        </div>
+
+        <div class="grid-2">
+          <button class="btn btn-yellow" onclick="abrirGoogleMaps()">🗺️ VER EN GOOGLE MAPS</button>
+          <button class="btn btn-green" onclick="pasarFleteAPresupuesto()">➕ PASAR AL PRESUPUESTO</button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // DATOS POR DEFECTO CON PERSISTENCIA
+    const defaultData = {
+      placas: [
+        { id: 'p_blanca', name: 'PLACA BLANCA (18mm)', w: 2750, h: 1830, price: 146000, cuts: [] },
+        { id: 'p_negra', name: 'PLACA NEGRA (18mm)', w: 2750, h: 1830, price: 155000, cuts: [] }
+      ],
+      selectedPlacaId: 'p_blanca',
+      baseMesita: {
+        techoProf: 335,
+        techoAncho: 400,
+        pisoProf: 335,
+        pisoAncho: 400,
+        latProf: 335,
+        latAlto: 550,
+        cajFrenteAlto: 160,
+        cajFrenteAncho: 364,
+        cajLatProf: 300,
+        cajLatAlto: 120,
+        cajContraAlto: 120,
+        cajContraAncho: 310,
+        fondoAlto: 550,
+        fondoAncho: 400,
+        precioMdf: 24000,
+        herrajes: 6500,
+        manoObra: 25000
+      },
+      stock: [
+        { name: 'Placa Melamina 18mm Blanco', price: 146000, qty: 12, unit: 'PLACAS', fast: false },
+        { name: 'Placa Melamina 18mm Negro', price: 155000, qty: 10, unit: 'PLACAS', fast: false },
+        { name: 'Plus / MDF 3mm (Fondos)', price: 24000, qty: 8, unit: 'PLACAS', fast: false },
+        { name: 'Tornillos Autoperforantes 3x30', price: 35, qty: 350, unit: 'U', fast: true },
+        { name: 'Clavos para fondo 1"', price: 18, qty: 500, unit: 'U', fast: true },
+        { name: 'Escuadras Metálicas 2"', price: 250, qty: 40, unit: 'U', fast: true }
+      ],
+      filos: { blancoM: 50, blancoP: 350, negroM: 45, negroP: 380 },
+      recetas: [
+        { name: 'Mesita de Luz Estándar (335x400)', placas: 0.35, tornillos: 24, venta: 65000 },
+        { name: 'Escritorio Gamer 1.20m', placas: 0.8, tornillos: 40, venta: 125000 }
+      ],
+      pedidos: []
+    };
+
+    let appData = JSON.parse(localStorage.getItem('carpinteria_jl_v7')) ||
+                  JSON.parse(localStorage.getItem('carpinteria_jl_v6')) ||
+                  defaultData;
+
+    if (!appData.placas || appData.placas.length === 0) {
+      appData.placas = defaultData.placas;
+      appData.selectedPlacaId = 'p_blanca';
+    }
+    if (!appData.baseMesita) {
+      appData.baseMesita = defaultData.baseMesita;
+    }
+
+    let editStockMode = false;
+    let lastCalculatedMesita = null;
+
+    function saveData() {
+      localStorage.setItem('carpinteria_jl_v7', JSON.stringify(appData));
+      renderAll();
+    }
+
+    // MENÚ HAMBURGUESA ARRIBA A LA IZQUIERDA
+    function toggleDrawer() {
+      document.getElementById('drawer').classList.toggle('open');
+      document.getElementById('drawerOverlay').classList.toggle('open');
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('sec-' + tab).classList.add('active');
+      document.getElementById('nav-' + tab).classList.add('active');
+      document.getElementById('drawer').classList.remove('open');
+      document.getElementById('drawerOverlay').classList.remove('open');
+      renderAll();
+    }
+
+    // ==========================================
+    // 1. LÓGICA DE MESITA CON TECHO VARIABLE
+    // ==========================================
+    function toggleEditBaseMesita() {
+      const box = document.getElementById('editBaseMesitaBox');
+      const b = appData.baseMesita;
+      if (box.style.display === 'none') {
+        document.getElementById('bm_techoProf').value = b.techoProf;
+        document.getElementById('bm_techoAncho').value = b.techoAncho;
+        document.getElementById('bm_pisoProf').value = b.pisoProf;
+        document.getElementById('bm_pisoAncho').value = b.pisoAncho;
+        document.getElementById('bm_latProf').value = b.latProf;
+        document.getElementById('bm_latAlto').value = b.latAlto;
+        document.getElementById('bm_cajFrenteAlto').value = b.cajFrenteAlto;
+        document.getElementById('bm_cajFrenteAncho').value = b.cajFrenteAncho;
+        document.getElementById('bm_cajLatProf').value = b.cajLatProf;
+        document.getElementById('bm_cajLatAlto').value = b.cajLatAlto;
+        document.getElementById('bm_cajContraAlto').value = b.cajContraAlto;
+        document.getElementById('bm_cajContraAncho').value = b.cajContraAncho;
+        document.getElementById('bm_fondoAlto').value = b.fondoAlto;
+        document.getElementById('bm_fondoAncho').value = b.fondoAncho;
+        document.getElementById('bm_precioMdf').value = b.precioMdf;
+        document.getElementById('bm_herrajes').value = b.herrajes;
+        document.getElementById('bm_manoObra').value = b.manoObra;
+        box.style.display = 'block';
+      } else {
+        box.style.display = 'none';
+      }
+    }
+
+    function saveBaseMesita() {
+      const b = appData.baseMesita;
+      b.techoProf = parseFloat(document.getElementById('bm_techoProf').value) || 335;
+      b.techoAncho = parseFloat(document.getElementById('bm_techoAncho').value) || 400;
+      b.pisoProf = parseFloat(document.getElementById('bm_pisoProf').value) || 335;
+      b.pisoAncho = parseFloat(document.getElementById('bm_pisoAncho').value) || 400;
+      b.latProf = parseFloat(document.getElementById('bm_latProf').value) || 335;
+      b.latAlto = parseFloat(document.getElementById('bm_latAlto').value) || 550;
+      b.cajFrenteAlto = parseFloat(document.getElementById('bm_cajFrenteAlto').value) || 160;
+      b.cajFrenteAncho = parseFloat(document.getElementById('bm_cajFrenteAncho').value) || 364;
+      b.cajLatProf = parseFloat(document.getElementById('bm_cajLatProf').value) || 300;
+      b.cajLatAlto = parseFloat(document.getElementById('bm_cajLatAlto').value) || 120;
+      b.cajContraAlto = parseFloat(document.getElementById('bm_cajContraAlto').value) || 120;
+      b.cajContraAncho = parseFloat(document.getElementById('bm_cajContraAncho').value) || 310;
+      b.fondoAlto = parseFloat(document.getElementById('bm_fondoAlto').value) || 550;
+      b.fondoAncho = parseFloat(document.getElementById('bm_fondoAncho').value) || 400;
+      b.precioMdf = parseFloat(document.getElementById('bm_precioMdf').value) || 24000;
+      b.herrajes = parseFloat(document.getElementById('bm_herrajes').value) || 0;
+      b.manoObra = parseFloat(document.getElementById('bm_manoObra').value) || 0;
+
+      document.getElementById('editBaseMesitaBox').style.display = 'none';
+      saveData();
+    }
+
+    function setQuickTecho(prof, ancho) {
+      document.getElementById('var_techoProf').value = prof;
+      document.getElementById('var_techoAncho').value = ancho;
+      calcMesitaVariable();
+    }
+
+    function renderMesitaSection() {
+      const sel = document.getElementById('var_placaId');
+      const prevVal = sel.value || appData.selectedPlacaId;
+      sel.innerHTML = '';
+      appData.placas.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = `${p.name} — $${p.price.toLocaleString('es-AR')}`;
+        if (p.id === prevVal) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      calcMesitaVariable();
+    }
+
+    function calcMesitaVariable() {
+      const b = appData.baseMesita;
+      const placaId = document.getElementById('var_placaId').value || appData.selectedPlacaId;
+      const placa = appData.placas.find(p => p.id === placaId) || appData.placas[0];
+      const areaPlaca = placa.w * placa.h;
+
+      const tProf = parseFloat(document.getElementById('var_techoProf').value) || b.techoProf;
+      const tAncho = parseFloat(document.getElementById('var_techoAncho').value) || b.techoAncho;
+      const modo = document.getElementById('var_modoEnsanche').value;
+
+      const deltaAncho = tAncho - b.techoAncho;
+      const deltaProf = tProf - b.techoProf;
+      const ensanchaTodo = (modo === 'completo');
+
+      // Medidas resultantes según el Modo elegido
+      const pisoProf = ensanchaTodo ? (b.pisoProf + deltaProf) : b.pisoProf;
+      const pisoAncho = ensanchaTodo ? (b.pisoAncho + deltaAncho) : b.pisoAncho;
+      const latProf = ensanchaTodo ? (b.latProf + deltaProf) : b.latProf;
+      const latAlto = b.latAlto;
+
+      const cajFrenteAlto = b.cajFrenteAlto;
+      const cajFrenteAncho = ensanchaTodo ? (b.cajFrenteAncho + deltaAncho) : b.cajFrenteAncho;
+      const cajLatProf = b.cajLatProf;
+      const cajLatAlto = b.cajLatAlto;
+      const cajContraAlto = b.cajContraAlto;
+      const cajContraAncho = ensanchaTodo ? (b.cajContraAncho + deltaAncho) : b.cajContraAncho;
+
+      const fondoAlto = b.fondoAlto;
+      const fondoAncho = ensanchaTodo ? (b.fondoAncho + deltaAncho) : b.fondoAncho;
+
+      // Lista de piezas de melamina 18mm
+      const piezas18 = [
+        { tag: 'Techo Mesita', w: tProf, h: tAncho, qty: 1, grupo: 'estructura' },
+        { tag: 'Piso Mesita', w: pisoProf, h: pisoAncho, qty: 1, grupo: 'estructura' },
+        { tag: 'Lateral Estructura', w: latProf, h: latAlto, qty: 2, grupo: 'estructura' },
+        { tag: 'Frente de Cajón', w: cajFrenteAlto, h: cajFrenteAncho, qty: 1, grupo: 'cajon' },
+        { tag: 'Lateral de Cajón', w: cajLatProf, h: cajLatAlto, qty: 2, grupo: 'cajon' },
+        { tag: 'Contrafrente Cajón', w: cajContraAlto, h: cajContraAncho, qty: 1, grupo: 'cajon' }
+      ];
+
+      let costoMelamina18 = 0;
+      piezas18.forEach(pz => {
+        const areaPz = pz.w * pz.h * pz.qty;
+        pz.costo = (areaPz / areaPlaca) * placa.price;
+        costoMelamina18 += pz.costo;
+      });
+
+      // Fondo MDF 3mm (estructura + base de cajón)
+      const areaFondoMueble = fondoAlto * fondoAncho;
+      const areaFondoCajon = cajLatProf * cajContraAncho;
+      const costoMdf = ((areaFondoMueble + areaFondoCajon) / (2750 * 1830)) * b.precioMdf;
+
+      // Cálculo de Filos separados (Estructura vs Cajón)
+      // Techo (4 lados) + Piso (frente y 2 lados) + 2 Laterales (frente)
+      const mmFiloEstructura = (2 * (tProf + tAncho)) + (pisoAncho + 2 * pisoProf) + (2 * latAlto);
+      const metrosFiloEstructura = mmFiloEstructura / 1000;
+
+      // Cajón: Frente (4 lados) + cantos superiores de laterales y contrafrente
+      const mmFiloCajon = (2 * (cajFrenteAlto + cajFrenteAncho)) + (2 * cajLatProf) + cajContraAncho;
+      const metrosFiloCajon = mmFiloCajon / 1000;
+
+      const colorFiloEst = document.getElementById('var_filoEstructura').value;
+      const colorFiloCaj = document.getElementById('var_filoCajon').value;
+
+      const precioMFiloEst = colorFiloEst === 'negro' ? appData.filos.negroP : appData.filos.blancoP;
+      const precioMFiloCaj = colorFiloCaj === 'negro' ? appData.filos.negroP : appData.filos.blancoP;
+
+      const costoFiloEst = metrosFiloEstructura * precioMFiloEst;
+      const costoFiloCaj = metrosFiloCajon * precioMFiloCaj;
+
+      const costoMaterialesTotal = Math.round(costoMelamina18 + costoMdf + costoFiloEst + costoFiloCaj + b.herrajes);
+      const precioVentaTotal = Math.round(costoMaterialesTotal + b.manoObra);
+
+      document.getElementById('resMesitaCosto').textContent = '$' + costoMaterialesTotal.toLocaleString('es-AR');
+      document.getElementById('resMesitaDifTxt').textContent =
+        deltaAncho === 0 && deltaProf === 0
+          ? `Medida Estándar (${b.techoProf}x${b.techoAncho}mm)`
+          : `Variación: ${deltaAncho >= 0 ? '+' : ''}${deltaAncho}mm ancho (${ensanchaTodo ? 'Mueble Completo' : 'Solo Techo'})`;
+
+      document.getElementById('resMesitaVenta').textContent = '$' + precioVentaTotal.toLocaleString('es-AR');
+      document.getElementById('resMesitaManoTxt').textContent = `Mano de obra: $${b.manoObra.toLocaleString('es-AR')}`;
+
+      // Renderizar el desglose
+      const cont = document.getElementById('desgloseMesitaList');
+      cont.innerHTML = '';
+
+      piezas18.forEach(pz => {
+        const div = document.createElement('div');
+        div.className = 'corte-row';
+        div.style.borderLeftColor = pz.grupo === 'estructura' ? 'var(--cyan)' : 'var(--yellow)';
+        div.innerHTML = `
+          <div>
+            <strong style="color:#fff;">${pz.qty}x ${pz.tag}</strong>
+            <span style="color:var(--cyan); margin-left:6px;">${pz.w} x ${pz.h} mm</span>
+          </div>
+          <strong style="color:var(--green);">$${Math.round(pz.costo).toLocaleString('es-AR')}</strong>
+        `;
+        cont.appendChild(div);
+      });
+
+      // Filos y extras en el desglose
+      const extraInfo = document.createElement('div');
+      extraInfo.style.fontSize = '12px';
+      extraInfo.style.marginTop = '8px';
+      extraInfo.style.padding = '8px';
+      extraInfo.style.background = '#05080d';
+      extraInfo.style.borderRadius = '4px';
+      extraInfo.innerHTML = `
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span>🎞️ Filo Estructura (${colorFiloEst.toUpperCase()} — ${metrosFiloEstructura.toFixed(2)}m):</span>
+          <b style="color:var(--cyan);">$${Math.round(costoFiloEst).toLocaleString('es-AR')}</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span>🎞️ Filo Cajón (${colorFiloCaj.toUpperCase()} — ${metrosFiloCajon.toFixed(2)}m):</span>
+          <b style="color:var(--yellow);">$${Math.round(costoFiloCaj).toLocaleString('es-AR')}</b>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span>🪵 Fondo MDF 3mm (${fondoAlto}x${fondoAncho} + base cajón):</span>
+          <b>$${Math.round(costoMdf).toLocaleString('es-AR')}</b>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span>🔩 Herrajes y Correderas:</span>
+          <b>$${Math.round(b.herrajes).toLocaleString('es-AR')}</b>
+        </div>
+      `;
+      cont.appendChild(extraInfo);
+
+      lastCalculatedMesita = {
+        placaId,
+        tProf,
+        tAncho,
+        ensanchaTodo,
+        costoMaterialesTotal,
+        manoObra: b.manoObra,
+        precioVentaTotal,
+        piezas18
+      };
+    }
+
+    function enviarCortesMesitaAPlaca() {
+      if (!lastCalculatedMesita) return;
+      appData.selectedPlacaId = lastCalculatedMesita.placaId;
+      const placa = getCurrentPlaca();
+
+      lastCalculatedMesita.piezas18.forEach(pz => {
+        for (let i = 0; i < pz.qty; i++) {
+          placa.cuts.push({
+            id: 'c_' + Date.now() + '_' + Math.random(),
+            w: pz.w,
+            h: pz.h,
+            tag: pz.tag
+          });
+        }
+      });
+
+      saveData();
+      switchTab('placas');
+    }
+
+    function pasarMesitaAPresupuesto() {
+      if (!lastCalculatedMesita) return;
+      const m = lastCalculatedMesita;
+      const modoStr = m.ensanchaTodo ? 'Completa Ensanchada' : 'Tapa Volada';
+      document.getElementById('presMueble').value = `Mesita de Luz (${m.tProf}x${m.tAncho}mm - ${modoStr})`;
+      document.getElementById('presCosto').value = m.costoMaterialesTotal;
+      document.getElementById('presMano').value = m.manoObra;
+      calcPresup();
+      switchTab('presup');
+    }
+
+    // ==========================================
+    // 2. LÓGICA DE VENTANA PLACAS Y CORTES
+    // ==========================================
+    function getCurrentPlaca() {
+      return appData.placas.find(p => p.id === appData.selectedPlacaId) || appData.placas[0];
+    }
+
+    function renderPlacasSection() {
+      const sel = document.getElementById('placaSelect');
+      sel.innerHTML = '';
+      appData.placas.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = `${p.name} — $${p.price.toLocaleString('es-AR')} (${p.w}x${p.h}mm)`;
+        if (p.id === appData.selectedPlacaId) opt.selected = true;
+        sel.appendChild(opt);
+      });
+
+      const placa = getCurrentPlaca();
+      document.getElementById('viewPlacaTitle').textContent = placa.name;
+      document.getElementById('viewPlacaPrice').textContent = '$' + placa.price.toLocaleString('es-AR');
+      document.getElementById('viewPlacaDims').textContent = `MEDIDA: ${placa.w} x ${placa.h} mm`;
+      const areaTotalM2 = (placa.w * placa.h) / 1000000;
+      document.getElementById('viewPlacaM2').textContent = areaTotalM2.toFixed(2) + ' m²';
+
+      drawPlacaCanvas(placa);
+      updateLiveCutCost();
+    }
+
+    function onPlacaChange() {
+      appData.selectedPlacaId = document.getElementById('placaSelect').value;
+      saveData();
+    }
+
+    function toggleEditPlaca() {
+      const box = document.getElementById('editPlacaBox');
+      const p = getCurrentPlaca();
+      if (box.style.display === 'none') {
+        document.getElementById('editPlacaName').value = p.name;
+        document.getElementById('editPlacaW').value = p.w;
+        document.getElementById('editPlacaH').value = p.h;
+        document.getElementById('editPlacaPrice').value = p.price;
+        box.style.display = 'block';
+        document.getElementById('newPlacaBox').style.display = 'none';
+      } else {
+        box.style.display = 'none';
+      }
+    }
+
+    function saveEditPlaca() {
+      const p = getCurrentPlaca();
+      p.name = document.getElementById('editPlacaName').value.trim() || p.name;
+      p.w = parseFloat(document.getElementById('editPlacaW').value) || 2750;
+      p.h = parseFloat(document.getElementById('editPlacaH').value) || 1830;
+      p.price = parseFloat(document.getElementById('editPlacaPrice').value) || 0;
+      document.getElementById('editPlacaBox').style.display = 'none';
+      saveData();
+    }
+
+    function deleteCurrentPlaca() {
+      if (appData.placas.length <= 1) {
+        alert('Debe quedar al menos una placa en la lista.');
+        return;
+      }
+      appData.placas = appData.placas.filter(p => p.id !== appData.selectedPlacaId);
+      appData.selectedPlacaId = appData.placas[0].id;
+      document.getElementById('editPlacaBox').style.display = 'none';
+      saveData();
+    }
+
+    function toggleNewPlaca() {
+      const box = document.getElementById('newPlacaBox');
+      box.style.display = box.style.display === 'none' ? 'block' : 'none';
+      document.getElementById('editPlacaBox').style.display = 'none';
+    }
+
+    function addNewPlaca() {
+      const name = document.getElementById('newPlacaName').value.trim();
+      const w = parseFloat(document.getElementById('newPlacaW').value) || 2750;
+      const h = parseFloat(document.getElementById('newPlacaH').value) || 1830;
+      const price = parseFloat(document.getElementById('newPlacaPrice').value) || 0;
+      if (!name) return alert('Poné el nombre de la nueva placa');
+      const newId = 'placa_' + Date.now();
+      appData.placas.push({ id: newId, name, w, h, price, cuts: [] });
+      appData.selectedPlacaId = newId;
+      document.getElementById('newPlacaName').value = '';
+      document.getElementById('newPlacaBox').style.display = 'none';
+      saveData();
+    }
+
+    function updateLiveCutCost() {
+      const placa = getCurrentPlaca();
+      const cw = parseFloat(document.getElementById('corteW').value) || 0;
+      const ch = parseFloat(document.getElementById('corteH').value) || 0;
+      const qty = parseInt(document.getElementById('corteQty').value) || 1;
+      const preview = document.getElementById('liveCutPreview');
+
+      if (cw > 0 && ch > 0) {
+        const totalArea = placa.w * placa.h;
+        const cutAreaUnit = cw * ch;
+        const unitCost = (cutAreaUnit / totalArea) * placa.price;
+        const totalCost = unitCost * qty;
+        const pct = ((cutAreaUnit * qty) / totalArea) * 100;
+        preview.innerHTML = `💡 Corte de <b>${cw}x${ch}mm</b>: <b>$${Math.round(unitCost).toLocaleString('es-AR')} c/u</b>` +
+          (qty > 1 ? ` | Total (${qty} u): <b>$${Math.round(totalCost).toLocaleString('es-AR')}</b>` : '') +
+          ` (${pct.toFixed(1)}% de la placa)`;
+      } else {
+        preview.innerHTML = 'Ingresá las medidas arriba (ej: 335 x 400) para ver cuánto sale el recorte.';
+      }
+    }
+
+    function agregarCorteAPlaca() {
+      const placa = getCurrentPlaca();
+      const cw = parseFloat(document.getElementById('corteW').value);
+      const ch = parseFloat(document.getElementById('corteH').value);
+      const qty = parseInt(document.getElementById('corteQty').value) || 1;
+      const tag = document.getElementById('corteTag').value.trim() || 'Recorte';
+
+      if (!cw || !ch || cw <= 0 || ch <= 0) {
+        return alert('Ingresá medidas válidas en milímetros (ej: 335 y 400).');
+      }
+      if (cw > placa.w || ch > placa.h) {
+        return alert(`El corte (${cw}x${ch}mm) supera el tamaño de la placa (${placa.w}x${placa.h}mm).`);
+      }
+
+      for (let i = 0; i < qty; i++) {
+        placa.cuts.push({
+          id: 'c_' + Date.now() + '_' + Math.random(),
+          w: cw,
+          h: ch,
+          tag: qty > 1 ? `${tag} (${i + 1}/${qty})` : tag
+        });
+      }
+
+      document.getElementById('corteW').value = '';
+      document.getElementById('corteH').value = '';
+      document.getElementById('corteQty').value = '1';
+      document.getElementById('corteTag').value = '';
+      saveData();
+    }
+
+    function eliminarCortePlaca(cutId) {
+      const placa = getCurrentPlaca();
+      placa.cuts = placa.cuts.filter(c => c.id !== cutId);
+      saveData();
+    }
+
+    function limpiarCortesPlaca() {
+      const placa = getCurrentPlaca();
+      placa.cuts = [];
+      saveData();
+    }
+
+    function drawPlacaCanvas(placa) {
+      const canvas = document.getElementById('placaCanvas');
+      const ctx = canvas.getContext('2d');
+
+      const baseWidth = 550;
+      const ratio = placa.h / placa.w;
+      canvas.width = baseWidth;
+      canvas.height = Math.round(baseWidth * ratio);
+
+      const scale = canvas.width / placa.w;
+
+      ctx.fillStyle = '#04070b';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.strokeStyle = 'rgba(0, 243, 255, 0.08)';
+      ctx.lineWidth = 1;
+      for (let x = 250; x < placa.w; x += 250) {
+        ctx.beginPath();
+        ctx.moveTo(x * scale, 0);
+        ctx.lineTo(x * scale, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = 250; y < placa.h; y += 250) {
+        ctx.beginPath();
+        ctx.moveTo(0, y * scale);
+        ctx.lineTo(canvas.width, y * scale);
+        ctx.stroke();
+      }
+
+      let curX = 0;
+      let curY = 0;
+      let rowH = 0;
+      let usedArea = 0;
+      const totalArea = placa.w * placa.h;
+
+      const listContainer = document.getElementById('listaCortesPlaca');
+      listContainer.innerHTML = '';
+
+      placa.cuts.forEach((c, idx) => {
+        const area = c.w * c.h;
+        usedArea += area;
+        const cutValue = (area / totalArea) * placa.price;
+
+        if (curX + c.w > placa.w) {
+          curX = 0;
+          curY += rowH;
+          rowH = 0;
         }
 
-        function saveDB() {
-            localStorage.setItem('carpinteria_jl_db', JSON.stringify(db));
-            renderAll();
+        const rx = curX * scale;
+        const ry = curY * scale;
+        const rw = c.w * scale;
+        const rh = c.h * scale;
+
+        ctx.fillStyle = 'rgba(255, 0, 85, 0.28)';
+        ctx.fillRect(rx, ry, rw, rh);
+        ctx.strokeStyle = '#ff0055';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(rx, ry, rw, rh);
+
+        if (rw > 34 && rh > 20) {
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 10px Courier New';
+          ctx.fillText(`${c.w}x${c.h}`, rx + 4, ry + 12);
+          if (rh > 32) {
+            ctx.fillStyle = '#00ff66';
+            ctx.fillText(`$${Math.round(cutValue).toLocaleString('es-AR')}`, rx + 4, ry + 24);
+          }
         }
 
-        function switchTab(tabId, el) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('tab-' + tabId).classList.add('active');
-            el.classList.add('active');
-            if(tabId === 'presupuesto') initPresupuestoSelect();
-            if(tabId === 'valor') renderValorTab();
-            if(tabId === 'stock') renderStock();
-            if(tabId === 'muebles') { renderMuebles(); calcularFiloPieza(); }
-            if(tabId === 'viaje') renderViajeTab();
-            if(tabId === 'caja') renderCaja();
+        curX += c.w;
+        if (c.h > rowH) rowH = c.h;
+
+        const row = document.createElement('div');
+        row.className = 'corte-row';
+        row.innerHTML = `
+          <div>
+            <strong style="color:#fff;">#${idx + 1} ${c.tag}</strong>
+            <span style="color:var(--cyan); margin-left:6px;">${c.w} x ${c.h} mm</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <strong style="color:var(--green); font-size:14px;">$${Math.round(cutValue).toLocaleString('es-AR')}</strong>
+            <button class="btn btn-pink" style="padding:3px 7px; font-size:11px;" onclick="eliminarCortePlaca('${c.id}')">✕</button>
+          </div>
+        `;
+        listContainer.appendChild(row);
+      });
+
+      if (placa.cuts.length === 0) {
+        listContainer.innerHTML = '<div style="color:var(--muted); font-size:12px; text-align:center; padding:10px;">Todavía no cargaste cortes en esta placa.</div>';
+      }
+
+      const usedPct = Math.min(100, (usedArea / totalArea) * 100);
+      const freePct = Math.max(0, 100 - usedPct);
+      const usedVal = (usedArea / totalArea) * placa.price;
+      const freeVal = Math.max(0, placa.price - usedVal);
+
+      document.getElementById('statUsadoValor').textContent = '$' + Math.round(usedVal).toLocaleString('es-AR');
+      document.getElementById('statUsadoPct').textContent = `${usedPct.toFixed(1)}% usado (${placa.cuts.length} cortes)`;
+      document.getElementById('statRestoValor').textContent = '$' + Math.round(freeVal).toLocaleString('es-AR');
+      document.getElementById('statRestoPct').textContent = `${freePct.toFixed(1)}% de placa disponible`;
+    }
+
+    // ==========================================
+    // 3. STOCK, COSTOS, RECETAS, CAJA Y VIAJE
+    // ==========================================
+    function toggleNewStockBox() {
+      const b = document.getElementById('newStockBox');
+      b.style.display = b.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function toggleEditStockMode() {
+      editStockMode = !editStockMode;
+      renderStock();
+    }
+
+    function addStockItem() {
+      const name = document.getElementById('newStockName').value.trim();
+      const price = parseFloat(document.getElementById('newStockPrice').value) || 0;
+      const qty = parseInt(document.getElementById('newStockQty').value) || 0;
+      const unit = document.getElementById('newStockUnit').value.trim() || 'U';
+      if (!name) return;
+      appData.stock.push({ name, price, qty, unit, fast: unit === 'U' });
+      document.getElementById('newStockName').value = '';
+      document.getElementById('newStockBox').style.display = 'none';
+      saveData();
+    }
+
+    function changeStockQty(idx, delta) {
+      appData.stock[idx].qty = Math.max(0, appData.stock[idx].qty + delta);
+      saveData();
+    }
+
+    function updateStockPrice(idx, val) {
+      appData.stock[idx].price = parseFloat(val) || 0;
+      saveData();
+    }
+
+    function deleteStockItem(idx) {
+      appData.stock.splice(idx, 1);
+      saveData();
+    }
+
+    function renderStock() {
+      const cont = document.getElementById('stockListContainer');
+      cont.innerHTML = '';
+      let lowAlerts = 0;
+      let totalCap = 0;
+
+      appData.stock.forEach((item, i) => {
+        if ((item.unit === 'PLACAS' && item.qty <= 2) || (item.unit !== 'PLACAS' && item.qty <= 20)) {
+          lowAlerts++;
         }
+        totalCap += item.price * item.qty;
 
-        function openModal(id) { 
-            document.getElementById(id).style.display = 'flex'; 
-            if(id === 'modal-editar-nombres') renderEditarNombresModal();
+        const div = document.createElement('div');
+        div.className = 'stock-item';
+        div.innerHTML = `
+          <div class="stock-info">
+            <div class="stock-name">${item.name}</div>
+            <div class="stock-sub">
+              $${item.price.toLocaleString('es-AR')} c/u
+              <span class="badge">${item.qty} ${item.unit}</span>
+            </div>
+            ${editStockMode ? `
+              <div style="margin-top:6px; display:flex; gap:6px;">
+                <input type="number" value="${item.price}" style="margin:0; width:110px; padding:4px;" onchange="updateStockPrice(${i}, this.value)">
+                <button class="btn btn-pink" style="padding:4px 8px;" onclick="deleteStockItem(${i})">🗑️</button>
+              </div>
+            ` : ''}
+          </div>
+          <div class="stock-controls">
+            ${item.fast ? `<button class="qty-btn neg10" onclick="changeStockQty(${i}, -10)">-10</button>` : ''}
+            <button class="qty-btn" onclick="changeStockQty(${i}, -1)">-</button>
+            <span class="qty-val">${item.qty}</span>
+            <button class="qty-btn" onclick="changeStockQty(${i}, 1)">+</button>
+            ${item.fast ? `<button class="qty-btn pos10" onclick="changeStockQty(${i}, 10)">+10</button>` : ''}
+          </div>
+        `;
+        cont.appendChild(div);
+      });
+
+      document.getElementById('totalItemsCount').textContent = appData.stock.length;
+      document.getElementById('lowStockCount').textContent = lowAlerts;
+
+      document.getElementById('filoBlancoM').value = appData.filos.blancoM;
+      document.getElementById('filoBlancoPrecio').value = appData.filos.blancoP;
+      document.getElementById('filoNegroM').value = appData.filos.negroM;
+      document.getElementById('filoNegroPrecio').value = appData.filos.negroP;
+
+      const capFilos = (appData.filos.blancoM * appData.filos.blancoP) + (appData.filos.negroM * appData.filos.negroP);
+      document.getElementById('totalCapitalStock').textContent = '$' + (totalCap + capFilos).toLocaleString('es-AR');
+    }
+
+    function saveFilos() {
+      appData.filos.blancoM = parseFloat(document.getElementById('filoBlancoM').value) || 0;
+      appData.filos.blancoP = parseFloat(document.getElementById('filoBlancoPrecio').value) || 0;
+      appData.filos.negroM = parseFloat(document.getElementById('filoNegroM').value) || 0;
+      appData.filos.negroP = parseFloat(document.getElementById('filoNegroPrecio').value) || 0;
+      saveData();
+    }
+
+    function toggleNewReceta() {
+      const b = document.getElementById('newRecetaBox');
+      b.style.display = b.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function addReceta() {
+      const name = document.getElementById('recName').value.trim();
+      const placas = parseFloat(document.getElementById('recPlacas').value) || 0.5;
+      const tornillos = parseInt(document.getElementById('recTornillos').value) || 20;
+      const venta = parseFloat(document.getElementById('recVenta').value) || 0;
+      if (!name) return;
+      appData.recetas.push({ name, placas, tornillos, venta });
+      document.getElementById('recName').value = '';
+      document.getElementById('newRecetaBox').style.display = 'none';
+      saveData();
+    }
+
+    function renderRecetas() {
+      const cont = document.getElementById('recetasList');
+      cont.innerHTML = '';
+      const totalPlacasDisp = (appData.stock[0]?.qty || 0) + (appData.stock[1]?.qty || 0);
+
+      appData.recetas.forEach((r, idx) => {
+        const capArmado = r.placas > 0 ? Math.floor(totalPlacasDisp / r.placas) : 0;
+        const div = document.createElement('div');
+        div.className = 'corte-row';
+        div.style.borderLeftColor = 'var(--cyan)';
+        div.innerHTML = `
+          <div>
+            <strong style="color:#fff; font-size:14px;">${r.name}</strong>
+            <div style="color:var(--muted); font-size:11px;">Usa ${r.placas} placa(s) y ${r.tornillos} tornillos | Stock alcanza para: <b style="color:var(--cyan);">${capArmado} u.</b></div>
+          </div>
+          <div style="text-align:right;">
+            <div style="color:var(--green); font-weight:bold;">$${r.venta.toLocaleString('es-AR')}</div>
+            <button class="btn btn-pink" style="padding:2px 6px; font-size:10px; margin-top:4px;" onclick="appData.recetas.splice(${idx},1);saveData();">Borrar</button>
+          </div>
+        `;
+        cont.appendChild(div);
+      });
+    }
+
+    function calcPresup() {
+      const c = parseFloat(document.getElementById('presCosto').value) || 0;
+      const m = parseFloat(document.getElementById('presMano').value) || 0;
+      const f = parseFloat(document.getElementById('presFlete').value) || 0;
+      const s = parseFloat(document.getElementById('presSena').value) || 0;
+      const total = c + m + f;
+      const resto = Math.max(0, total - s);
+      document.getElementById('presTotalTxt').textContent = '$' + total.toLocaleString('es-AR');
+      document.getElementById('presRestoTxt').textContent = 'Saldo a cobrar en entrega: $' + resto.toLocaleString('es-AR');
+      return { total, resto, s };
+    }
+
+    function enviarPresupWhatsApp() {
+      const cli = document.getElementById('presCliente').value.trim() || 'Cliente';
+      const mueble = document.getElementById('presMueble').value.trim() || 'Mueble a medida';
+      const { total, resto, s } = calcPresup();
+      const msg = `Hola *${cli}*! Te paso el presupuesto de *Carpintería JL*:\n\n` +
+        `🪑 *Trabajo:* ${mueble}\n` +
+        `💰 *Total:* $${total.toLocaleString('es-AR')}\n` +
+        `✅ *Seña:* $${s.toLocaleString('es-AR')}\n` +
+        `📌 *Saldo contra entrega:* $${resto.toLocaleString('es-AR')}`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function registrarPedidoDesdePresup() {
+      const cli = document.getElementById('presCliente').value.trim() || 'Cliente';
+      const mueble = document.getElementById('presMueble').value.trim() || 'Mueble';
+      const { total, resto, s } = calcPresup();
+      appData.pedidos.unshift({
+        id: Date.now(),
+        cliente: cli,
+        mueble,
+        total,
+        sena: s,
+        resto,
+        estado: 'En Armado'
+      });
+      switchTab('caja');
+      saveData();
+    }
+
+    function rotarEstadoPedido(idx) {
+      const estados = ['En Armado', 'Listo', 'Entregado'];
+      const actual = appData.pedidos[idx].estado;
+      const sig = estados[(estados.indexOf(actual) + 1) % estados.length];
+      appData.pedidos[idx].estado = sig;
+      if (sig === 'Entregado') {
+        appData.pedidos[idx].sena = appData.pedidos[idx].total;
+        appData.pedidos[idx].resto = 0;
+      }
+      saveData();
+    }
+
+    function renderCaja() {
+      const cont = document.getElementById('pedidosList');
+      cont.innerHTML = '';
+      let cobrado = 0;
+      let deuda = 0;
+
+      appData.pedidos.forEach((p, idx) => {
+        cobrado += p.sena;
+        deuda += p.resto;
+        const stClass = p.estado === 'En Armado' ? 'st-armado' : (p.estado === 'Listo' ? 'st-listo' : 'st-entregado');
+        const div = document.createElement('div');
+        div.className = 'corte-row';
+        div.innerHTML = `
+          <div>
+            <strong style="color:#fff;">${p.cliente} — ${p.mueble}</strong>
+            <div style="font-size:11px; color:var(--muted);">Total: $${p.total.toLocaleString('es-AR')} | Seña: $${p.sena.toLocaleString('es-AR')} | Falta: <b style="color:var(--pink);">$${p.resto.toLocaleString('es-AR')}</b></div>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span class="status-pill ${stClass}" onclick="rotarEstadoPedido(${idx})">${p.estado}</span>
+            <button class="btn btn-pink" style="padding:3px 6px;" onclick="appData.pedidos.splice(${idx},1);saveData();">✕</button>
+          </div>
+        `;
+        cont.appendChild(div);
+      });
+
+      document.getElementById('cajaCobradaVal').textContent = '$' + cobrado.toLocaleString('es-AR');
+      document.getElementById('cajaDeudaVal').textContent = '$' + deuda.toLocaleString('es-AR');
+    }
+
+    function calcViaje() {
+      const km = parseFloat(document.getElementById('viajeKm').value) || 0;
+      const p = parseFloat(document.getElementById('viajePrecioKm').value) || 0;
+      const tot = Math.round(km * p);
+      document.getElementById('viajeTotalTxt').textContent = '$' + tot.toLocaleString('es-AR');
+      return tot;
+    }
+
+    function abrirGoogleMaps() {
+      const dest = document.getElementById('viajeDestino').value.trim();
+      const q = encodeURIComponent(dest || 'Buenos Aires');
+      window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, '_blank');
+    }
+
+    function pasarFleteAPresupuesto() {
+      const tot = calcViaje();
+      document.getElementById('presFlete').value = tot;
+      calcPresup();
+      switchTab('presup');
+    }
+
+    function exportBackup() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+      const a = document.createElement('a');
+      a.href = dataStr;
+      a.download = "backup_carpinteria_jl.json";
+      a.click();
+    }
+
+    function importBackup(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        try {
+          appData = JSON.parse(ev.target.result);
+          saveData();
+          alert('Backup restaurado con éxito');
+        } catch (err) {
+          alert('Archivo JSON inválido');
         }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-        function renderStock() {
-            let html = '';
-            let alerts = '';
-            let lowCount = 0;
-            let totalItems = db.stock.length;
-
-            // Alerta de Filo bajo
-            if(db.filo.negroCant <= 10) {
-                lowCount++;
-                alerts += `<div style="margin-bottom:2px;">[!] <b>Filo Negro</b> stock bajo (${db.filo.negroCant}m)</div>`;
-            }
-            if(db.filo.blancoCant <= 10) {
-                lowCount++;
-                alerts += `<div style="margin-bottom:2px;">[!] <b>Filo Blanco</b> stock bajo (${db.filo.blancoCant}m)</div>`;
-            }
-
-            db.stock.forEach(item => {
-                let isLow = item.cant <= item.min;
-                if(isLow) {
-                    lowCount++;
-                    alerts += `<div style="margin-bottom:2px;">[!] <b>${item.nombre}</b> stock bajo (${item.cant} ${item.unidad})</div>`;
-                }
-
-                let isHardware = item.cat === 'Herraje' || item.unidad === 'u' || item.unidad === 'pares';
-                let quickBtns = '';
-                if(isHardware) {
-                    quickBtns = `
-                        <button class="btn btn-sm btn-danger-neon" onclick="modStock(${item.id}, -10)">-10</button>
-                        <button class="btn btn-sm btn-secondary" onclick="modStock(${item.id}, -1)">-1</button>
-                        <span style="font-family:'Share Tech Mono', monospace; font-weight:700; min-width:32px; text-align:center; color:var(--primary-neon); text-shadow:0 0 8px var(--primary-neon);">${item.cant}</span>
-                        <button class="btn btn-sm btn-secondary" onclick="modStock(${item.id}, 1)">+1</button>
-                        <button class="btn btn-sm" onclick="modStock(${item.id}, 10)">+10</button>
-                    `;
-                } else {
-                    quickBtns = `
-                        <button class="btn btn-sm btn-secondary" onclick="modStock(${item.id}, -1)">-</button>
-                        <span style="font-family:'Share Tech Mono', monospace; font-weight:700; min-width:26px; text-align:center; color:var(--primary-neon); text-shadow:0 0 8px var(--primary-neon);">${item.cant}</span>
-                        <button class="btn btn-sm btn-secondary" onclick="modStock(${item.id}, 1)">+</button>
-                    `;
-                }
-
-                html += `
-                <div class="item-row">
-                    <div class="item-info">
-                        <h4>${item.nombre}</h4>
-                        <p>$${item.costo.toLocaleString()} c/u • <span class="badge ${isLow ? 'badge-low' : 'badge-ok'}">${item.cant} ${item.unidad}</span></p>
-                    </div>
-                    <div style="display:flex; gap:4px; align-items:center;">
-                        ${quickBtns}
-                    </div>
-                </div>`;
-            });
-
-            document.getElementById('stock-list').innerHTML = html;
-            document.getElementById('stat-total-items').innerText = totalItems;
-            document.getElementById('stat-low-alerts').innerText = lowCount;
-
-            let alertContainer = document.getElementById('stock-alerts');
-            if(lowCount > 0) {
-                alertContainer.innerHTML = `<div class="alert-box"><div style="font-weight:700; margin-bottom:4px; color:var(--danger-neon); text-shadow:0 0 6px var(--danger-neon);">ALERTA DE INVENTARIO (${lowCount})</div>${alerts}</div>`;
-                alertContainer.style.display = 'block';
-            } else {
-                alertContainer.style.display = 'none';
-            }
-        }
-
-        function renderEditarNombresModal() {
-            let html = '';
-            db.stock.forEach(item => {
-                html += `
-                <div class="form-group" style="margin-bottom:8px;">
-                    <label>ID #${item.id}</label>
-                    <input type="text" id="edit-nombre-${item.id}" value="${item.nombre}" oninput="actualizarNombreMaterial(${item.id})">
-                </div>`;
-            });
-            document.getElementById('editar-nombres-list').innerHTML = html;
-        }
-
-        function actualizarNombreMaterial(id) {
-            let input = document.getElementById(`edit-nombre-${id}`);
-            if(input) {
-                let item = db.stock.find(s => s.id === id);
-                if(item) {
-                    item.nombre = input.value;
-                    localStorage.setItem('carpinteria_jl_db', JSON.stringify(db));
-                }
-            }
-        }
-
-        function modStock(id, delta) {
-            let item = db.stock.find(s => s.id === id);
-            if(item) {
-                item.cant = Math.round((Math.max(0, item.cant + delta)) * 100) / 100;
-                saveDB();
-            }
-        }
-
-        function guardarMaterial() {
-            let nombre = document.getElementById('m-nombre').value;
-            if(!nombre) return alert('Ingresá un nombre');
-            db.stock.push({
-                id: Date.now(),
-                nombre: nombre,
-                cat: document.getElementById('m-cat').value,
-                cant: parseFloat(document.getElementById('m-cant').value) || 0,
-                unidad: document.getElementById('m-unidad').value || 'u',
-                costo: parseFloat(document.getElementById('m-costo').value) || 0,
-                min: parseFloat(document.getElementById('m-min').value) || 10
-            });
-            closeModal('modal-material');
-            saveDB();
-        }
-
-        function guardarMuebleReceta() {
-            let nombre = document.getElementById('mu-nombre').value;
-            let filoMetros = parseFloat(document.getElementById('mu-filo').value) || 0;
-            let filoTipo = document.getElementById('mu-filo-tipo').value;
-            if(!nombre) return alert('Ingresá un nombre para el mueble');
-            
-            let initialMaterials = db.stock.map(s => ({ id: s.id, cant: s.cat === 'Madera Melamina' ? 0.3 : (s.unidad === 'u' || s.unidad === 'pares' ? 10 : 1) }));
-
-            db.muebles.push({
-                id: Date.now(),
-                nombre: nombre,
-                filoMetros: filoMetros,
-                filoTipo: filoTipo,
-                materiales: initialMaterials
-            });
-            closeModal('modal-mueble');
-            saveDB();
-            renderMuebles();
-        }
-
-        function abrirEditarReceta(muebleId) {
-            let mueble = db.muebles.find(m => m.id === muebleId);
-            if(!mueble) return;
-
-            document.getElementById('edit-mueble-id').value = mueble.id;
-            document.getElementById('edit-mueble-nombre').value = mueble.nombre;
-            document.getElementById('edit-mueble-filo').value = mueble.filoMetros || 0;
-            document.getElementById('edit-mueble-filotipo').value = mueble.filoTipo || 'negro';
-
-            let matsHtml = '';
-            db.stock.forEach(stockItem => {
-                let existing = mueble.materiales ? mueble.materiales.find(x => x.id === stockItem.id) : null;
-                let val = existing ? existing.cant : 0;
-
-                matsHtml += `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:0.85rem;">
-                    <span style="color:var(--text-main);">${stockItem.nombre} (${stockItem.unidad})</span>
-                    <input type="number" step="0.05" id="mueble-mat-cant-${stockItem.id}" value="${val}" style="width:90px; padding:4px;">
-                </div>`;
-            });
-
-            document.getElementById('edit-mueble-materiales-list').innerHTML = matsHtml;
-            openModal('modal-editar-receta');
-        }
-
-        function guardarRecetaModificada() {
-            let muebleId = parseInt(document.getElementById('edit-mueble-id').value);
-            let mueble = db.muebles.find(m => m.id === muebleId);
-            if(!mueble) return;
-
-            mueble.nombre = document.getElementById('edit-mueble-nombre').value;
-            mueble.filoMetros = parseFloat(document.getElementById('edit-mueble-filo').value) || 0;
-            mueble.filoTipo = document.getElementById('edit-mueble-filotipo').value;
-
-            let updatedMaterials = [];
-            db.stock.forEach(stockItem => {
-                let input = document.getElementById(`mueble-mat-cant-${stockItem.id}`);
-                if(input) {
-                    let cant = parseFloat(input.value) || 0;
-                    if(cant > 0) {
-                        updatedMaterials.push({ id: stockItem.id, cant: cant });
-                    }
-                }
-            });
-
-            mueble.materiales = updatedMaterials;
-            closeModal('modal-editar-receta');
-            saveDB();
-            renderMuebles();
-        }
-
-        /* CALCULADOR DE FILO POR CORTES */
-        function calcularFiloPieza() {
-            let largoCm = parseFloat(document.getElementById('calc-largo').value) || 0;
-            let anchoCm = parseFloat(document.getElementById('calc-ancho').value) || 0;
-            let piezas = parseInt(document.getElementById('calc-piezas').value) || 1;
-            let ladosL = parseInt(document.getElementById('calc-lados-l').value) || 0;
-            let ladosA = parseInt(document.getElementById('calc-lados-a').value) || 0;
-
-            let cmPorPieza = (largoCm * ladosL) + (anchoCm * ladosA);
-            let metrosTotales = (cmPorPieza * piezas) / 100;
-            let conDesperdicio = (metrosTotales * 1.10).toFixed(2);
-
-            document.getElementById('calc-filo-res').innerText = `${conDesperdicio} metros`;
-        }
-
-        function renderValorTab() {
-            document.getElementById('filo-negro-cant').value = db.filo.negroCant;
-            document.getElementById('filo-negro-costo').value = db.filo.negroCosto;
-            document.getElementById('filo-blanco-cant').value = db.filo.blancoCant;
-            document.getElementById('filo-blanco-costo').value = db.filo.blancoCosto;
-
-            let html = '';
-            db.stock.forEach(item => {
-                html += `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:0.85rem; border-bottom:1px solid #141414; padding-bottom:6px;">
-                    <div>
-                        <div style="font-weight:600; color:var(--text-main);">${item.nombre}</div>
-                        <div style="font-size:0.7rem; color:#666666;">${item.cat} (${item.cant} ${item.unidad})</div>
-                    </div>
-                    <input type="number" id="val-item-${item.id}" value="${item.costo}" style="width:110px; padding:6px;" oninput="actualizarCostoMaterial(${item.id})">
-                </div>`;
-            });
-            document.getElementById('valor-materiales-list').innerHTML = html;
-        }
-
-        function guardarFiloData() {
-            db.filo.negroCant = parseFloat(document.getElementById('filo-negro-cant').value) || 0;
-            db.filo.negroCosto = parseFloat(document.getElementById('filo-negro-costo').value) || 0;
-            db.filo.blancoCant = parseFloat(document.getElementById('filo-blanco-cant').value) || 0;
-            db.filo.blancoCosto = parseFloat(document.getElementById('filo-blanco-costo').value) || 0;
-            localStorage.setItem('carpinteria_jl_db', JSON.stringify(db));
-        }
-
-        function actualizarCostoMaterial(id) {
-            let input = document.getElementById(`val-item-${id}`);
-            if(input) {
-                let item = db.stock.find(s => s.id === id);
-                if(item) {
-                    item.costo = parseFloat(input.value) || 0;
-                    localStorage.setItem('carpinteria_jl_db', JSON.stringify(db));
-                }
-            }
-        }
-
-        /* FUNCIONES DE PESTAÑA VIAJE */
-        function renderViajeTab() {
-            document.getElementById('v-origen').value = db.viaje.origen || '';
-            document.getElementById('v-destino').value = db.viaje.destino || '';
-            document.getElementById('v-precio-km').value = db.viaje.precioKm !== undefined ? db.viaje.precioKm : 800;
-            document.getElementById('v-cant-km').value = db.viaje.cantKm !== undefined ? db.viaje.cantKm : 10;
-            calcularViaje();
-        }
-
-        function guardarViajeData() {
-            db.viaje.origen = document.getElementById('v-origen').value;
-            db.viaje.destino = document.getElementById('v-destino').value;
-            localStorage.setItem('carpinteria_jl_db', JSON.stringify(db));
-        }
-
-        function calcularViaje() {
-            let precioKm = parseFloat(document.getElementById('v-precio-km').value) || 0;
-            let cantKm = parseFloat(document.getElementById('v-cant-km').value) || 0;
-            
-            db.viaje.precioKm = precioKm;
-            db.viaje.cantKm = cantKm;
-            localStorage.setItem('carpinteria_jl_db', JSON.stringify(db));
-
-            let costoTotal = Math.round(precioKm * cantKm);
-            document.getElementById('v-costo-total').innerText = '$' + costoTotal.toLocaleString();
-        }
-
-        function abrirRutaGoogleMaps() {
-            let origen = document.getElementById('v-origen').value.trim();
-            let destino = document.getElementById('v-destino').value.trim();
-            if(!origen || !destino) {
-                return alert('Ingresá la dirección de inicio y la de entrega para ver la ruta en Google Maps.');
-            }
-            let url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origen)}&destination=${encodeURIComponent(destino)}`;
-            window.open(url, '_blank');
-        }
-
-        function pasarViajeAPresupuesto() {
-            let precioKm = parseFloat(document.getElementById('v-precio-km').value) || 0;
-            let cantKm = parseFloat(document.getElementById('v-cant-km').value) || 0;
-            let destino = document.getElementById('v-destino').value.trim();
-            let costoTotal = Math.round(precioKm * cantKm);
-
-            document.getElementById('p-extras').value = costoTotal;
-            if(destino) {
-                document.getElementById('p-destino').value = destino;
-            }
-            let navPresup = document.querySelectorAll('.nav-item')[3];
-            switchTab('presupuesto', navPresup);
-        }
-
-        /* CAPACIDAD DE FABRICACIÓN EN MUEBLES */
-        function calcularCapacidadMueble(m) {
-            if(!m.materiales || m.materiales.length === 0) return 99;
-            let maxPosible = 999;
-            m.materiales.forEach(item => {
-                let mat = db.stock.find(s => s.id === item.id);
-                if(mat && item.cant > 0) {
-                    let cap = Math.floor(mat.cant / item.cant);
-                    if(cap < maxPosible) maxPosible = cap;
-                }
-            });
-            if(m.filoMetros && m.filoMetros > 0) {
-                let filoDisp = m.filoTipo === 'negro' ? db.filo.negroCant : db.filo.blancoCant;
-                let capFilo = Math.floor(filoDisp / m.filoMetros);
-                if(capFilo < maxPosible) maxPosible = capFilo;
-            }
-            return maxPosible === 999 ? 0 : maxPosible;
-        }
-
-        function renderMuebles() {
-            let html = '';
-            db.muebles.forEach(m => {
-                let mats = m.materiales ? m.materiales.map(x => {
-                    let mat = db.stock.find(s => s.id === x.id);
-                    return mat ? `${x.cant} ${mat.unidad} de ${mat.nombre}` : '';
-                }).join(' • ') : '';
-
-                let filoInfo = m.filoMetros ? ` | Filo ${m.filoTipo}: ${m.filoMetros}m` : '';
-                let cap = calcularCapacidadMueble(m);
-                let badgeCap = cap > 0 
-                    ? `<span class="badge badge-success">Stock alcanza p/ ${cap} u.</span>` 
-                    : `<span class="badge badge-low">Sin stock suficiente</span>`;
-
-                html += `
-                <div class="item-row" style="flex-direction:column; align-items:flex-start; gap:6px; padding:12px 0;">
-                    <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
-                        <h4 style="color:var(--accent-neon); text-shadow:0 0 8px var(--accent-neon);">${m.nombre}</h4>
-                        <button class="btn btn-sm btn-secondary" onclick="abrirEditarReceta(${m.id})"><i class="fa-solid fa-pen"></i> Insumos</button>
-                    </div>
-                    <div>${badgeCap}</div>
-                    <p style="font-size:0.73rem; color:#888888;">${mats}${filoInfo}</p>
-                </div>`;
-            });
-            document.getElementById('muebles-list').innerHTML = html;
-        }
-
-        function initPresupuestoSelect() {
-            let sel = document.getElementById('p-mueble');
-            sel.innerHTML = db.muebles.map(m => `<option value="${m.id}">${m.nombre}</option>`).join('');
-            if(!document.getElementById('p-destino').value && db.viaje.destino) {
-                document.getElementById('p-destino').value = db.viaje.destino;
-            }
-            calcularPresupuesto();
-        }
-
-        let ultimoPrecioCalculado = 0;
-
-        function calcularPresupuesto() {
-            let muebleId = parseInt(document.getElementById('p-mueble').value);
-            let cantMuebles = parseInt(document.getElementById('p-cant').value) || 1;
-            let mueble = db.muebles.find(m => m.id === muebleId);
-            if(!mueble) return;
-
-            let editsContainer = document.getElementById('p-insumos-edits');
-            editsContainer.innerHTML = '';
-            let costoInsumosTotal = 0;
-
-            if(mueble.materiales) {
-                mueble.materiales.forEach(item => {
-                    let mat = db.stock.find(s => s.id === item.id);
-                    if(!mat) return;
-                    let reqCant = Math.round((item.cant * cantMuebles) * 100) / 100;
-                    
-                    editsContainer.innerHTML += `
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:0.78rem;">
-                        <span>${mat.nombre} (${reqCant} ${mat.unidad})</span>
-                        <input type="number" id="costo-mat-${item.id}" value="${mat.costo}" style="width:85px; padding:4px;" oninput="calcularPresupuesto()">
-                    </div>`;
-
-                    let costoInput = document.getElementById(`costo-mat-${item.id}`);
-                    let costoActual = costoInput ? parseFloat(costoInput.value) || mat.costo : mat.costo;
-                    costoInsumosTotal += costoActual * reqCant;
-                });
-            }
-
-            if(mueble.filoMetros && mueble.filoMetros > 0) {
-                let reqFilo = Math.round((mueble.filoMetros * cantMuebles) * 100) / 100;
-                let costoMetroFilo = mueble.filoTipo === 'negro' ? db.filo.negroCosto : db.filo.blancoCosto;
-                costoInsumosTotal += reqFilo * costoMetroFilo;
-
-                editsContainer.innerHTML += `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:0.78rem; color:var(--amber-neon); text-shadow:0 0 6px var(--amber-neon);">
-                    <span>Filo ${mueble.filoTipo || 'negro'} (${reqFilo}m)</span>
-                    <span>$${Math.round(reqFilo * costoMetroFilo).toLocaleString()}</span>
-                </div>`;
-            }
-
-            let manoObra = parseFloat(document.getElementById('p-MO').value) || 0;
-            let extras = parseFloat(document.getElementById('p-extras').value) || 0;
-            let gananciaPct = parseFloat(document.getElementById('p-ganancia').value) || 0;
-
-            let costoTotal = costoInsumosTotal + manoObra + extras;
-            let precioFinal = Math.round(costoTotal * (1 + (gananciaPct / 100)));
-            ultimoPrecioCalculado = precioFinal;
-
-            document.getElementById('p-total').innerHTML = `<span>$${precioFinal.toLocaleString()}</span>`;
-
-            let sena = parseFloat(document.getElementById('p-sena').value) || 0;
-            let restoInfo = document.getElementById('p-resto-info');
-            if(sena > 0 && sena < precioFinal) {
-                restoInfo.style.display = 'block';
-                restoInfo.innerText = `Seña: $${sena.toLocaleString()} | Resta cobrar en entrega: $${(precioFinal - sena).toLocaleString()}`;
-            } else {
-                restoInfo.style.display = 'none';
-            }
-        }
-
-        function procesarVentaYDescontarStock() {
-            let muebleId = parseInt(document.getElementById('p-mueble').value);
-            let cantMuebles = parseInt(document.getElementById('p-cant').value) || 1;
-            let mueble = db.muebles.find(m => m.id === muebleId);
-            let destino = document.getElementById('p-destino').value.trim() || 'Taller / Retiro';
-            let cliente = document.getElementById('p-cliente').value.trim() || 'Cliente';
-            let estado = document.getElementById('p-estado').value;
-            let costoViaje = parseFloat(document.getElementById('p-extras').value) || 0;
-            let sena = parseFloat(document.getElementById('p-sena').value) || 0;
-
-            let actualizar = document.getElementById('actualizar-stock-precio').checked;
-            
-            // Descontar materiales del stock
-            if(mueble.materiales) {
-                mueble.materiales.forEach(item => {
-                    let input = document.getElementById(`costo-mat-${item.id}`);
-                    let mat = db.stock.find(s => s.id === item.id);
-                    if(mat) {
-                        if(input && actualizar) {
-                            mat.costo = parseFloat(input.value) || mat.costo;
-                        }
-                        mat.cant = Math.round(Math.max(0, mat.cant - (item.cant * cantMuebles)) * 100) / 100;
-                    }
-                });
-            }
-
-            // Descontar metros de filo
-            if(mueble.filoMetros && mueble.filoMetros > 0) {
-                let reqFilo = mueble.filoMetros * cantMuebles;
-                if(mueble.filoTipo === 'negro') {
-                    db.filo.negroCant = Math.round(Math.max(0, db.filo.negroCant - reqFilo) * 100) / 100;
-                } else {
-                    db.filo.blancoCant = Math.round(Math.max(0, db.filo.blancoCant - reqFilo) * 100) / 100;
-                }
-            }
-
-            let montoTotal = ultimoPrecioCalculado;
-            let montoPagadoHoy = (estado === 'Entregado' && sena === 0) ? montoTotal : sena;
-            let fechaHoy = new Date().toISOString().split('T')[0];
-            let descProducto = `${cantMuebles}x ${mueble.nombre}`;
-
-            // Guardar en el Historial de Ventas
-            db.ventas.unshift({
-                id: Date.now(),
-                fecha: fechaHoy,
-                producto: descProducto,
-                cliente: cliente,
-                destino: destino,
-                costoViaje: costoViaje,
-                total: montoTotal,
-                pagado: montoPagadoHoy,
-                estado: estado
-            });
-
-            // Si entró plata hoy (seña o pago total), sumarlo a Caja
-            if(montoPagadoHoy > 0) {
-                let etiquetaPago = montoPagadoHoy < montoTotal ? `Seña Venta` : `Venta`;
-                db.caja.unshift({
-                    fecha: fechaHoy,
-                    desc: `${etiquetaPago}: ${descProducto} (Viaje a ${destino})`,
-                    tipo: 'ingreso',
-                    monto: montoPagadoHoy
-                });
-            }
-
-            saveDB();
-            return { descProducto, destino, montoTotal, sena, costoViaje };
-        }
-
-        function registrarVentaDirecta() {
-            let datos = procesarVentaYDescontarStock();
-            alert(`¡Venta registrada en el historial!\n• Producto: ${datos.descProducto}\n• Destino: ${datos.destino}\n• Stock descontado automáticamente.`);
-            let navCaja = document.querySelectorAll('.nav-item')[4];
-            switchTab('caja', navCaja);
-        }
-
-        function enviarPresupuestoWhatsApp() {
-            let datos = procesarVentaYDescontarStock();
-            let detalleSena = datos.sena > 0 ? `\n*Seña abonada:* $${datos.sena.toLocaleString()}\n*Saldo contra entrega:* $${(datos.montoTotal - datos.sena).toLocaleString()}` : '';
-            let detalleViaje = datos.destino !== 'Taller / Retiro' ? `\n*Envío / Entrega en:* ${datos.destino}` : '';
-
-            let mensaje = `Hola! Te envío el presupuesto de *Carpintería JL*:\n\n*Pedido:* ${datos.descProducto}${detalleViaje}\n*Precio Total:* $${datos.montoTotal.toLocaleString()}${detalleSena}\n\nMuchas gracias!`;
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mensaje)}`);
-        }
-
-        /* FUNCIONES DEL HISTORIAL DE VENTAS Y CAJA */
-        function cobrarSaldoRestante(ventaId) {
-            let v = db.ventas.find(x => x.id === ventaId);
-            if(!v) return;
-            let saldoPendiente = v.total - v.pagado;
-            if(saldoPendiente > 0) {
-                db.caja.unshift({
-                    fecha: new Date().toISOString().split('T')[0],
-                    desc: `Saldo final cobrado: ${v.producto} (${v.destino})`,
-                    tipo: 'ingreso',
-                    monto: saldoPendiente
-                });
-            }
-            v.pagado = v.total;
-            v.estado = 'Entregado';
-            saveDB();
-        }
-
-        function cambiarEstadoVenta(ventaId) {
-            let v = db.ventas.find(x => x.id === ventaId);
-            if(!v) return;
-            if(v.estado === 'En Armado') v.estado = 'Listo';
-            else if(v.estado === 'Listo') v.estado = 'Entregado';
-            else v.estado = 'En Armado';
-            saveDB();
-        }
-
-        function guardarVentaManual() {
-            let desc = document.getElementById('vm-desc').value.trim();
-            let destino = document.getElementById('vm-destino').value.trim() || 'Sin especificar';
-            let total = parseFloat(document.getElementById('vm-total').value) || 0;
-            let viaje = parseFloat(document.getElementById('vm-viaje').value) || 0;
-
-            if(!desc || total <= 0) return alert('Completá qué se vendió y el monto total.');
-
-            let fechaHoy = new Date().toISOString().split('T')[0];
-            db.ventas.unshift({
-                id: Date.now(),
-                fecha: fechaHoy,
-                producto: desc,
-                cliente: 'Cliente',
-                destino: destino,
-                costoViaje: viaje,
-                total: total,
-                pagado: total,
-                estado: 'Entregado'
-            });
-
-            db.caja.unshift({
-                fecha: fechaHoy,
-                desc: `Venta: ${desc} (Viaje a ${destino})`,
-                tipo: 'ingreso',
-                monto: total
-            });
-
-            closeModal('modal-nueva-venta-manual');
-            saveDB();
-        }
-
-        function guardarGastoMov() {
-            let desc = document.getElementById('g-desc').value;
-            let monto = parseFloat(document.getElementById('g-monto').value) || 0;
-            if(!desc || monto <= 0) return alert('Completá los datos');
-            db.caja.unshift({ fecha: new Date().toISOString().split('T')[0], desc: desc, tipo: 'gasto', monto: monto });
-            closeModal('modal-gasto');
-            saveDB();
-        }
-
-        function guardarIngresoMov() {
-            let desc = document.getElementById('i-desc').value;
-            let monto = parseFloat(document.getElementById('i-monto').value) || 0;
-            if(!desc || monto <= 0) return alert('Completá los datos');
-            db.caja.unshift({ fecha: new Date().toISOString().split('T')[0], desc: desc, tipo: 'ingreso', monto: monto });
-            closeModal('modal-ingreso');
-            saveDB();
-        }
-
-        function renderCaja() {
-            let saldo = 0;
-            let htmlCaja = '';
-            db.caja.forEach(mov => {
-                if(mov.tipo === 'ingreso') saldo += mov.monto;
-                else saldo -= mov.monto;
-
-                htmlCaja += `
-                <div class="item-row">
-                    <div class="item-info">
-                        <h4>${mov.desc}</h4>
-                        <p>${mov.fecha}</p>
-                    </div>
-                    <div style="font-family:'Share Tech Mono', monospace; font-weight:700; color:${mov.tipo === 'ingreso' ? 'var(--success-neon)' : 'var(--danger-neon)'}; text-shadow:0 0 8px ${mov.tipo === 'ingreso' ? 'var(--success-neon)' : 'var(--danger-neon)'};">
-                        ${mov.tipo === 'ingreso' ? '+' : '-'}$${mov.monto.toLocaleString()}
-                    </div>
-                </div>`;
-            });
-            document.getElementById('caja-saldo').innerText = '$' + saldo.toLocaleString();
-            document.getElementById('caja-list').innerHTML = htmlCaja;
-
-            // Renderizar Historial de Ventas y Viajes
-            let htmlVentas = '';
-            let totalPorCobrar = 0;
-
-            db.ventas.forEach(v => {
-                let faltaPagar = Math.max(0, v.total - (v.pagado || 0));
-                totalPorCobrar += faltaPagar;
-
-                let badgeClass = v.estado === 'Entregado' ? 'badge-success' : (v.estado === 'Listo' ? 'badge-ok' : 'badge-warn');
-                let btnCobrar = faltaPagar > 0 
-                    ? `<button class="btn btn-sm btn-success" onclick="cobrarSaldoRestante(${v.id})">Cobrar resto ($${faltaPagar.toLocaleString()})</button>` 
-                    : `<span style="color:var(--success-neon); font-size:0.7rem;">✔ PAGADO</span>`;
-
-                htmlVentas += `
-                <div class="venta-card">
-                    <div class="venta-header">
-                        <div>
-                            <div class="venta-title">${v.producto}</div>
-                            <div style="font-size:0.75rem; color:#888;">${v.fecha} • ${v.cliente || 'Cliente'}</div>
-                        </div>
-                        <span class="badge ${badgeClass}" style="cursor:pointer;" onclick="cambiarEstadoVenta(${v.id})" title="Tocar para cambiar estado">${v.estado}</span>
-                    </div>
-                    <div class="venta-loc">
-                        <i class="fa-solid fa-truck-fast"></i> Viaje a: <b>${v.destino}</b> ${v.costoViaje ? `(Flete: $${v.costoViaje.toLocaleString()})` : ''}
-                    </div>
-                    <div class="venta-footer">
-                        <span style="color:#FFF; font-size:0.85rem;">TOTAL: <strong style="color:var(--primary-neon);">$${v.total.toLocaleString()}</strong></span>
-                        ${btnCobrar}
-                    </div>
-                </div>`;
-            });
-
-            document.getElementById('caja-por-cobrar').innerText = '$' + totalPorCobrar.toLocaleString();
-            document.getElementById('ventas-historial-list').innerHTML = htmlVentas || '<p style="font-size:0.8rem; color:#666;">Todavía no hay ventas registradas.</p>';
-        }
-
-        /* BACKUP: EXPORTAR E IMPORTAR DATOS */
-        function exportarBackup() {
-            let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db, null, 2));
-            let dlAnchor = document.createElement('a');
-            dlAnchor.setAttribute("href", dataStr);
-            dlAnchor.setAttribute("download", `carpinteria_jl_backup_${new Date().toISOString().split('T')[0]}.json`);
-            document.body.appendChild(dlAnchor);
-            dlAnchor.click();
-            dlAnchor.remove();
-        }
-
-        function importarBackup(event) {
-            let file = event.target.files[0];
-            if(!file) return;
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    let importedDb = JSON.parse(e.target.result);
-                    if(importedDb.stock && importedDb.muebles) {
-                        db = importedDb;
-                        saveDB();
-                        alert('¡Copia de seguridad cargada con éxito!');
-                    } else {
-                        alert('El archivo no tiene el formato correcto.');
-                    }
-                } catch(err) {
-                    alert('Error al leer el archivo de respaldo.');
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        function renderAll() {
-            renderStock();
-            renderMuebles();
-            renderCaja();
-            renderViajeTab();
-        }
-
-        renderAll();
-        calcularFiloPieza();
-    </script>
+      };
+      reader.readAsText(file);
+    }
+
+    function renderAll() {
+      renderMesitaSection();
+      renderPlacasSection();
+      renderStock();
+      renderRecetas();
+      renderCaja();
+      calcViaje();
+    }
+
+    window.addEventListener('resize', () => renderPlacasSection());
+    renderAll();
+  </script>
 </body>
 </html>
