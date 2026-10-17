@@ -1,102 +1,126 @@
-<!DOCTYPE html>
+# Let's redesign the index.html file to incorporate the cyberpunk / pixel-art UI aesthetic inspired by VA-11 HALL-A (from the images) and Hyper Light Drifter (neon accents, dark backgrounds, high-contrast borders, retro futuristic HUD panels, sharp pixel/monospace feel, vibrant neon cyan/magenta/amber glows on dark navy/charcoal backgrounds).
+# The functionality (Stock, Muebles, Presupuestos, Caja) will stay completely intact, but the visual style will completely transform into a gorgeous cyberpunk UI fitting Carpintería JL.
+
+html_content = """<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Carpintería JL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Carpintería JL // System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary: #8B5A2B;
-            --primary-dark: #5C3A21;
-            --secondary: #D4A373;
-            --bg: #F4F1EA;
-            --card-bg: #FFFFFF;
-            --text: #2C2C2C;
-            --text-light: #6C757D;
-            --danger: #D90429;
-            --success: #2B9348;
-            --border: #E5E0D8;
+            --bg-deep: #0D0F18;
+            --panel-bg: #161B2E;
+            --panel-border: #2A3655;
+            --primary-neon: #00F0FF; /* Cyan Hyper Light */
+            --accent-neon: #FF0055;  /* Magenta VA-11 HALL-A */
+            --amber-neon: #FFB700;
+            --text-main: #E2E8F0;
+            --text-muted: #8892B0;
+            --success: #00FF66;
+            --danger: #FF3366;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text); padding-bottom: 80px; max-width: 480px; margin: 0 auto; position: relative; min-height: 100vh; }
-        header { background: var(--primary-dark); color: white; padding: 16px 20px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        header h1 { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        header p { font-size: 0.8rem; color: var(--secondary); margin-top: 2px; }
-        .container { padding: 16px; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Rajdhani', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-deep); color: var(--text-main); padding-bottom: 90px; max-width: 480px; margin: 0 auto; position: relative; min-height: 100vh; border-left: 2px solid var(--panel-border); border-right: 2px solid var(--panel-border); }
+
+        /* Retro HUD Header */
+        header { background: var(--panel-bg); border-bottom: 2px solid var(--primary-neon); padding: 12px 16px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 20px rgba(0, 240, 255, 0.15); }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        header h1 { font-family: 'Share Tech Mono', monospace; font-size: 1.1rem; color: var(--primary-neon); text-shadow: 0 0 8px rgba(0, 240, 255, 0.5); letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+        header p { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: var(--accent-neon); text-transform: uppercase; letter-spacing: 2px; margin-top: 2px; }
+        .sys-status { font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary-neon); padding: 2px 6px; color: var(--primary-neon); border-radius: 2px; }
+
+        .container { padding: 14px; }
         .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Cards & UI */
-        .card { background: var(--card-bg); border-radius: 12px; padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid var(--border); }
-        .card-title { font-size: 1rem; font-weight: 600; color: var(--primary-dark); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        
+        .tab-content.active { display: block; animation: scanline 0.25s ease; }
+
+        @keyframes scanline {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cyberpunk Cards / Panels */
+        .card { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 4px; padding: 14px; margin-bottom: 12px; position: relative; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--primary-neon); }
+        .card-title { font-family: 'Share Tech Mono', monospace; font-size: 0.95rem; font-weight: 700; color: var(--primary-neon); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; border-bottom: 1px dashed var(--panel-border); padding-bottom: 6px; }
+
         /* Alerts */
-        .alert-box { background: #FDEED9; border-left: 4px solid #E07A5F; padding: 12px; border-radius: 8px; margin-bottom: 14px; font-size: 0.85rem; color: #78350F; }
-        
-        /* Forms */
-        .form-group { margin-bottom: 12px; }
-        label { display: block; font-size: 0.8rem; font-weight: 500; color: var(--text-light); margin-bottom: 4px; }
-        input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; background: #FAFAFA; color: var(--text); outline: none; transition: border 0.2s; }
-        input:focus, select:focus { border-color: var(--primary); background: white; }
-        
+        .alert-box { background: rgba(255, 51, 102, 0.1); border-left: 4px solid var(--danger); padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 0.8rem; color: #FFA6C1; font-family: 'Share Tech Mono', monospace; }
+
+        /* Forms & Inputs */
+        .form-group { margin-bottom: 10px; }
+        label { display: block; font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--panel-border); background: #0A0D14; color: var(--text-main); font-family: 'Share Tech Mono', monospace; font-size: 0.9rem; border-radius: 2px; outline: none; transition: all 0.2s; }
+        input:focus, select:focus { border-color: var(--primary-neon); box-shadow: 0 0 8px rgba(0, 240, 255, 0.3); }
+
         /* Buttons */
-        .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 4px rgba(139,90,43,0.3); transition: background 0.2s; }
-        .btn:active { transform: scale(0.98); }
-        .btn-success { background: var(--success); box-shadow: 0 2px 4px rgba(43,147,72,0.3); }
-        .btn-secondary { background: var(--secondary); color: var(--primary-dark); box-shadow: none; }
-        .btn-sm { padding: 6px 12px; font-size: 0.8rem; width: auto; }
-        
-        /* Lists & Tables */
-        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .btn { width: 100%; padding: 11px; background: rgba(0, 240, 255, 0.15); border: 1px solid var(--primary-neon); color: var(--primary-neon); font-family: 'Share Tech Mono', monospace; font-size: 0.9rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; border-radius: 2px; transition: all 0.2s; }
+        .btn:active { background: var(--primary-neon); color: var(--bg-deep); transform: scale(0.98); }
+        .btn-success { background: rgba(0, 255, 102, 0.15); border-color: var(--success); color: var(--success); }
+        .btn-success:active { background: var(--success); color: var(--bg-deep); }
+        .btn-secondary { background: rgba(212, 163, 115, 0.1); border-color: #D4A373; color: #D4A373; }
+        .btn-sm { padding: 5px 10px; font-size: 0.75rem; width: auto; }
+
+        /* Lists & Rows */
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--panel-border); }
         .item-row:last-child { border-bottom: none; }
-        .item-info h4 { font-size: 0.9rem; font-weight: 600; color: var(--text); }
-        .item-info p { font-size: 0.8rem; color: var(--text-light); }
-        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
-        .badge-ok { background: #E1F5FE; color: #0288D1; }
-        .badge-low { background: #FFEBEE; color: #C62828; }
+        .item-info h4 { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        .item-info p { font-size: 0.75rem; color: var(--text-muted); font-family: 'Share Tech Mono', monospace; }
         
-        /* Bottom Nav */
-        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -4px 10px rgba(0,0,0,0.08); z-index: 1000; max-width: 480px; margin: 0 auto; border-top: 1px solid var(--border); }
-        .nav-item { text-align: center; color: var(--text-light); font-size: 0.7rem; font-weight: 500; cursor: pointer; flex: 1; transition: color 0.2s; }
-        .nav-item i { font-size: 1.2rem; display: block; margin-bottom: 2px; }
-        .nav-item.active { color: var(--primary); font-weight: 700; }
-        
+        .badge { padding: 3px 6px; border-radius: 2px; font-size: 0.7rem; font-family: 'Share Tech Mono', monospace; font-weight: 700; text-transform: uppercase; }
+        .badge-ok { background: rgba(0, 240, 255, 0.1); color: var(--primary-neon); border: 1px solid rgba(0, 240, 255, 0.4); }
+        .badge-low { background: rgba(255, 51, 102, 0.15); color: var(--danger); border: 1px solid var(--danger); }
+
+        /* Cyber Bottom Navigation (VA-11 HALL-A style HUD dock) */
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--panel-bg); border-top: 2px solid var(--panel-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 1000; max-width: 480px; margin: 0 auto; box-shadow: 0 -4px 15px rgba(0,0,0,0.6); }
+        .nav-item { text-align: center; color: var(--text-muted); font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; cursor: pointer; flex: 1; text-transform: uppercase; transition: color 0.2s; }
+        .nav-item i { font-size: 1.1rem; display: block; margin-bottom: 2px; }
+        .nav-item.active { color: var(--primary-neon); text-shadow: 0 0 6px rgba(0, 240, 255, 0.6); }
+
         .flex-row { display: flex; gap: 8px; }
         .flex-row > * { flex: 1; }
+
+        /* Modal Overlay */
+        .modal-overlay { display:none; position:fixed; inset:0; background:rgba(13, 15, 24, 0.85); backdrop-filter: blur(3px); z-index:2000; align-items:center; justify-content:center; padding:16px; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1><i class="fa-solid fa-hammer"></i> Carpintería JL</h1>
-        <p>Control de Stock, Presupuestos y Caja</p>
+        <div class="header-top">
+            <div>
+                <h1><i class="fa-solid fa-terminal" style="color:var(--accent-neon);"></i> CARPINTERÍA JL</h1>
+                <p>SYS.VER // 2.06.ACTIVE</p>
+            </div>
+            <div class="sys-status">ONLINE</div>
+        </div>
     </header>
 
     <div class="container">
         <!-- STOCK TAB -->
         <div id="tab-stock" class="tab-content active">
             <div id="stock-alerts"></div>
-            <div class="card">
-                <div class="card-title">Inventario de Materiales <button class="btn btn-sm" onclick="openModal('modal-material')"><i class="fa-solid fa-plus"></i> Nuevo</button></div>
+            <div class="card" style="border-left-color: var(--primary-neon);">
+                <div class="card-title">Inventario de Materiales <button class="btn btn-sm" onclick="openModal('modal-material')"><i class="fa-solid fa-plus"></i> NEW</button></div>
                 <div id="stock-list"></div>
             </div>
         </div>
 
-        <!-- RECETAS TAB -->
+        <!-- MUEBLES TAB -->
         <div id="tab-muebles" class="tab-content">
-            <div class="card">
-                <div class="card-title">Recetas de Mesitas de Luz <button class="btn btn-sm" onclick="openModal('modal-mueble')"><i class="fa-solid fa-plus"></i> Nueva</button></div>
+            <div class="card" style="border-left-color: var(--accent-neon);">
+                <div class="card-title" style="color:var(--accent-neon);">Recetas de Muebles <button class="btn btn-sm btn-secondary" onclick="openModal('modal-mueble')"><i class="fa-solid fa-plus"></i> NEW</button></div>
                 <div id="muebles-list"></div>
             </div>
         </div>
 
-        <!-- PRESUPUESTOS TAB -->
+        <!-- PRESUPUESTO TAB -->
         <div id="tab-presupuesto" class="tab-content">
-            <div class="card">
-                <div class="card-title"><i class="fa-solid fa-calculator"></i> Armar Presupuesto</div>
+            <div class="card" style="border-left-color: var(--amber-neon);">
+                <div class="card-title" style="color:var(--amber-neon);"><i class="fa-solid fa-calculator"></i> Calculadora & Presupuesto</div>
                 <div class="form-group">
                     <label>Seleccionar Modelo</label>
                     <select id="p-mueble" onchange="calcularPresupuesto()"></select>
@@ -106,13 +130,13 @@
                     <input type="number" id="p-cant" value="1" min="1" oninput="calcularPresupuesto()">
                 </div>
                 
-                <div style="background: #F9F8F6; padding: 12px; border-radius: 8px; margin-bottom: 12px;">
-                    <h4 style="font-size:0.85rem; margin-bottom:8px; color:var(--primary-dark);">Costos de Insumos (Editables)</h4>
+                <div style="background: #0A0D14; border: 1px solid var(--panel-border); padding: 10px; border-radius: 4px; margin-bottom: 10px;">
+                    <label style="color:var(--primary-neon); margin-bottom:6px;">Costos de Insumos (Editables)</label>
                     <div id="p-insumos-edits"></div>
                 </div>
 
                 <div class="form-group">
-                    <label>Mano de Obra (Total $)</label>
+                    <label>Mano de Obra ($)</label>
                     <input type="number" id="p-MO" value="15000" oninput="calcularPresupuesto()">
                 </div>
                 <div class="form-group">
@@ -123,30 +147,31 @@
                     <label>Margen de Ganancia (%)</label>
                     <input type="number" id="p-ganancia" value="40" oninput="calcularPresupuesto()">
                 </div>
-                <div class="form-group">
-                    <label><input type="checkbox" id="actualizar-stock-precio" checked> Actualizar precios de costos en stock general</label>
+                <div class="form-group" style="display:flex; align-items:center; gap:8px; margin-top:8px;">
+                    <input type="checkbox" id="actualizar-stock-precio" checked style="width:auto;">
+                    <label style="display:inline; margin:0; font-size:0.7rem;">Actualizar precios en stock general</label>
                 </div>
 
-                <div style="background: var(--primary-dark); color: white; padding: 14px; border-radius: 8px; text-align: center; margin-bottom: 12px;">
-                    <div style="font-size: 0.8rem; color: var(--secondary);">PRECIO FINAL SUGERIDO</div>
-                    <div id="p-total" style="font-size: 1.5rem; font-weight: 700; margin-top: 4px;">$0</div>
+                <div style="background: #0A0D14; border: 1px solid var(--primary-neon); padding: 12px; border-radius: 4px; text-align: center; margin: 12px 0;">
+                    <div style="font-family:'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--text-muted);">PRECIO FINAL SUGERIDO</div>
+                    <div id="p-total" style="font-family:'Share Tech Mono', monospace; font-size: 1.6rem; font-weight: 700; color: var(--primary-neon); margin-top: 2px; text-shadow: 0 0 10px rgba(0,240,255,0.4);">$0</div>
                 </div>
 
-                <button class="btn btn-success" onclick="enviarPresupuestoWhatsApp()"><i class="fa-brands fa-whatsapp"></i> Enviar Presupuesto y Vender</button>
+                <button class="btn btn-success" onclick="enviarPresupuestoWhatsApp()"><i class="fa-brands fa-whatsapp"></i> Enviar Presupuesto & Vender</button>
             </div>
         </div>
 
         <!-- CAJA TAB -->
         <div id="tab-caja" class="tab-content">
-            <div class="card" style="background: linear-gradient(135deg, #5C3A21, #8B5A2B); color: white;">
-                <div style="font-size: 0.85rem; opacity: 0.9;">Balance Actual en Caja</div>
-                <div id="caja-saldo" style="font-size: 1.8rem; font-weight: 700; margin: 6px 0;">$0</div>
-                <div class="flex-row" style="margin-top: 12px;">
-                    <button class="btn btn-sm btn-success" onclick="openModal('modal-gasto')"><i class="fa-solid fa-minus"></i> Registrar Gasto</button>
-                    <button class="btn btn-sm" style="background:white; color:var(--primary);" onclick="openModal('modal-ingreso')"><i class="fa-solid fa-plus"></i> Otro Ingreso</button>
+            <div class="card" style="border-left-color: var(--success); background: linear-gradient(135deg, #161B2E, #0D2318);">
+                <div style="font-family:'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--text-muted);">BALANCE ACTUAL EN CAJA</div>
+                <div id="caja-saldo" style="font-family:'Share Tech Mono', monospace; font-size: 1.8rem; font-weight: 700; color: var(--success); margin: 4px 0; text-shadow: 0 0 10px rgba(0,255,102,0.3);">$0</div>
+                <div class="flex-row" style="margin-top: 10px;">
+                    <button class="btn btn-sm btn-success" onclick="openModal('modal-gasto')"><i class="fa-solid fa-minus"></i> Gasto</button>
+                    <button class="btn btn-sm btn-secondary" onclick="openModal('modal-ingreso')"><i class="fa-solid fa-plus"></i> Ingreso</button>
                 </div>
             </div>
-            <div class="card">
+            <div class="card" style="border-left-color: var(--primary-neon);">
                 <div class="card-title">Movimientos Recientes</div>
                 <div id="caja-list"></div>
             </div>
@@ -161,9 +186,9 @@
         <div class="nav-item" onclick="switchTab('caja', this)"><i class="fa-solid fa-cash-register"></i> Caja</div>
     </div>
 
-    <!-- MODALS -->
-    <div id="modal-material" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:2000; align-items:center; justify-content:center; padding:16px;">
-        <div class="card" style="width:100%; max-width:400px; margin:0;">
+    <!-- MODAL NUEVO MATERIAL -->
+    <div id="modal-material" class="modal-overlay">
+        <div class="card" style="width:100%; max-width:400px; margin:0; border-left-color:var(--primary-neon);">
             <div class="card-title">Nuevo Material <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('modal-material')"></i></div>
             <div class="form-group"><label>Nombre</label><input type="text" id="m-nombre" placeholder="Ej. Tornillo 3x30"></div>
             <div class="form-group"><label>Categoría</label><select id="m-cat"><option value="Madera">Madera</option><option value="Herraje">Herraje</option><option value="Insumo">Insumo</option></select></div>
@@ -179,8 +204,27 @@
         </div>
     </div>
 
+    <!-- MODAL NUEVO GASTO -->
+    <div id="modal-gasto" class="modal-overlay">
+        <div class="card" style="width:100%; max-width:400px; margin:0; border-left-color:var(--danger);">
+            <div class="card-title" style="color:var(--danger);">Registrar Gasto <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('modal-gasto')"></i></div>
+            <div class="form-group"><label>Descripción</label><input type="text" id="g-desc" placeholder="Ej. Compra de tornillos"></div>
+            <div class="form-group"><label>Monto ($)</label><input type="number" id="g-monto" value="5000"></div>
+            <button class="btn" style="border-color:var(--danger); color:var(--danger);" onclick="guardarGastoMov()">Registrar Gasto</button>
+        </div>
+    </div>
+
+    <!-- MODAL NUEVO INGRESO -->
+    <div id="modal-ingreso" class="modal-overlay">
+        <div class="card" style="width:100%; max-width:400px; margin:0; border-left-color:var(--success);">
+            <div class="card-title" style="color:var(--success);">Registrar Ingreso Extra <i class="fa-solid fa-xmark" style="cursor:pointer;" onclick="closeModal('modal-ingreso')"></i></div>
+            <div class="form-group"><label>Descripción</label><input type="text" id="i-desc" placeholder="Ej. Venta mostrador o seña"></div>
+            <div class="form-group"><label>Monto ($)</label><input type="number" id="i-monto" value="10000"></div>
+            <button class="btn btn-success" onclick="guardarIngresoMov()">Registrar Ingreso</button>
+        </div>
+    </div>
+
     <script>
-        // Data Store
         let db = JSON.parse(localStorage.getItem('carpinteria_jl_db')) || {
             stock: [
                 { id: 1, nombre: 'Placa Melamina 18mm Blanco', cat: 'Madera', cant: 12, unidad: 'placas', costo: 45000, min: 3 },
@@ -231,7 +275,7 @@
                 let isLow = item.cant <= item.min;
                 if(isLow) {
                     lowCount++;
-                    alerts += `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><span>⚠️ <b>${item.nombre}</b> stock bajo (${item.cant} ${item.unidad})</span></div>`;
+                    alerts += `<div style="margin-bottom:2px;">[!] <b>${item.nombre}</b> stock bajo (${item.cant} ${item.unidad})</div>`;
                 }
                 html += `
                 <div class="item-row">
@@ -241,7 +285,7 @@
                     </div>
                     <div style="display:flex; gap:6px; align-items:center;">
                         <button class="btn btn-sm btn-secondary" onclick="modStock(${item.id}, -1)">-</button>
-                        <span style="font-weight:600; min-width:24px; text-align:center;">${item.cant}</span>
+                        <span style="font-family:'Share Tech Mono', monospace; font-weight:700; min-width:24px; text-align:center;">${item.cant}</span>
                         <button class="btn btn-sm btn-secondary" onclick="modStock(${item.id}, 1)">+</button>
                     </div>
                 </div>`;
@@ -250,7 +294,7 @@
             document.getElementById('stock-list').innerHTML = html;
             let alertContainer = document.getElementById('stock-alerts');
             if(lowCount > 0) {
-                alertContainer.innerHTML = `<div class="alert-box"><div style="font-weight:700; margin-bottom:4px;"><i class="fa-solid fa-triangle-exclamation"></i> Alertas de Stock (${lowCount})</div>${alerts}</div>`;
+                alertContainer.innerHTML = `<div class="alert-box"><div style="font-weight:700; margin-bottom:4px;">ALERTA DE INVENTARIO (${lowCount})</div>${alerts}</div>`;
                 alertContainer.style.display = 'block';
             } else {
                 alertContainer.style.display = 'none';
@@ -281,6 +325,24 @@
             saveDB();
         }
 
+        function guardarGastoMov() {
+            let desc = document.getElementById('g-desc').value;
+            let monto = parseFloat(document.getElementById('g-monto').value) || 0;
+            if(!desc || monto <= 0) return alert('Completá los datos');
+            db.caja.unshift({ fecha: new Date().toISOString().split('T')[0], desc: desc, tipo: 'gasto', monto: monto });
+            closeModal('modal-gasto');
+            saveDB();
+        }
+
+        function guardarIngresoMov() {
+            let desc = document.getElementById('i-desc').value;
+            let monto = parseFloat(document.getElementById('i-monto').value) || 0;
+            if(!desc || monto <= 0) return alert('Completá los datos');
+            db.caja.unshift({ fecha: new Date().toISOString().split('T')[0], desc: desc, tipo: 'ingreso', monto: monto });
+            closeModal('modal-ingreso');
+            saveDB();
+        }
+
         function renderMuebles() {
             let html = '';
             db.muebles.forEach(m => {
@@ -290,9 +352,9 @@
                 }).join(' • ');
 
                 html += `
-                <div class="item-row" style="flex-direction:column; align-items:flex-start; gap:4px; padding:12px 0;">
-                    <h4 style="color:var(--primary-dark); font-size:0.95rem;">${m.nombre}</h4>
-                    <p style="font-size:0.8rem; color:var(--text-light);">${mats}</p>
+                <div class="item-row" style="flex-direction:column; align-items:flex-start; gap:4px; padding:10px 0;">
+                    <h4 style="color:var(--accent-neon);">${m.nombre}</h4>
+                    <p>${mats}</p>
                 </div>`;
             });
             document.getElementById('muebles-list').innerHTML = html;
@@ -314,15 +376,15 @@
             editsContainer.innerHTML = '';
             let costoInsumosTotal = 0;
 
-            mueble.materiales.forEach((item, idx) => {
+            mueble.materiales.forEach(item => {
                 let mat = db.stock.find(s => s.id === item.id);
                 if(!mat) return;
                 let reqCant = item.cant * cantMuebles;
                 
                 editsContainer.innerHTML += `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:0.85rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:0.8rem;">
                     <span>${mat.nombre} (${reqCant} ${mat.unidad})</span>
-                    <input type="number" id="costo-mat-${item.id}" value="${mat.costo}" style="width:90px; padding:4px 8px;" oninput="calcularPresupuesto()">
+                    <input type="number" id="costo-mat-${item.id}" value="${mat.costo}" style="width:85px; padding:4px;" oninput="calcularPresupuesto()">
                 </div>`;
 
                 let costoInput = document.getElementById(`costo-mat-${item.id}`);
@@ -346,7 +408,6 @@
             let mueble = db.muebles.find(m => m.id === muebleId);
             let precioFinal = document.getElementById('p-total').innerText;
 
-            // Actualizar costos si está tildado
             let actualizar = document.getElementById('actualizar-stock-precio').checked;
             mueble.materiales.forEach(item => {
                 let input = document.getElementById(`costo-mat-${item.id}`);
@@ -360,7 +421,6 @@
                 }
             });
 
-            // Registrar Venta en Caja
             let montoVenta = parseFloat(document.getElementById('p-total').innerText.replace('$', '').replace(/\./g, '')) || 0;
             db.caja.unshift({
                 fecha: new Date().toISOString().split('T')[0],
@@ -371,7 +431,7 @@
 
             saveDB();
 
-            let mensaje = `Hola! Te envío el presupuesto de ${cantMuebles}x *${mueble.nombre}* de Carpintería JL:\n\n*Precio Total:* ${precioFinal}\n\nQuedo a disposición para coordinar detalles y seña. Muchas gracias!`;
+            let mensaje = `Hola! Te envío el presupuesto de ${cantMuebles}x *${mueble.nombre}* de Carpintería JL:\\n\\n*Precio Total:* ${precioFinal}\\n\\nQuedo a disposición para coordinar detalles y seña. Muchas gracias!`;
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mensaje)}`);
         }
 
@@ -388,7 +448,7 @@
                         <h4>${mov.desc}</h4>
                         <p>${mov.fecha}</p>
                     </div>
-                    <div style="font-weight:700; color:${mov.tipo === 'ingreso' ? 'var(--success)' : 'var(--danger)'};">
+                    <div style="font-family:'Share Tech Mono', monospace; font-weight:700; color:${mov.tipo === 'ingreso' ? 'var(--success)' : 'var(--danger)'};">
                         ${mov.tipo === 'ingreso' ? '+' : '-'}$${mov.monto.toLocaleString()}
                     </div>
                 </div>`;
@@ -407,3 +467,9 @@
     </script>
 </body>
 </html>
+"""
+
+with open("carpinteria_jl.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+print("Redesigned Cyberpunk HTML generated.")
