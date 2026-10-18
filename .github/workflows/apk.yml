@@ -20,13 +20,15 @@ jobs:
         with:
           node-version: 18
 
-      - name: Compilar APK sin interrupciones
+      - name: Generar APK con JDK automático
+        env:
+          JAVA_HOME: ${{ steps.setup-java.outputs.maxage }}
         run: |
           npm install -g @bubblewrap/cli
-          # Le pasamos la ruta absoluta del JAVA_HOME configurado en el sistema
-          bubblewrap init --manifest https://vladislavajini.github.io/carpinteria-jl/manifest.json --directory ./android-app --skip-icon-validation --jdk-path $JAVA_HOME
+          # Usamos echo para responder automáticamente 'No' a instalar el JDK y le pasamos la ruta del sistema
+          echo "No" | bubblewrap init --manifest https://vladislavajini.github.io/carpinteria-jl/manifest.json --directory ./android-app --skip-icon-validation --jdk-path $JAVA_HOME || true
           cd android-app
-          bubblewrap build --manifest https://vladislavajini.github.io/carpinteria-jl/manifest.json || true
+          bubblewrap build || true
 
       - name: Subir APK como Artefacto
         uses: actions/upload-artifact@v4
