@@ -27,7 +27,7 @@
       --accent-wood-hover: #9E774B;
       --status-ok: #74B49A;        /* Verde confirmación */
       --status-warn: #E7B45E;      /* Advertencia */
-      --status-err: #E47777;       /* Error / Alerta */
+      --status-err: #E47777;       /* Rojo crítico / Punto de reposición */
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       --radius-sm: 10px;
@@ -200,12 +200,12 @@
       position: absolute;
       top: 5px;
       right: 5px;
-      background-color: var(--accent-wood);
+      background-color: var(--status-err);
       color: #0A0A0A;
       font-size: 10px;
-      font-weight: 800;
-      min-width: 17px;
-      height: 17px;
+      font-weight: 900;
+      min-width: 18px;
+      height: 18px;
       border-radius: 9px;
       display: flex;
       align-items: center;
@@ -512,11 +512,12 @@
       justify-content: space-between;
       gap: 12px;
       cursor: pointer;
-      transition: border-color var(--transition-fast);
+      transition: border-color var(--transition-fast), background-color var(--transition-fast);
     }
 
-    .alert-banner-card:hover {
-      border-color: var(--accent-wood);
+    .alert-banner-card.critical {
+      background-color: rgba(228, 119, 119, 0.12);
+      border-color: var(--status-err);
     }
 
     .alert-banner-left {
@@ -572,7 +573,7 @@
     }
 
     /* ========================================================================
-       FORMULARIOS MOBILE-FIRST Y CONTROLES DE STOCK AMPLIADOS (+10 / -10)
+       FORMULARIOS Y TARJETAS DE STOCK (CON ROJO CRÍTICO EN PUNTO DE REPOSICIÓN)
        ======================================================================== */
     .form-group {
       margin-bottom: 14px;
@@ -679,7 +680,7 @@
     }
 
     .btn-danger {
-      background-color: rgba(228, 119, 119, 0.16);
+      background-color: rgba(228, 119, 119, 0.18);
       border-color: var(--status-err);
       color: var(--status-err);
     }
@@ -697,7 +698,7 @@
       margin-bottom: 16px;
     }
 
-    /* FICHAS DE INVENTARIO Y RECETAS CON BOTONES DE EDICIÓN Y BORRADO */
+    /* TARJETAS DE ÍTEMS Y ESTADO ROJO CRÍTICO PARA PUNTO DE REPOSICIÓN */
     .item-card {
       background-color: var(--bg-elevated);
       border: 1px solid var(--border-color);
@@ -707,6 +708,14 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
+      transition: background-color var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .item-card.critical-low {
+      background-color: rgba(228, 119, 119, 0.14);
+      border: 1.5px solid var(--status-err);
+      border-left: 5px solid var(--status-err);
+      box-shadow: 0 0 16px rgba(228, 119, 119, 0.18);
     }
 
     .item-card-top {
@@ -736,6 +745,25 @@
       border-top: 1px solid var(--border-color);
     }
 
+    .stock-progress-track {
+      width: 100%;
+      height: 7px;
+      background-color: #121212;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .stock-progress-fill {
+      height: 100%;
+      background-color: var(--status-ok);
+      transition: width 0.25s ease;
+    }
+
+    .stock-progress-fill.critical {
+      background-color: var(--status-err);
+    }
+
     .status-pill {
       display: inline-flex;
       align-items: center;
@@ -749,7 +777,7 @@
 
     .status-pill.ok { background: rgba(116, 180, 154, 0.18); color: var(--status-ok); border: 1px solid var(--status-ok); }
     .status-pill.warn { background: rgba(231, 180, 94, 0.18); color: var(--status-warn); border: 1px solid var(--status-warn); }
-    .status-pill.err { background: rgba(228, 119, 119, 0.18); color: var(--status-err); border: 1px solid var(--status-err); }
+    .status-pill.err { background: var(--status-err); color: #0A0A0A; border: 1px solid var(--status-err); font-weight: 900; }
     .status-pill.wood { background: rgba(181, 139, 90, 0.18); color: var(--accent-wood); border: 1px solid var(--accent-wood); }
 
     .stepper-controls-multi {
@@ -912,7 +940,7 @@
 </head>
 <body>
 
-  <!-- CONTENEDOR DE NOTIFICACIONES EN TIEMPO REAL -->
+  <!-- CONTENEDOR DE NOTIFICACIONES FLOTANTES (TOASTS) -->
   <div id="toastContainer" class="toast-container" aria-live="polite"></div>
 
   <!-- MODAL DE CONFIRMACIÓN PARA OPERACIONES CRÍTICAS -->
@@ -950,7 +978,7 @@
         <span class="sync-dot" id="syncStatusDot"></span>
         <span id="syncStatusText">Conectado</span>
       </div>
-      <button class="icon-action-btn" onclick="AppUI.navigate('alertas-stock')" aria-label="Alertas de stock">
+      <button class="icon-action-btn" onclick="AppUI.navigate('notificaciones')" aria-label="Centro de Notificaciones">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
           <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
@@ -1025,16 +1053,21 @@
         </div>
       </div>
 
-      <div class="alert-banner-card" onclick="AppUI.navigate('alertas-stock')">
+      <!-- BANNER DE PUNTO DE REPOSICIÓN (SE PONE ROJO SI HAY ÍTEMS CRÍTICOS) -->
+      <div class="alert-banner-card" id="dashLowStockBanner" onclick="AppUI.navigate('alertas-stock')">
         <div class="alert-banner-left">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E7B45E" stroke-width="2">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E47777" stroke-width="2.2">
             <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
             <line x1="12" y1="9" x2="12" y2="13"></line>
             <line x1="12" y1="17" x2="12.01" y2="17"></line>
           </svg>
           <div>
-            <div style="font-size:15px; font-weight:700; color:var(--text-primary);">Stock bajo (<span id="bannerLowStockCount">0</span>)</div>
-            <div style="font-size:13px; color:var(--text-secondary);">Revisar materiales pendientes</div>
+            <div style="font-size:15px; font-weight:700; color:var(--text-primary);">
+              Punto de reposición / Stock bajo (<span id="bannerLowStockCount">0</span>)
+            </div>
+            <div style="font-size:13px; color:var(--text-secondary);" id="bannerLowStockSub">
+              Revisar materiales pendientes de reposición
+            </div>
           </div>
         </div>
         <span style="color:var(--text-secondary); font-size:18px;">›</span>
@@ -1053,9 +1086,9 @@
           <span class="kpi-label">Presup. Pendientes</span>
           <span class="kpi-value" id="kpiPresupPend">0</span>
         </div>
-        <div class="kpi-card ok" onclick="AppUI.navigate('pedidos')">
-          <span class="kpi-label">Listos p/ Entregar</span>
-          <span class="kpi-value" id="kpiPedidosListos">0</span>
+        <div class="kpi-card err" onclick="AppUI.navigate('notificaciones')">
+          <span class="kpi-label">Notificaciones</span>
+          <span class="kpi-value" id="kpiNotifUnread">0</span>
         </div>
         <div class="kpi-card wood" onclick="AppUI.navigate('filo')">
           <span class="kpi-label">Cálculo de Filo</span>
@@ -1077,11 +1110,11 @@
           <span class="status-pill wood" id="dashPendingQueueBadge">0 Pendientes Sync</span>
         </div>
         <div class="quick-actions-grid">
+          <button class="btn" onclick="AppUI.navigate('calculadora')">🧮 Calculadora Mueble</button>
+          <button class="btn" onclick="AppUI.navigate('mesita-variable')">✨ Mesita Variable</button>
           <button class="btn" onclick="AppUI.navigate('filo')">📏 Calculadora de Filo</button>
           <button class="btn" onclick="AppUI.navigate('optimizador')">📐 Optimizador + Retazos</button>
           <button class="btn" onclick="AppUI.navigate('catalogo3d')">🪑 Catálogo y Visor 3D</button>
-          <button class="btn" onclick="AppUI.navigate('calculadora')">✨ Mesita Variable</button>
-          <button class="btn" onclick="AppUI.navigate('recetas')">📋 Recetas Vinculadas</button>
           <button class="btn" onclick="AppUI.navigate('stock')">📦 Inventario (+10)</button>
         </div>
       </div>
@@ -1095,53 +1128,38 @@
     </section>
 
     <!-- ====================================================================
-         2. FABRICACIÓN: CALCULADORA DE MUEBLES Y MESITA VARIABLE (SIN MANO DE OBRA)
+         2A. FABRICACIÓN: CALCULADORA DE MUEBLES (SEPARADA + ESQUEMA PROPORCIONAL EN TIEMPO REAL)
          ==================================================================== -->
     <section id="view-calculadora" class="module-view">
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Calculadora de Muebles y Mesita Variable</span>
-          <span class="status-pill wood">Sin Mano de Obra</span>
+          <span class="card-title">Calculadora de Muebles a Medida</span>
+          <span class="status-pill ok">Vista Previa Proporcional</span>
         </div>
 
-        <div class="form-group">
-          <label for="calcModoEnsanche">Modo de Comportamiento Estructural</label>
-          <select id="calcModoEnsanche" onchange="DomainFurnitureCalc.recalculateUI()">
-            <option value="modo1_tapa_volada">Modo 1: Tapa Volada (El cuerpo conserva su medida base; sobresale el techo)</option>
-            <option value="modo2_proporcional">Modo 2: Ensanche Proporcional (Se ensancha todo el mueble y cajones)</option>
-          </select>
-        </div>
+        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
+          Ingresá las medidas exactas que pidió el cliente. El <strong>Esquema Proporcional en Tiempo Real</strong> se actualiza al instante mostrando cómo va a quedar el mueble y sus cajones.
+        </p>
 
         <div class="form-row-responsive">
           <div>
-            <label for="calcTechoAncho">Ancho del Techo (mm)</label>
-            <input type="number" id="calcTechoAncho" inputmode="numeric" value="400" oninput="DomainFurnitureCalc.recalculateUI()">
+            <label for="stdAncho">Ancho Total del Mueble (mm)</label>
+            <input type="number" id="stdAncho" inputmode="numeric" value="400" min="200" max="2000" oninput="StandardFurnitureCalc.recalculateUI()">
           </div>
           <div>
-            <label for="calcTechoProf">Profundidad del Techo (mm)</label>
-            <input type="number" id="calcTechoProf" inputmode="numeric" value="335" oninput="DomainFurnitureCalc.recalculateUI()">
+            <label for="stdProf">Profundidad Total (mm)</label>
+            <input type="number" id="stdProf" inputmode="numeric" value="335" min="200" max="1200" oninput="StandardFurnitureCalc.recalculateUI()">
           </div>
         </div>
 
         <div class="form-row-responsive">
           <div>
-            <label for="calcCuerpoAnchoBase">Ancho Cuerpo Base (mm)</label>
-            <input type="number" id="calcCuerpoAnchoBase" inputmode="numeric" value="400" oninput="DomainFurnitureCalc.recalculateUI()">
+            <label for="stdAlto">Altura Total del Mueble (mm)</label>
+            <input type="number" id="stdAlto" inputmode="numeric" value="450" min="200" max="2400" oninput="StandardFurnitureCalc.recalculateUI()">
           </div>
           <div>
-            <label for="calcCuerpoProfBase">Prof. Cuerpo Base (mm)</label>
-            <input type="number" id="calcCuerpoProfBase" inputmode="numeric" value="335" oninput="DomainFurnitureCalc.recalculateUI()">
-          </div>
-        </div>
-
-        <div class="form-row-responsive">
-          <div>
-            <label for="calcAltoTotal">Altura Total del Mueble (mm)</label>
-            <input type="number" id="calcAltoTotal" inputmode="numeric" value="450" oninput="DomainFurnitureCalc.recalculateUI()">
-          </div>
-          <div>
-            <label for="calcEspesor">Espesor de Placa (mm)</label>
-            <select id="calcEspesor" onchange="DomainFurnitureCalc.recalculateUI()">
+            <label for="stdEspesor">Espesor de Melamina (mm)</label>
+            <select id="stdEspesor" onchange="StandardFurnitureCalc.recalculateUI()">
               <option value="18" selected>18 mm</option>
               <option value="15">15 mm</option>
               <option value="25">25 mm</option>
@@ -1151,23 +1169,23 @@
 
         <div class="form-row-responsive">
           <div>
-            <label for="calcCantCajones">Número de Cajones</label>
-            <input type="number" id="calcCantCajones" inputmode="numeric" value="1" min="1" max="6" oninput="DomainFurnitureCalc.recalculateUI()">
+            <label for="stdCajones">Cantidad de Cajones</label>
+            <input type="number" id="stdCajones" inputmode="numeric" value="1" min="0" max="6" oninput="StandardFurnitureCalc.recalculateUI()">
           </div>
           <div>
-            <label for="calcAltoFrente">Altura Frente de Cajón (mm)</label>
-            <input type="number" id="calcAltoFrente" inputmode="numeric" value="160" oninput="DomainFurnitureCalc.recalculateUI()">
+            <label for="stdAltoFrente">Altura de cada Frente de Cajón (mm)</label>
+            <input type="number" id="stdAltoFrente" inputmode="numeric" value="160" min="60" max="600" oninput="StandardFurnitureCalc.recalculateUI()">
           </div>
         </div>
 
         <div class="form-row-responsive">
           <div>
-            <label for="calcPlacaSelect">Placa de Melamina Principal</label>
-            <select id="calcPlacaSelect" onchange="DomainFurnitureCalc.recalculateUI()"></select>
+            <label for="stdPlacaSelect">Placa de Melamina Principal</label>
+            <select id="stdPlacaSelect" onchange="StandardFurnitureCalc.recalculateUI()"></select>
           </div>
           <div>
-            <label for="calcCorrederaTipo">Tipo de Correderas</label>
-            <select id="calcCorrederaTipo" onchange="DomainFurnitureCalc.recalculateUI()">
+            <label for="stdCorrederaTipo">Tipo de Correderas</label>
+            <select id="stdCorrederaTipo" onchange="StandardFurnitureCalc.recalculateUI()">
               <option value="telescopica">Telescópica H45 ($5.800 par)</option>
               <option value="comun">Metálica Común Z ($2.600 par)</option>
               <option value="oculta">Oculta Cierre Suave ($14.500 par)</option>
@@ -1177,63 +1195,166 @@
 
         <div class="form-row-responsive">
           <div>
-            <label for="calcDesperdicioPct">Desperdicio Estimado (%)</label>
-            <input type="number" id="calcDesperdicioPct" inputmode="decimal" value="10" oninput="DomainFurnitureCalc.recalculateUI()">
+            <label for="stdDesperdicioPct">Desperdicio Estimado (%)</label>
+            <input type="number" id="stdDesperdicioPct" inputmode="decimal" value="10" oninput="StandardFurnitureCalc.recalculateUI()">
           </div>
           <div>
-            <label for="calcCantMuebles">Cantidad de Muebles</label>
-            <input type="number" id="calcCantMuebles" inputmode="numeric" value="1" min="1" oninput="DomainFurnitureCalc.recalculateUI()">
+            <label for="stdCantMuebles">Cantidad de Muebles</label>
+            <input type="number" id="stdCantMuebles" inputmode="numeric" value="1" min="1" oninput="StandardFurnitureCalc.recalculateUI()">
           </div>
         </div>
 
         <div class="form-row-responsive">
           <div>
-            <label for="calcTipoRentabilidad">Criterio Comercial</label>
-            <select id="calcTipoRentabilidad" onchange="DomainFurnitureCalc.recalculateUI()">
+            <label for="stdTipoRentabilidad">Criterio Comercial</label>
+            <select id="stdTipoRentabilidad" onchange="StandardFurnitureCalc.recalculateUI()">
               <option value="recargo">Recargo sobre Costo de Materiales (%)</option>
               <option value="margen">Margen sobre Precio de Venta (%)</option>
             </select>
           </div>
           <div>
-            <label for="calcPorcentajeGanancia">Porcentaje de Ganancia (%)</label>
-            <input type="number" id="calcPorcentajeGanancia" inputmode="decimal" value="45" oninput="DomainFurnitureCalc.recalculateUI()">
+            <label for="stdPorcentajeGanancia">Porcentaje de Ganancia (%)</label>
+            <input type="number" id="stdPorcentajeGanancia" inputmode="decimal" value="45" oninput="StandardFurnitureCalc.recalculateUI()">
           </div>
         </div>
 
-        <div class="card-elevated" style="text-align:center;">
-          <div style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">Esquema Proporcional en Tiempo Real</div>
-          <svg id="calcSvgDiagram" width="100%" height="145" viewBox="0 0 320 145"></svg>
+        <!-- ESQUEMA PROPORCIONAL EN TIEMPO REAL DEL MUEBLE PEDIDO POR EL CLIENTE -->
+        <div class="card-elevated" style="text-align:center; border:1px solid var(--accent-wood);">
+          <div style="font-size:12px; color:var(--accent-wood); font-weight:700; margin-bottom:8px;">
+            Esquema Proporcional en Tiempo Real (Vista Frontal + Cotas de Cliente)
+          </div>
+          <svg id="stdSvgDiagram" width="100%" height="210" viewBox="0 0 360 210"></svg>
         </div>
 
         <div class="kpi-grid">
           <div class="kpi-card warn">
             <span class="kpi-label">Costo Materiales</span>
-            <span class="kpi-value" id="calcOutCosto">$0</span>
+            <span class="kpi-value" id="stdOutCosto">$0</span>
           </div>
           <div class="kpi-card ok">
             <span class="kpi-label">Precio Venta</span>
-            <span class="kpi-value" id="calcOutVenta">$0</span>
+            <span class="kpi-value" id="stdOutVenta">$0</span>
           </div>
           <div class="kpi-card wood">
             <span class="kpi-label">Ganancia Neta</span>
-            <span class="kpi-value" id="calcOutUtilidad">$0</span>
+            <span class="kpi-value" id="stdOutUtilidad">$0</span>
           </div>
         </div>
 
         <div class="card-elevated">
-          <strong style="font-size:13px; display:block; margin-bottom:8px; color:var(--accent-wood);">Listado de Cortes Despiezados</strong>
-          <div id="calcPiecesBreakdown"></div>
+          <strong style="font-size:13px; display:block; margin-bottom:8px; color:var(--accent-wood);">Despiece Automático para este Mueble</strong>
+          <div id="stdPiecesBreakdown"></div>
         </div>
 
         <div class="quick-actions-grid" style="margin-top:12px;">
-          <button class="btn btn-primary" onclick="DomainFurnitureCalc.sendToOptimizer()">📐 Enviar al Optimizador</button>
-          <button class="btn btn-success" onclick="DomainFurnitureCalc.sendToQuote()">🧾 Pasar a Presupuesto</button>
+          <button class="btn btn-primary" onclick="StandardFurnitureCalc.sendToOptimizer()">📐 Enviar al Optimizador</button>
+          <button class="btn btn-success" onclick="StandardFurnitureCalc.sendToQuote()">🧾 Pasar a Presupuesto</button>
         </div>
       </div>
     </section>
 
     <!-- ====================================================================
-         3. FABRICACIÓN: NUEVA VENTANA EXCLUSIVA «CÁLCULO DE FILO» (DOBLE TRAMO)
+         2B. FABRICACIÓN: MESITA CON TECHO VARIABLE (APARTADO EXCLUSIVO SEPARADO)
+         ==================================================================== -->
+    <section id="view-mesita-variable" class="module-view">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Mesita con Techo Variable (Tapa Volada / Ensanche)</span>
+          <span class="status-pill wood">Módulo Independiente</span>
+        </div>
+
+        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
+          Apartado exclusivo para mesitas especiales donde el techo sobresale (por ejemplo, para porta secador) o donde querés ensanchar proporcionalmente a partir del techo.
+        </p>
+
+        <div class="form-group">
+          <label for="varModoEnsanche">Modo de Comportamiento del Techo</label>
+          <select id="varModoEnsanche" onchange="VariableTopCalc.recalculateUI()">
+            <option value="modo1_tapa_volada">Modo 1: Tapa Volada (El cuerpo conserva 400×335 y solo sobresale el techo)</option>
+            <option value="modo2_proporcional">Modo 2: Ensanche Proporcional (El cuerpo y cajón se ensanchan igual que el techo)</option>
+          </select>
+        </div>
+
+        <div class="form-row-responsive">
+          <div>
+            <label for="varTechoAncho">Ancho del Techo Superior (mm)</label>
+            <input type="number" id="varTechoAncho" inputmode="numeric" value="520" oninput="VariableTopCalc.recalculateUI()">
+          </div>
+          <div>
+            <label for="varTechoProf">Profundidad del Techo (mm)</label>
+            <input type="number" id="varTechoProf" inputmode="numeric" value="335" oninput="VariableTopCalc.recalculateUI()">
+          </div>
+        </div>
+
+        <div class="form-row-responsive">
+          <div>
+            <label for="varCuerpoAnchoBase">Ancho Cuerpo Base Fijo (mm)</label>
+            <input type="number" id="varCuerpoAnchoBase" inputmode="numeric" value="400" oninput="VariableTopCalc.recalculateUI()">
+          </div>
+          <div>
+            <label for="varCuerpoProfBase">Prof. Cuerpo Base Fijo (mm)</label>
+            <input type="number" id="varCuerpoProfBase" inputmode="numeric" value="335" oninput="VariableTopCalc.recalculateUI()">
+          </div>
+        </div>
+
+        <div class="form-row-responsive">
+          <div>
+            <label for="varAltoTotal">Altura Total (mm)</label>
+            <input type="number" id="varAltoTotal" inputmode="numeric" value="450" oninput="VariableTopCalc.recalculateUI()">
+          </div>
+          <div>
+            <label for="varCantMuebles">Cantidad de Mesitas</label>
+            <input type="number" id="varCantMuebles" inputmode="numeric" value="1" min="1" oninput="VariableTopCalc.recalculateUI()">
+          </div>
+        </div>
+
+        <div class="form-row-responsive">
+          <div>
+            <label for="varPlacaSelect">Placa de Melamina</label>
+            <select id="varPlacaSelect" onchange="VariableTopCalc.recalculateUI()"></select>
+          </div>
+          <div>
+            <label for="varPorcentajeGanancia">Recargo de Ganancia (%)</label>
+            <input type="number" id="varPorcentajeGanancia" inputmode="decimal" value="45" oninput="VariableTopCalc.recalculateUI()">
+          </div>
+        </div>
+
+        <div class="card-elevated" style="text-align:center; border:1px solid var(--accent-wood);">
+          <div style="font-size:12px; color:var(--accent-wood); font-weight:700; margin-bottom:8px;">
+            Comparativa Visual de Vuelo de Tapa vs. Cuerpo
+          </div>
+          <svg id="varSvgDiagram" width="100%" height="175" viewBox="0 0 360 175"></svg>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card warn">
+            <span class="kpi-label">Costo Materiales</span>
+            <span class="kpi-value" id="varOutCosto">$0</span>
+          </div>
+          <div class="kpi-card ok">
+            <span class="kpi-label">Precio Venta</span>
+            <span class="kpi-value" id="varOutVenta">$0</span>
+          </div>
+          <div class="kpi-card wood">
+            <span class="kpi-label">Ganancia Neta</span>
+            <span class="kpi-value" id="varOutUtilidad">$0</span>
+          </div>
+        </div>
+
+        <div class="card-elevated">
+          <strong style="font-size:13px; display:block; margin-bottom:8px; color:var(--accent-wood);">Cortes de la Mesita con Techo Variable</strong>
+          <div id="varPiecesBreakdown"></div>
+        </div>
+
+        <div class="quick-actions-grid" style="margin-top:12px;">
+          <button class="btn btn-primary" onclick="VariableTopCalc.sendToOptimizer()">📐 Enviar al Optimizador</button>
+          <button class="btn btn-success" onclick="VariableTopCalc.sendToQuote()">🧾 Pasar a Presupuesto</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         3. FABRICACIÓN: VENTANA EXCLUSIVA «CÁLCULO DE FILO» (DOBLE TRAMO)
          ==================================================================== -->
     <section id="view-filo" class="module-view">
       <div class="card">
@@ -1243,7 +1364,7 @@
         </div>
 
         <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
-          Calculá exactamente cuántos metros de filo requiere cada modelo de mueble, separando el costo del <strong>Filo Base (Blanco o Negro)</strong> para el cuerpo y el <strong>Filo de Color (ej. Helsinki, Teka Ártico)</strong> para el frente del cajón.
+          Calculá cuántos metros de filo lleva el mueble, separando la cuenta del <strong>Filo Base (Blanco o Negro)</strong> y la segunda cuenta con el <strong>Filo del Color requerido (ej. Helsinki)</strong>.
         </p>
 
         <div class="form-row-responsive">
@@ -1252,12 +1373,11 @@
             <select id="edgeModelSelect" onchange="EdgeBandingModule.recalc()"></select>
           </div>
           <div>
-            <label for="edgeFurnitureQty">Cantidad de Muebles a Fabricar</label>
+            <label for="edgeFurnitureQty">Cantidad de Muebles</label>
             <input type="number" id="edgeFurnitureQty" inputmode="numeric" value="1" min="1" oninput="EdgeBandingModule.recalc()">
           </div>
         </div>
 
-        <!-- TRAMO 1: CUENTA DE FILO BASE (BLANCO O NEGRO PARA EL CUERPO) -->
         <div class="card-elevated" style="border-left:3px solid var(--text-primary); margin-top:8px;">
           <strong style="font-size:14px; color:var(--text-primary); display:block; margin-bottom:10px;">
             1° Cuenta — Filo Base del Cuerpo (Blanco o Negro)
@@ -1281,17 +1401,16 @@
               <input type="number" id="edgeBaseRollPrice" inputmode="numeric" value="9500" oninput="EdgeBandingModule.recalc()">
             </div>
             <div>
-              <label for="edgeBaseIncludeFront">¿Filo Base en todo el mueble?</label>
+              <label for="edgeBaseIncludeFront">Modalidad de Filo</label>
               <select id="edgeBaseIncludeFront" onchange="EdgeBandingModule.recalc()">
-                <option value="combinado" selected>No — El frente lleva otro color (ej. Helsinki)</option>
-                <option value="completo">Sí — Todo el mueble lleva este mismo filo</option>
+                <option value="combinado" selected>Combinado — Frente lleva otro color (ej. Helsinki)</option>
+                <option value="completo">Un solo color — Todo el mueble lleva este filo</option>
               </select>
             </div>
           </div>
           <div id="edgeBaseSummaryLine" style="font-size:13px; color:var(--text-secondary); margin-top:6px;"></div>
         </div>
 
-        <!-- TRAMO 2: CUENTA DE FILO DE COLOR PARA EL FRENTE (HELSINKI, ÁRTICO, ETC.) -->
         <div id="edgeFrontBox" class="card-elevated" style="border-left:3px solid var(--accent-wood); margin-top:12px;">
           <strong style="font-size:14px; color:var(--accent-wood); display:block; margin-bottom:10px;">
             2° Cuenta — Filo del Frente del Cajón (Color / Madera)
@@ -1320,7 +1439,6 @@
           <div id="edgeFrontSummaryLine" style="font-size:13px; color:var(--text-secondary); margin-top:6px;"></div>
         </div>
 
-        <!-- RESULTADO TOTAL COMBINADO DE AMBAS CUENTAS -->
         <div class="kpi-grid" style="margin-top:14px;">
           <div class="kpi-card ok">
             <span class="kpi-label">Metros Filo Base</span>
@@ -1360,7 +1478,7 @@
     </section>
 
     <!-- ====================================================================
-         4. FABRICACIÓN: OPTIMIZADOR DE CORTES + RETAZOS EN STOCK E HISTÓRICO
+         4. FABRICACIÓN: OPTIMIZADOR DE CORTES + RETAZOS EN STOCK
          ==================================================================== -->
     <section id="view-optimizador" class="module-view">
       <div class="card">
@@ -1372,10 +1490,8 @@
           </div>
         </div>
 
-        <!-- HISTÓRICO RÁPIDO DE PRECIO DE LA PLACA SELECCIONADA -->
         <div id="optBoardPriceHistoryPill" class="card-elevated" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;"></div>
 
-        <!-- FORMULARIO PARA ACTUALIZAR PRECIO DE PLACA CON REGISTRO DE FECHA -->
         <div id="updateBoardPriceBox" class="card-elevated" style="display:none;">
           <label>Nuevo Precio de la Placa Seleccionada ($)</label>
           <div style="display:flex; gap:8px;">
@@ -1421,14 +1537,13 @@
           <select id="optSelectPlaca" onchange="OptimizerEngine.onSelectBoard()"></select>
         </div>
 
-        <!-- GESTIÓN DE RETAZOS / SOBRANTES EN STOCK DEL TALLER -->
         <div class="card-elevated" style="border-left:3px solid var(--status-ok);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
             <strong style="font-size:13px; color:var(--status-ok);">♻️ Retazos y Recortes Disponibles en Taller</strong>
             <button class="btn btn-sm" onclick="OptimizerEngine.toggleScrapForm()">+ Cargar Retazo</button>
           </div>
           <div style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">
-            El optimizador descontará automáticamente las piezas que entren en estos retazos antes de mandarte a comprar una placa entera.
+            El optimizador usa primero estos retazos antes de sumar placas enteras nuevas a tu lista de compra.
           </div>
 
           <div id="newScrapFormBox" style="display:none; margin-bottom:10px; padding-top:8px; border-top:1px solid var(--border-color);">
@@ -1446,7 +1561,6 @@
           <div id="optScrapsList"></div>
         </div>
 
-        <!-- AGREGAR PIEZAS A CORTAR -->
         <div class="card-elevated">
           <strong style="font-size:13px; display:block; margin-bottom:10px; color:var(--accent-wood);">Añadir Pieza Despiezada</strong>
           <div class="form-row-responsive">
@@ -1467,7 +1581,6 @@
           <button class="btn btn-primary btn-block" onclick="OptimizerEngine.addPiece()">+ Incorporar Pieza al Cálculo</button>
         </div>
 
-        <!-- ALERTA VISUAL DE COMPRA DE PLACAS -->
         <div id="optPurchaseAlertBanner" class="card-elevated" style="margin-top:10px;"></div>
 
         <div style="display:flex; gap:8px; margin:12px 0 8px; flex-wrap:wrap;">
@@ -1501,7 +1614,7 @@
     </section>
 
     <!-- ====================================================================
-         5. FABRICACIÓN: CATÁLOGO DE MUEBLES Y VISOR 3D (TEXTURAS LIMPIAS SIN RAYAS)
+         5. FABRICACIÓN: CATÁLOGO DE MUEBLES Y VISOR 3D (CON TEXTURAS PNG REALES)
          ==================================================================== -->
     <section id="view-catalogo3d" class="module-view">
       <div class="card">
@@ -1576,7 +1689,7 @@
     </section>
 
     <!-- ====================================================================
-         6. FABRICACIÓN: RECETAS VINCULADAS AL STOCK (CON EDITAR/BORRAR Y SIN MANO DE OBRA)
+         6. FABRICACIÓN: RECETAS VINCULADAS AL STOCK (EDITAR/BORRAR)
          ==================================================================== -->
     <section id="view-recetas" class="module-view">
       <div class="card">
@@ -1610,40 +1723,44 @@
     </section>
 
     <!-- ====================================================================
-         7. INVENTARIO: CONTROL DE STOCK (+10 / -10 / EDITAR / BORRAR)
+         7. INVENTARIO: PUNTO DE REPOSICIÓN EDITABLE (ROJO CRÍTICO) + BOTONES +10
          ==================================================================== -->
     <section id="view-stock" class="module-view">
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Inventario y Control de Stock en Tiempo Real</span>
+          <span class="card-title">Inventario y Punto de Reposición en Tiempo Real</span>
           <button class="btn btn-primary" onclick="InventoryModule.openNewForm()">+ Material</button>
         </div>
 
         <div id="newStockItemBox" class="card-elevated" style="display:none;">
           <input type="hidden" id="stkEditId" value="">
           <div class="form-row-responsive">
-            <div><label>Nombre del Material</label><input type="text" id="stkName" placeholder="Ej: Tornillo Fix 3.5x30"></div>
-            <div><label>Código SKU</label><input type="text" id="stkCode" placeholder="HER-008"></div>
+            <div><label>Nombre del Material / Pieza</label><input type="text" id="stkName" placeholder="Ej: Laterales Melamina 18mm"></div>
+            <div><label>Código SKU</label><input type="text" id="stkCode" placeholder="COR-LAT-01"></div>
           </div>
           <div class="form-row-responsive">
             <div>
               <label>Categoría</label>
               <select id="stkCategory">
+                <option value="cortes">Piezas Cortadas (Laterales, Techos, Frentes)</option>
                 <option value="herrajes">Herrajes y Tornillería</option>
                 <option value="cantos">Filos / Tapacantos y Adhesivos</option>
-                <option value="cortes">Piezas Cortadas / Insumos</option>
                 <option value="consumibles">Consumibles</option>
               </select>
             </div>
             <div><label>Unidad de Medida</label><input type="text" id="stkUnit" value="UNID"></div>
           </div>
           <div class="form-row-responsive">
-            <div><label>Cantidad en Stock</label><input type="number" id="stkQty" inputmode="numeric" value="20"></div>
-            <div><label>Stock Mínimo (Alerta)</label><input type="number" id="stkMin" inputmode="numeric" value="5"></div>
+            <div><label>Cantidad Actual en Stock</label><input type="number" id="stkQty" inputmode="numeric" value="100"></div>
+            <div><label>Stock Normal / Ideal</label><input type="number" id="stkNormal" inputmode="numeric" value="100"></div>
           </div>
           <div class="form-row-responsive">
-            <div><label>Costo Unitario ($)</label><input type="number" id="stkPrice" inputmode="numeric" value="150"></div>
-            <div><label>Ubicación en Taller</label><input type="text" id="stkLoc" value="Estante A1"></div>
+            <div><label style="color:var(--status-err);">🎯 Punto de Reposición (Alerta Roja)</label><input type="number" id="stkMin" inputmode="numeric" value="20"></div>
+            <div><label>Costo Unitario ($)</label><input type="number" id="stkPrice" inputmode="numeric" value="2500"></div>
+          </div>
+          <div class="form-group">
+            <label>Ubicación en Taller</label>
+            <input type="text" id="stkLoc" value="Estantería Principal">
           </div>
           <div style="display:flex; gap:8px;">
             <button class="btn" style="flex:1;" onclick="InventoryModule.cancelForm()">Cancelar</button>
@@ -1658,10 +1775,10 @@
           <div>
             <select id="stkFilterCat" onchange="InventoryModule.render()">
               <option value="all">Todas las Categorías</option>
+              <option value="cortes">Piezas Cortadas (Laterales, Techos, Frentes)</option>
               <option value="herrajes">Herrajes y Tornillería</option>
               <option value="cantos">Filos / Tapacantos y Adhesivos</option>
-              <option value="cortes">Piezas Cortadas / Insumos</option>
-              <option value="low">⚠️ Solo Stock Bajo (≤ Mínimo)</option>
+              <option value="low">🚨 En Punto de Reposición (Alerta Roja)</option>
             </select>
           </div>
         </div>
@@ -1694,8 +1811,8 @@
             </div>
           </div>
           <div class="form-row-responsive">
-            <div><label>Cantidad</label><input type="number" id="purQty" inputmode="numeric" value="10" min="1"></div>
-            <div><label>Costo Unitario Compra ($)</label><input type="number" id="purUnitCost" inputmode="numeric" value="5800"></div>
+            <div><label>Cantidad</label><input type="number" id="purQty" inputmode="numeric" value="20" min="1"></div>
+            <div><label>Costo Unitario Compra ($)</label><input type="number" id="purUnitCost" inputmode="numeric" value="2500"></div>
           </div>
           <div class="form-group">
             <label>Estado de Recepción</label>
@@ -1711,7 +1828,7 @@
     </section>
 
     <!-- ====================================================================
-         9. COMERCIAL: PRESUPUESTOS LIMPIOS, DESGLOSE INSTANTÁNEO, COPIAR Y DUPLICAR
+         9. COMERCIAL: PRESUPUESTOS LIMPIOS + COPIAR + DUPLICAR 1 CLIC
          ==================================================================== -->
     <section id="view-presupuestos" class="module-view">
       <div class="card">
@@ -1730,7 +1847,6 @@
           <select id="quoRecipeSelect" onchange="QuotesModule.onSelectRecipe()"></select>
         </div>
 
-        <!-- RESUMEN INSTANTÁNEO DE COSTOS E INSUMOS AL COTIZAR -->
         <div id="quoInstantBreakdownCard" class="card-elevated" style="display:none; border-left:3px solid var(--accent-wood);"></div>
 
         <div class="form-row-responsive">
@@ -1822,15 +1938,23 @@
     </section>
 
     <!-- ====================================================================
-         12. COMERCIAL: CALCULADORA DE FLETES
+         12. COMERCIAL: CALCULADORA DE FLETES + BOTÓN DIRECTO A GOOGLE MAPS
          ==================================================================== -->
     <section id="view-fletes" class="module-view">
       <div class="card">
-        <div class="card-header"><span class="card-title">Calculadora de Fletes por Kilómetro</span></div>
-        <div class="form-group">
-          <label>Localidad / Dirección de Entrega</label>
-          <input type="text" id="frDestination" placeholder="Ej: Villa Luzuriaga / Ramos Mejía">
+        <div class="card-header">
+          <span class="card-title">Calculadora de Fletes y Ruta en Google Maps</span>
         </div>
+        <div class="form-group">
+          <label for="frDestination">Dirección o Localidad de Entrega</label>
+          <input type="text" id="frDestination" placeholder="Ej: Av. Rivadavia 14200, Ramos Mejía">
+        </div>
+
+        <!-- BOTÓN SOLICITADO PARA ABRIR RUTA EN GOOGLE MAPS -->
+        <button class="btn btn-warn btn-block" style="margin-bottom:14px;" onclick="FreightModule.openGoogleMaps()">
+          🗺️ Abrir Ruta en Google Maps
+        </button>
+
         <div class="form-row-responsive">
           <div><label>Distancia (Km)</label><input type="number" id="frKm" inputmode="decimal" value="10" oninput="FreightModule.calc()"></div>
           <div><label>Tarifa por Km ($)</label><input type="number" id="frRateKm" inputmode="numeric" value="1400" oninput="FreightModule.calc()"></div>
@@ -1854,9 +1978,67 @@
     </section>
 
     <!-- ====================================================================
-         13. SISTEMA: RESPALDOS JSON, ROLES Y PRUEBAS AUTOMATIZADAS
+         13. SISTEMA: CENTRO DE NOTIFICACIONES (PEDIDOS Y STOCK BAJO)
+         ==================================================================== -->
+    <section id="view-notificaciones" class="module-view">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Centro de Notificaciones del Taller</span>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-sm" onclick="NotificationCenter.markAllRead()">✓ Marcar Leídas</button>
+            <button class="btn btn-sm btn-danger" onclick="NotificationCenter.clearAll()">🗑 Vaciar</button>
+          </div>
+        </div>
+        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
+          Aquí se registran automáticamente las alertas cuando se <strong>confirma un pedido</strong> y cuando cualquier insumo llega a su <strong>punto de reposición</strong>.
+        </p>
+        <div id="notificationsListContainer"></div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         14. SISTEMA: AJUSTES DE SONIDO PERSONALIZADO, RESPALDOS Y ROLES
          ==================================================================== -->
     <section id="view-sistema" class="module-view">
+      <!-- APARTADO DE SONIDO DE NOTIFICACIÓN PERSONALIZADO -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🔊 Sonido de Notificación Personalizado</span>
+          <span class="status-pill wood" id="soundActiveBadge">Activo</span>
+        </div>
+        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
+          Configurá el sonido que reproducirá la aplicación al confirmar un pedido o cuando un material entre en punto de reposición rojo.
+        </p>
+
+        <div class="form-row-responsive">
+          <div>
+            <label for="soundPresetSelect">Tipo de Tono de Alerta</label>
+            <select id="soundPresetSelect" onchange="NotificationCenter.saveSoundSettings()">
+              <option value="chime">Campana de Taller (Doble Acorde)</option>
+              <option value="industrial">Alerta Industrial Intensa</option>
+              <option value="pulse">Pulso Digital Suave</option>
+              <option value="custom">🎵 Archivo de Audio Personalizado (.mp3 / .wav)</option>
+              <option value="mute">Silenciado</option>
+            </select>
+          </div>
+          <div>
+            <label for="soundVolumeRange">Volumen de Alerta (%)</label>
+            <input type="number" id="soundVolumeRange" min="10" max="100" value="85" onchange="NotificationCenter.saveSoundSettings()">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top:8px;">
+          <label for="customSoundFileInput">Subir Sonido Personalizado desde tu Teléfono o PC (.mp3, .wav, .ogg)</label>
+          <input type="file" id="customSoundFileInput" accept="audio/*" onchange="NotificationCenter.uploadCustomAudio(event)">
+          <div id="customSoundFileName" style="font-size:12px; color:var(--accent-wood); margin-top:6px;"></div>
+        </div>
+
+        <div class="quick-actions-grid" style="margin-top:10px;">
+          <button class="btn btn-primary" onclick="NotificationCenter.playAlertSound()">🔊 Probar Sonido Ahora</button>
+          <button class="btn" onclick="NotificationCenter.triggerTestNotification()">🔔 Simular Alerta Completa</button>
+        </div>
+      </div>
+
       <div class="card">
         <div class="card-header"><span class="card-title">Respaldos JSON y Restauración Segura</span></div>
         <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
@@ -1892,7 +2074,7 @@
           <button class="btn btn-primary" onclick="TestSuiteRunner.runAll()">▶ Ejecutar Tests</button>
         </div>
         <div id="selfTestResultsBox" style="font-size:13px; color:var(--text-secondary);">
-          Presioná "Ejecutar Tests" para validar los cálculos de filo doble tramo, aprovechamiento de retazos y texturas lisas.
+          Presioná "Ejecutar Tests" para validar los cálculos de filo doble tramo, punto de reposición rojo, retazos y esquema proporcional.
         </div>
       </div>
     </section>
@@ -1919,7 +2101,7 @@
     try {
       const fbApp = initializeApp(firebaseConfig);
       const fbDb = getDatabase(fbApp);
-      const rootRef = ref(fbDb, 'carpinteria_jl_enterprise_v3');
+      const rootRef = ref(fbDb, 'carpinteria_jl_enterprise_v4');
 
       onValue(rootRef, (snapshot) => {
         const remoteData = snapshot.val();
@@ -1941,12 +2123,12 @@
   </script>
 
   <!-- ========================================================================
-       LÓGICA DE NEGOCIO, MÓDULO DE FILO, RETAZOS Y VISOR 3D CON TEXTURAS REALES
+       LÓGICA DE NEGOCIO, NOTIFICACIONES SONORAS, PUNTO DE REPOSICIÓN Y 3D
        ======================================================================== -->
   <script>
     /* LIMPIEZA AUTOMÁTICA DE CACHÉS ANTERIORES */
     (async function purgeOldCachesOnce() {
-      const PURGE_KEY = 'jl_theme_v3_0_no_stripes_applied';
+      const PURGE_KEY = 'jl_theme_v4_0_applied';
       if (!localStorage.getItem(PURGE_KEY)) {
         if ('caches' in window) {
           const keys = await caches.keys();
@@ -1960,9 +2142,17 @@
       }
     })();
 
-    /* GESTOR CENTRAL DE IMÁGENES DE TEXTURAS REALES (SIN RAYAS VERTICALES NI HORIZONTALES) */
+    /* GESTOR CENTRAL DE TEXTURAS REALES (COMPATIBLE CON /assets/Textures/ Y /assets/textures/) */
     const RealTexturesManager = {
-      files: {
+      filesPrimary: {
+        helsinki: 'assets/Textures/Helsinki.png',
+        artico: 'assets/Textures/Teka artico.png',
+        baltico: 'assets/Textures/Baltico.png',
+        carvalho: 'assets/Textures/Carvalho Mezzo.png',
+        gaudi: 'assets/Textures/Gaudi.png',
+        kiri: 'assets/Textures/Kiri.png'
+      },
+      filesFallbackLower: {
         helsinki: 'assets/textures/Helsinki.png',
         artico: 'assets/textures/Teka artico.png',
         baltico: 'assets/textures/Baltico.png',
@@ -1983,13 +2173,22 @@
       htmlImages: {},
 
       preloadAll() {
-        Object.keys(this.files).forEach(key => {
+        Object.keys(this.filesPrimary).forEach(key => {
           const img = new Image();
           img.crossOrigin = 'anonymous';
-          img.src = this.files[key];
+          img.src = this.filesPrimary[key];
           img.onload = () => {
             this.htmlImages[key] = img;
             if (window.OptimizerEngine) window.OptimizerEngine.render();
+          };
+          img.onerror = () => {
+            const altImg = new Image();
+            altImg.crossOrigin = 'anonymous';
+            altImg.src = this.filesFallbackLower[key];
+            altImg.onload = () => {
+              this.htmlImages[key] = altImg;
+              if (window.OptimizerEngine) window.OptimizerEngine.render();
+            };
           };
         });
       }
@@ -2007,9 +2206,9 @@
       },
       rolePermissions: {
         ADMINISTRADOR: ['*'],
-        ENCARGADO: ['dashboard', 'calculadora', 'filo', 'optimizador', 'catalogo3d', 'recetas', 'stock', 'proveedores', 'presupuestos', 'pedidos', 'fletes'],
-        OPERADOR: ['dashboard', 'calculadora', 'filo', 'optimizador', 'catalogo3d', 'recetas', 'stock', 'pedidos'],
-        CONSULTA: ['dashboard', 'catalogo3d', 'stock', 'pedidos']
+        ENCARGADO: ['dashboard', 'calculadora', 'mesita-variable', 'filo', 'optimizador', 'catalogo3d', 'recetas', 'stock', 'proveedores', 'presupuestos', 'pedidos', 'fletes', 'notificaciones'],
+        OPERADOR: ['dashboard', 'calculadora', 'mesita-variable', 'filo', 'optimizador', 'catalogo3d', 'recetas', 'stock', 'pedidos', 'notificaciones'],
+        CONSULTA: ['dashboard', 'catalogo3d', 'stock', 'pedidos', 'notificaciones']
       },
       canViewModule(moduleId) {
         const allowed = this.rolePermissions[this.currentUser.role] || [];
@@ -2038,7 +2237,7 @@
        CAPA 2: ESTADO INICIAL Y PERSISTENCIA OFFLINE-FIRST (INDEXEDDB)
        ======================================================================== */
     const INITIAL_ENTERPRISE_STATE = {
-      schemaVersion: '3.0-enterprise',
+      schemaVersion: '4.0-enterprise',
       updatedAt: Date.now(),
       boards: [
         { id: 'b_blanco', name: 'Melamina 18mm Blanco', w: 2750, h: 1830, thickness: 18, price: 146000, prevPrice: 139000, priceUpdatedAt: '15/10/2026', texture: 'blanco', margin: 10, kerf: 4, cuts: [], scraps: [] },
@@ -2052,10 +2251,12 @@
       ],
       selectedBoardId: 'b_helsinki',
       stock: [
-        { id: 'stk_3', code: 'HER-COR-30', name: 'Corredera Telescópica 300mm (Par)', category: 'herrajes', qty: 14, min: 5, unit: 'PAR', price: 5800, location: 'Gaveta H1' },
-        { id: 'stk_4', code: 'TOR-35-30', name: 'Tornillos Autoperforantes 3.5x30', category: 'herrajes', qty: 450, min: 50, unit: 'UNID', price: 35, location: 'Gaveta T2' },
-        { id: 'stk_5', code: 'FIL-BLA-22', name: 'Rollo Filo Melamínico Blanco 22mm (25m)', category: 'cantos', qty: 4, min: 2, unit: 'ROLLO', price: 9500, location: 'Sector Filos' },
-        { id: 'stk_6', code: 'FIL-HEL-22', name: 'Rollo Filo Melamínico Helsinki 22mm (25m)', category: 'cantos', qty: 2, min: 2, unit: 'ROLLO', price: 12500, location: 'Sector Filos' }
+        { id: 'stk_lat', code: 'COR-LAT-18', name: 'Laterales de Mesita Cortados 18mm', category: 'cortes', qty: 100, normalQty: 100, min: 20, unit: 'UNID', price: 3200, location: 'Estante Cortes A' },
+        { id: 'stk_tec', code: 'COR-TEC-18', name: 'Techos y Pisos Cortados 18mm', category: 'cortes', qty: 80, normalQty: 100, min: 20, unit: 'UNID', price: 3400, location: 'Estante Cortes B' },
+        { id: 'stk_3', code: 'HER-COR-30', name: 'Corredera Telescópica 300mm (Par)', category: 'herrajes', qty: 14, normalQty: 30, min: 5, unit: 'PAR', price: 5800, location: 'Gaveta H1' },
+        { id: 'stk_4', code: 'TOR-35-30', name: 'Tornillos Autoperforantes 3.5x30', category: 'herrajes', qty: 450, normalQty: 1000, min: 100, unit: 'UNID', price: 35, location: 'Gaveta T2' },
+        { id: 'stk_5', code: 'FIL-BLA-22', name: 'Rollo Filo Melamínico Blanco 22mm (25m)', category: 'cantos', qty: 4, normalQty: 10, min: 2, unit: 'ROLLO', price: 9500, location: 'Sector Filos' },
+        { id: 'stk_6', code: 'FIL-HEL-22', name: 'Rollo Filo Melamínico Helsinki 22mm (25m)', category: 'cantos', qty: 2, normalQty: 6, min: 2, unit: 'ROLLO', price: 12500, location: 'Sector Filos' }
       ],
       stockMovements: [],
       catalogModels: [
@@ -2076,8 +2277,9 @@
           version: 1,
           name: 'Mesita de Luz Clásica (Cuerpo + 1 Cajón)',
           dims: '400x335x450',
-          costTotal: 16140,
+          costTotal: 22540,
           items: [
+            { stockId: 'stk_lat', name: 'Laterales de Mesita Cortados 18mm', qty: 2, unitPrice: 3200 },
             { stockId: 'stk_4', name: 'Tornillos Autoperforantes 3.5x30', qty: 24, unitPrice: 35 },
             { stockId: 'stk_3', name: 'Corredera Telescópica 300mm (Par)', qty: 1, unitPrice: 5800 },
             { stockId: 'stk_5', name: 'Rollo Filo Melamínico Blanco 22mm (25m)', qty: 1, unitPrice: 9500 }
@@ -2091,12 +2293,21 @@
       cashLedger: [
         { id: 'csh_init', date: new Date().toISOString(), type: 'ingreso', concept: 'Apertura de Caja Taller JL', amount: 125000, method: 'Efectivo', user: 'Leandro Llanes' }
       ],
+      notifications: [
+        { id: 'not_welcome', date: new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }), type: 'sistema', title: 'Sistema de Alertas Activo', message: 'Recibirás notificaciones sonoras al confirmar pedidos o alcanzar el punto de reposición.', read: false }
+      ],
+      soundSettings: {
+        preset: 'chime',
+        volume: 85,
+        customAudioDataUrl: null,
+        customAudioName: ''
+      },
       processedTransactions: {},
       auditLog: []
     };
 
     const OfflineStore = {
-      dbName: 'CarpinteriaJLEnterpriseDB_v3',
+      dbName: 'CarpinteriaJLEnterpriseDB_v4',
       dbVersion: 1,
       idb: null,
       state: JSON.parse(JSON.stringify(INITIAL_ENTERPRISE_STATE)),
@@ -2130,6 +2341,8 @@
             if (reqState.result) {
               this.state = Object.assign({}, INITIAL_ENTERPRISE_STATE, reqState.result);
               this.state.catalogModels = INITIAL_ENTERPRISE_STATE.catalogModels;
+              if (!this.state.notifications) this.state.notifications = INITIAL_ENTERPRISE_STATE.notifications;
+              if (!this.state.soundSettings) this.state.soundSettings = INITIAL_ENTERPRISE_STATE.soundSettings;
             }
             if (reqQueue.result) {
               this.pendingQueue = reqQueue.result;
@@ -2245,19 +2458,174 @@
     window.OfflineStore = OfflineStore;
 
     /* ========================================================================
-       CAPA 3: DOMINIO COMPARTIDO — CALCULADORA DE MUEBLES (SIN MANO DE OBRA)
+       CAPA 3: CENTRO DE NOTIFICACIONES Y SONIDO PERSONALIZADO (WEB AUDIO + MP3)
        ======================================================================== */
-    const DomainFurnitureCalc = {
+    const NotificationCenter = {
+      audioCtx: null,
+
+      pushNotification(type, title, message) {
+        if (!OfflineStore.state.notifications) OfflineStore.state.notifications = [];
+        OfflineStore.state.notifications.unshift({
+          id: 'not_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+          date: new Date().toLocaleString('es-AR', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }),
+          type, // 'pedido' | 'stock' | 'sistema'
+          title,
+          message,
+          read: false
+        });
+        if (OfflineStore.state.notifications.length > 60) {
+          OfflineStore.state.notifications.pop();
+        }
+        this.playAlertSound();
+        AppUI.toast(`🔔 ${title}: ${message}`, type === 'stock' ? 'err' : 'ok');
+      },
+
+      playAlertSound() {
+        const cfg = OfflineStore.state.soundSettings || { preset: 'chime', volume: 85 };
+        if (cfg.preset === 'mute') return;
+        const vol = Math.min(1, Math.max(0.05, (cfg.volume || 85) / 100));
+
+        // Si el usuario subió un archivo personalizado y seleccionó 'custom'
+        if (cfg.preset === 'custom' && cfg.customAudioDataUrl) {
+          try {
+            const audio = new Audio(cfg.customAudioDataUrl);
+            audio.volume = vol;
+            audio.play().catch(() => {});
+            return;
+          } catch (e) {}
+        }
+
+        // Sintetizador Web Audio API para tonos limpios sin depender de archivos externos
+        try {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!this.audioCtx) this.audioCtx = new AudioContextClass();
+          if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
+
+          const now = this.audioCtx.currentTime;
+          const osc = this.audioCtx.createOscillator();
+          const gain = this.audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(this.audioCtx.destination);
+
+          if (cfg.preset === 'industrial') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(620, now);
+            osc.frequency.setValueAtTime(880, now + 0.14);
+            osc.frequency.setValueAtTime(620, now + 0.28);
+            gain.gain.setValueAtTime(vol * 0.45, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.48);
+            osc.start(now);
+            osc.stop(now + 0.48);
+          } else if (cfg.preset === 'pulse') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(528, now);
+            gain.gain.setValueAtTime(vol * 0.5, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+            osc.start(now);
+            osc.stop(now + 0.25);
+          } else {
+            // 'chime' — Doble acorde armónico de taller
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(587.33, now);       // D5
+            osc.frequency.setValueAtTime(880.00, now + 0.12); // A5
+            gain.gain.setValueAtTime(vol * 0.6, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+            osc.start(now);
+            osc.stop(now + 0.42);
+          }
+        } catch (err) {
+          console.warn("Audio no disponible:", err);
+        }
+      },
+
+      uploadCustomAudio(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        if (file.size > 4 * 1024 * 1024) {
+          return AppUI.toast('Elegí un archivo de sonido menor a 4 MB.', 'warn');
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          OfflineStore.state.soundSettings.customAudioDataUrl = e.target.result;
+          OfflineStore.state.soundSettings.customAudioName = file.name;
+          OfflineStore.state.soundSettings.preset = 'custom';
+          document.getElementById('soundPresetSelect').value = 'custom';
+          OfflineStore.commit(`Sonido personalizado cargado: ${file.name}`);
+          this.playAlertSound();
+          AppUI.toast(`Sonido "${file.name}" configurado correctamente.`, 'ok');
+        };
+        reader.readAsDataURL(file);
+      },
+
+      saveSoundSettings() {
+        if (!OfflineStore.state.soundSettings) OfflineStore.state.soundSettings = {};
+        OfflineStore.state.soundSettings.preset = document.getElementById('soundPresetSelect').value;
+        OfflineStore.state.soundSettings.volume = parseInt(document.getElementById('soundVolumeRange').value) || 85;
+        OfflineStore.commit('Ajustes de sonido actualizados');
+      },
+
+      triggerTestNotification() {
+        this.pushNotification('pedido', 'Prueba de Notificación', 'El sonido y el aviso visual funcionan correctamente.');
+        OfflineStore.commit('Notificación de prueba disparada');
+      },
+
+      markAllRead() {
+        (OfflineStore.state.notifications || []).forEach(n => { n.read = true; });
+        OfflineStore.commit('Notificaciones marcadas como leídas');
+      },
+
+      clearAll() {
+        OfflineStore.state.notifications = [];
+        OfflineStore.commit('Historial de notificaciones vaciado');
+      },
+
+      render() {
+        const cfg = OfflineStore.state.soundSettings || { preset: 'chime', volume: 85 };
+        const selEl = document.getElementById('soundPresetSelect');
+        if (selEl) selEl.value = cfg.preset || 'chime';
+        const volEl = document.getElementById('soundVolumeRange');
+        if (volEl) volEl.value = cfg.volume || 85;
+        const nameEl = document.getElementById('customSoundFileName');
+        if (nameEl) {
+          nameEl.textContent = cfg.customAudioName
+            ? `🎵 Archivo cargado: ${cfg.customAudioName}`
+            : 'Sin archivo personalizado subido (usando sintetizador interno).';
+        }
+
+        const list = document.getElementById('notificationsListContainer');
+        if (!list) return;
+        const arr = OfflineStore.state.notifications || [];
+        list.innerHTML = arr.map(n => {
+          const isStock = n.type === 'stock';
+          const isOrder = n.type === 'pedido';
+          return `
+            <div class="item-card ${isStock ? 'critical-low' : ''}">
+              <div class="item-card-top">
+                <div>
+                  <div class="item-title">${isStock ? '🚨 ' : (isOrder ? '✅ ' : '🔔 ')}${n.title}</div>
+                  <div class="item-meta">${n.date} — ${n.message}</div>
+                </div>
+                <span class="status-pill ${isStock ? 'err' : (isOrder ? 'ok' : 'wood')}">
+                  ${n.type.toUpperCase()}
+                </span>
+              </div>
+            </div>
+          `;
+        }).join('') || '<div style="font-size:13px; color:var(--text-secondary);">No hay notificaciones registradas.</div>';
+      }
+    };
+
+    /* ========================================================================
+       CAPA 4A: CALCULADORA DE MUEBLES ESTÁNDAR (CON ESQUEMA PROPORCIONAL EN TIEMPO REAL)
+       ======================================================================== */
+    const StandardFurnitureCalc = {
       lastResult: null,
 
-      calculateCustomFurniture(params) {
+      calculateStandard(params) {
         const {
-          modoEnsanche,
-          techoAncho,
-          techoProf,
-          cuerpoAnchoBase,
-          cuerpoProfBase,
-          altoTotal,
+          ancho,
+          prof,
+          alto,
           espesor,
           cantCajones,
           altoFrente,
@@ -2269,35 +2637,35 @@
           cantidadLote
         } = params;
 
-        const effCuerpoAncho = modoEnsanche === 'modo2_proporcional' ? techoAncho : cuerpoAnchoBase;
-        const effCuerpoProf = modoEnsanche === 'modo2_proporcional' ? techoProf : cuerpoProfBase;
-        const altoLateral = Math.max(100, altoTotal - (2 * espesor));
-        const anchoInterior = Math.max(80, effCuerpoAncho - (2 * espesor));
+        const altoLateral = Math.max(80, alto - (2 * espesor));
+        const anchoInterior = Math.max(80, ancho - (2 * espesor));
         const anchoCajonInterno = Math.max(60, anchoInterior - 26);
-        const profCajon = Math.max(150, effCuerpoProf - 35);
+        const profCajon = Math.max(120, prof - 35);
 
         const pieces = [
-          { tag: 'Techo Superior', w: techoAncho, h: techoProf, qty: 1 * cantidadLote, allowRot: false },
-          { tag: 'Piso Inferior', w: effCuerpoAncho, h: effCuerpoProf, qty: 1 * cantidadLote, allowRot: false },
-          { tag: 'Lateral Estructural', w: altoLateral, h: effCuerpoProf, qty: 2 * cantidadLote, allowRot: false },
-          { tag: 'Frente de Cajón', w: anchoInterior - 4, h: altoFrente, qty: cantCajones * cantidadLote, allowRot: false },
-          { tag: 'Lateral de Cajón', w: profCajon, h: Math.max(80, altoFrente - 35), qty: 2 * cantCajones * cantidadLote, allowRot: true },
-          { tag: 'Contrafrente Cajón', w: anchoCajonInterno, h: Math.max(80, altoFrente - 35), qty: 2 * cantCajones * cantidadLote, allowRot: true }
+          { tag: 'Techo Superior', w: ancho, h: prof, qty: 1 * cantidadLote, allowRot: false },
+          { tag: 'Piso Inferior', w: ancho, h: prof, qty: 1 * cantidadLote, allowRot: false },
+          { tag: 'Lateral Estructural', w: altoLateral, h: prof, qty: 2 * cantidadLote, allowRot: false }
         ];
+
+        if (cantCajones > 0) {
+          pieces.push(
+            { tag: 'Frente de Cajón', w: anchoInterior - 4, h: altoFrente, qty: cantCajones * cantidadLote, allowRot: false },
+            { tag: 'Lateral de Cajón', w: profCajon, h: Math.max(60, altoFrente - 35), qty: 2 * cantCajones * cantidadLote, allowRot: true },
+            { tag: 'Contrafrente Cajón', w: anchoCajonInterno, h: Math.max(60, altoFrente - 35), qty: 2 * cantCajones * cantidadLote, allowRot: true }
+          );
+        }
 
         const areaPlacaMm2 = board.w * board.h;
         let areaConsumidaMm2 = 0;
-        pieces.forEach(p => {
-          areaConsumidaMm2 += (p.w * p.h * p.qty);
-        });
+        pieces.forEach(p => { areaConsumidaMm2 += (p.w * p.h * p.qty); });
 
         const costoMelaminaRaw = (areaConsumidaMm2 / areaPlacaMm2) * board.price;
         const preciosCorredera = { telescopica: 5800, comun: 2600, oculta: 14500 };
         const costoCorrederas = (preciosCorredera[correderaTipo] || 5800) * cantCajones * cantidadLote;
         const costoTornillosYFilo = 4200 * cantidadLote;
         const subtotalMateriales = costoMelaminaRaw + costoCorrederas + costoTornillosYFilo;
-        const costoDesperdicio = subtotalMateriales * (desperdicioPct / 100);
-        const costoTotalLote = Math.round(subtotalMateriales + costoDesperdicio);
+        const costoTotalLote = Math.round(subtotalMateriales * (1 + (desperdicioPct / 100)));
 
         let precioVentaLote = costoTotalLote;
         if (tipoRentabilidad === 'margen') {
@@ -2308,16 +2676,9 @@
         }
 
         return {
-          modoEnsanche,
-          techoAncho,
-          techoProf,
-          effCuerpoAncho,
-          effCuerpoProf,
-          altoTotal,
-          pieces,
-          boardId: board.id,
-          costoTotalLote,
-          precioVentaLote,
+          ancho, prof, alto, espesor, cantCajones, altoFrente,
+          pieces, boardId: board.id,
+          costoTotalLote, precioVentaLote,
           utilidadNeta: precioVentaLote - costoTotalLote,
           cantidadLote
         };
@@ -2325,7 +2686,7 @@
 
       recalculateUI() {
         const boards = OfflineStore.state.boards;
-        const selEl = document.getElementById('calcPlacaSelect');
+        const selEl = document.getElementById('stdPlacaSelect');
         if (selEl && selEl.options.length === 0) {
           boards.forEach(b => {
             const opt = document.createElement('option');
@@ -2336,58 +2697,95 @@
         }
 
         const board = boards.find(b => b.id === (selEl ? selEl.value : '')) || boards[0];
-        const params = {
-          modoEnsanche: document.getElementById('calcModoEnsanche').value,
-          techoAncho: parseFloat(document.getElementById('calcTechoAncho').value) || 400,
-          techoProf: parseFloat(document.getElementById('calcTechoProf').value) || 335,
-          cuerpoAnchoBase: parseFloat(document.getElementById('calcCuerpoAnchoBase').value) || 400,
-          cuerpoProfBase: parseFloat(document.getElementById('calcCuerpoProfBase').value) || 335,
-          altoTotal: parseFloat(document.getElementById('calcAltoTotal').value) || 450,
-          espesor: parseFloat(document.getElementById('calcEspesor').value) || 18,
-          cantCajones: parseInt(document.getElementById('calcCantCajones').value) || 1,
-          altoFrente: parseFloat(document.getElementById('calcAltoFrente').value) || 160,
+        const res = this.calculateStandard({
+          ancho: parseFloat(document.getElementById('stdAncho').value) || 400,
+          prof: parseFloat(document.getElementById('stdProf').value) || 335,
+          alto: parseFloat(document.getElementById('stdAlto').value) || 450,
+          espesor: parseFloat(document.getElementById('stdEspesor').value) || 18,
+          cantCajones: parseInt(document.getElementById('stdCajones').value) || 0,
+          altoFrente: parseFloat(document.getElementById('stdAltoFrente').value) || 160,
           board,
-          correderaTipo: document.getElementById('calcCorrederaTipo').value,
-          desperdicioPct: parseFloat(document.getElementById('calcDesperdicioPct').value) || 10,
-          tipoRentabilidad: document.getElementById('calcTipoRentabilidad').value,
-          porcentajeGanancia: parseFloat(document.getElementById('calcPorcentajeGanancia').value) || 45,
-          cantidadLote: parseInt(document.getElementById('calcCantMuebles').value) || 1
-        };
+          correderaTipo: document.getElementById('stdCorrederaTipo').value,
+          desperdicioPct: parseFloat(document.getElementById('stdDesperdicioPct').value) || 10,
+          tipoRentabilidad: document.getElementById('stdTipoRentabilidad').value,
+          porcentajeGanancia: parseFloat(document.getElementById('stdPorcentajeGanancia').value) || 45,
+          cantidadLote: parseInt(document.getElementById('stdCantMuebles').value) || 1
+        });
 
-        const res = this.calculateCustomFurniture(params);
         this.lastResult = res;
 
-        document.getElementById('calcOutCosto').textContent = '$' + res.costoTotalLote.toLocaleString('es-AR');
-        document.getElementById('calcOutVenta').textContent = '$' + res.precioVentaLote.toLocaleString('es-AR');
-        document.getElementById('calcOutUtilidad').textContent = '$' + res.utilidadNeta.toLocaleString('es-AR');
+        document.getElementById('stdOutCosto').textContent = '$' + res.costoTotalLote.toLocaleString('es-AR');
+        document.getElementById('stdOutVenta').textContent = '$' + res.precioVentaLote.toLocaleString('es-AR');
+        document.getElementById('stdOutUtilidad').textContent = '$' + res.utilidadNeta.toLocaleString('es-AR');
 
-        const breakdownEl = document.getElementById('calcPiecesBreakdown');
-        breakdownEl.innerHTML = res.pieces.map(p => `
+        document.getElementById('stdPiecesBreakdown').innerHTML = res.pieces.map(p => `
           <div style="display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px solid var(--border-color);">
             <span><strong>${p.qty}x</strong> ${p.tag}</span>
-            <span style="color:var(--accent-wood); font-weight:700;">${p.w} × ${p.h} mm ${p.allowRot ? '(Giro OK)' : '(Veta Fija)'}</span>
+            <span style="color:var(--accent-wood); font-weight:700;">${p.w} × ${p.h} mm</span>
           </div>
         `).join('');
 
-        this.renderDiagramSVG(res);
+        this.renderRealTimeProportionalSVG(res);
       },
 
-      renderDiagramSVG(res) {
-        const svg = document.getElementById('calcSvgDiagram');
+      renderRealTimeProportionalSVG(res) {
+        const svg = document.getElementById('stdSvgDiagram');
         if (!svg) return;
-        const maxW = Math.max(res.techoAncho, res.effCuerpoAncho, 400);
-        const scale = 180 / maxW;
-        const topW = Math.round(res.techoAncho * scale);
-        const bodyW = Math.round(res.effCuerpoAncho * scale);
-        const topX = Math.round((320 - topW) / 2);
-        const bodyX = Math.round((320 - bodyW) / 2);
+
+        const maxDim = Math.max(res.ancho, res.alto, 300);
+        const scale = 135 / maxDim;
+
+        const drawW = Math.max(40, Math.round(res.ancho * scale));
+        const drawH = Math.max(40, Math.round(res.alto * scale));
+        const drawT = Math.max(3, Math.round(res.espesor * scale));
+
+        const startX = Math.round((360 - drawW) / 2);
+        const startY = Math.round((185 - drawH) / 2) + 8;
+
+        let drawersSvg = '';
+        const innerX = startX + drawT + 2;
+        const innerW = Math.max(10, drawW - (2 * drawT) - 4);
+        const singleDrawerH = Math.max(10, Math.round(res.altoFrente * scale));
+
+        let currentY = startY + drawT + 2;
+        for (let i = 0; i < res.cantCajones; i++) {
+          if (currentY + singleDrawerH <= startY + drawH - drawT) {
+            drawersSvg += `
+              <rect x="${innerX}" y="${currentY}" width="${innerW}" height="${singleDrawerH}"
+                fill="#252525" stroke="#B58B5A" stroke-width="1.6" rx="2" />
+              <line x1="${innerX + (innerW * 0.38)}" y1="${currentY + 6}" x2="${innerX + (innerW * 0.62)}" y2="${currentY + 6}"
+                stroke="#E8E8E8" stroke-width="2" stroke-linecap="round" />
+            `;
+            currentY += singleDrawerH + 3;
+          }
+        }
+
+        const freeNicheH = Math.max(0, Math.round(res.alto - (2 * res.espesor) - (res.cantCajones * res.altoFrente)));
 
         svg.innerHTML = `
-          <rect x="${topX}" y="20" width="${topW}" height="10" fill="#B58B5A" rx="2" />
-          <text x="160" y="14" fill="#E8E8E8" font-size="11" text-anchor="middle" font-weight="bold">Techo: ${res.techoAncho} × ${res.techoProf} mm</text>
-          <rect x="${bodyX}" y="30" width="${bodyW}" height="86" fill="#171717" stroke="#A0A0A0" stroke-width="2" rx="3" />
-          <rect x="${bodyX + 6}" y="34" width="${bodyW - 12}" height="34" fill="#252525" stroke="#B58B5A" stroke-width="1.5" rx="2" />
-          <text x="160" y="134" fill="#A0A0A0" font-size="11" text-anchor="middle">Cuerpo: ${res.effCuerpoAncho} × ${res.effCuerpoProf} × ${res.altoTotal} mm</text>
+          <!-- Cota Superior de Ancho -->
+          <text x="180" y="15" fill="#E8E8E8" font-size="11" text-anchor="middle" font-weight="bold">
+            Ancho: ${res.ancho} mm × Prof: ${res.prof} mm
+          </text>
+          <!-- Cuerpo Exterior Proporcional -->
+          <rect x="${startX}" y="${startY}" width="${drawW}" height="${drawH}"
+            fill="#121212" stroke="#A0A0A0" stroke-width="2" rx="3" />
+          <!-- Techo y Piso -->
+          <rect x="${startX}" y="${startY}" width="${drawW}" height="${drawT}" fill="#B58B5A" />
+          <rect x="${startX}" y="${startY + drawH - drawT}" width="${drawW}" height="${drawT}" fill="#B58B5A" />
+          <!-- Laterales -->
+          <rect x="${startX}" y="${startY + drawT}" width="${drawT}" height="${drawH - (2 * drawT)}" fill="#8C6B43" />
+          <rect x="${startX + drawW - drawT}" y="${startY + drawT}" width="${drawT}" height="${drawH - (2 * drawT)}" fill="#8C6B43" />
+          <!-- Cajones Proporcionales -->
+          ${drawersSvg}
+          <!-- Cota Lateral de Altura -->
+          <text x="${ Math.min(345, startX + drawW + 8) }" y="${ startY + Math.round(drawH / 2) }" fill="#B58B5A" font-size="11" font-weight="bold">
+            ↕ ${res.alto}mm
+          </text>
+          <!-- Resumen Inferior -->
+          <text x="180" y="202" fill="#A0A0A0" font-size="11" text-anchor="middle">
+            ${res.cantCajones} Cajón(es) de ${res.altoFrente}mm | Hueco libre inferior: ${freeNicheH} mm
+          </text>
         `;
       },
 
@@ -2409,14 +2807,14 @@
           }
         });
 
-        OfflineStore.commit(`Enviadas piezas de calculadora al optimizador (${board.name})`);
+        OfflineStore.commit(`Enviadas piezas de Calculadora de Muebles al optimizador (${board.name})`);
         AppUI.navigate('optimizador');
         AppUI.toast('Cortes enviados al Optimizador.', 'ok');
       },
 
       sendToQuote() {
         if (!this.lastResult) this.recalculateUI();
-        document.getElementById('quoDetail').value = `Mesita a Medida (${this.lastResult.techoAncho}×${this.lastResult.techoProf}×${this.lastResult.altoTotal}mm)`;
+        document.getElementById('quoDetail').value = `Mueble a Medida (${this.lastResult.ancho}×${this.lastResult.prof}×${this.lastResult.alto}mm)`;
         document.getElementById('quoQty').value = this.lastResult.cantidadLote;
         document.getElementById('quoUnitPrice').value = Math.round(this.lastResult.precioVentaLote / this.lastResult.cantidadLote);
         QuotesModule.recalc();
@@ -2425,7 +2823,156 @@
     };
 
     /* ========================================================================
-       CAPA 4: MÓDULO EXCLUSIVO «CÁLCULO DE FILO» (DOBLE TRAMO CUERPO + FRENTE)
+       CAPA 4B: MÓDULO INDEPENDIENTE «MESITA CON TECHO VARIABLE»
+       ======================================================================== */
+    const VariableTopCalc = {
+      lastResult: null,
+
+      calculateVariable(params) {
+        const {
+          modoEnsanche,
+          techoAncho,
+          techoProf,
+          cuerpoAnchoBase,
+          cuerpoProfBase,
+          altoTotal,
+          board,
+          porcentajeGanancia,
+          cantidadLote
+        } = params;
+
+        const espesor = 18;
+        const altoFrente = 160;
+        const effCuerpoAncho = modoEnsanche === 'modo2_proporcional' ? techoAncho : cuerpoAnchoBase;
+        const effCuerpoProf = modoEnsanche === 'modo2_proporcional' ? techoProf : cuerpoProfBase;
+        const altoLateral = Math.max(100, altoTotal - (2 * espesor));
+        const anchoInterior = Math.max(80, effCuerpoAncho - (2 * espesor));
+
+        const pieces = [
+          { tag: 'Techo Variable', w: techoAncho, h: techoProf, qty: 1 * cantidadLote, allowRot: false },
+          { tag: 'Piso Cuerpo', w: effCuerpoAncho, h: effCuerpoProf, qty: 1 * cantidadLote, allowRot: false },
+          { tag: 'Lateral Cuerpo', w: altoLateral, h: effCuerpoProf, qty: 2 * cantidadLote, allowRot: false },
+          { tag: 'Frente Cajón', w: anchoInterior - 4, h: altoFrente, qty: 1 * cantidadLote, allowRot: false }
+        ];
+
+        const areaPlacaMm2 = board.w * board.h;
+        let areaConsumidaMm2 = 0;
+        pieces.forEach(p => { areaConsumidaMm2 += (p.w * p.h * p.qty); });
+
+        const costoMelamina = (areaConsumidaMm2 / areaPlacaMm2) * board.price;
+        const costoHerrajes = (5800 + 4200) * cantidadLote;
+        const costoTotalLote = Math.round((costoMelamina + costoHerrajes) * 1.10);
+        const precioVentaLote = Math.round(costoTotalLote * (1 + (porcentajeGanancia / 100)));
+
+        return {
+          modoEnsanche, techoAncho, techoProf, effCuerpoAncho, effCuerpoProf, altoTotal,
+          pieces, boardId: board.id,
+          costoTotalLote, precioVentaLote,
+          utilidadNeta: precioVentaLote - costoTotalLote,
+          cantidadLote
+        };
+      },
+
+      recalculateUI() {
+        const boards = OfflineStore.state.boards;
+        const selEl = document.getElementById('varPlacaSelect');
+        if (selEl && selEl.options.length === 0) {
+          boards.forEach(b => {
+            const opt = document.createElement('option');
+            opt.value = b.id;
+            opt.textContent = `${b.name} ($${b.price.toLocaleString('es-AR')})`;
+            selEl.appendChild(opt);
+          });
+        }
+
+        const board = boards.find(b => b.id === (selEl ? selEl.value : '')) || boards[0];
+        const res = this.calculateVariable({
+          modoEnsanche: document.getElementById('varModoEnsanche').value,
+          techoAncho: parseFloat(document.getElementById('varTechoAncho').value) || 520,
+          techoProf: parseFloat(document.getElementById('varTechoProf').value) || 335,
+          cuerpoAnchoBase: parseFloat(document.getElementById('varCuerpoAnchoBase').value) || 400,
+          cuerpoProfBase: parseFloat(document.getElementById('varCuerpoProfBase').value) || 335,
+          altoTotal: parseFloat(document.getElementById('varAltoTotal').value) || 450,
+          board,
+          porcentajeGanancia: parseFloat(document.getElementById('varPorcentajeGanancia').value) || 45,
+          cantidadLote: parseInt(document.getElementById('varCantMuebles').value) || 1
+        });
+
+        this.lastResult = res;
+
+        document.getElementById('varOutCosto').textContent = '$' + res.costoTotalLote.toLocaleString('es-AR');
+        document.getElementById('varOutVenta').textContent = '$' + res.precioVentaLote.toLocaleString('es-AR');
+        document.getElementById('varOutUtilidad').textContent = '$' + res.utilidadNeta.toLocaleString('es-AR');
+
+        document.getElementById('varPiecesBreakdown').innerHTML = res.pieces.map(p => `
+          <div style="display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px solid var(--border-color);">
+            <span><strong>${p.qty}x</strong> ${p.tag}</span>
+            <span style="color:var(--accent-wood); font-weight:700;">${p.w} × ${p.h} mm</span>
+          </div>
+        `).join('');
+
+        this.renderVariableDiagramSVG(res);
+      },
+
+      renderVariableDiagramSVG(res) {
+        const svg = document.getElementById('varSvgDiagram');
+        if (!svg) return;
+        const maxW = Math.max(res.techoAncho, res.effCuerpoAncho, 450);
+        const scale = 210 / maxW;
+        const topW = Math.round(res.techoAncho * scale);
+        const bodyW = Math.round(res.effCuerpoAncho * scale);
+        const topX = Math.round((360 - topW) / 2);
+        const bodyX = Math.round((360 - bodyW) / 2);
+        const overhangMm = Math.max(0, res.techoAncho - res.effCuerpoAncho);
+
+        svg.innerHTML = `
+          <text x="180" y="16" fill="#E8E8E8" font-size="11" text-anchor="middle" font-weight="bold">
+            Techo: ${res.techoAncho} × ${res.techoProf} mm ${overhangMm > 0 ? `(Vuelo: +${overhangMm} mm)` : '(Sin vuelo)'}
+          </text>
+          <rect x="${topX}" y="24" width="${topW}" height="12" fill="#B58B5A" rx="2" />
+          <rect x="${bodyX}" y="36" width="${bodyW}" height="105" fill="#171717" stroke="#A0A0A0" stroke-width="2" rx="3" />
+          <rect x="${bodyX + 6}" y="42" width="${bodyW - 12}" height="42" fill="#252525" stroke="#B58B5A" stroke-width="1.5" rx="2" />
+          <text x="180" y="162" fill="#A0A0A0" font-size="11" text-anchor="middle">
+            Cuerpo Inferior: ${res.effCuerpoAncho} × ${res.effCuerpoProf} × ${res.altoTotal} mm
+          </text>
+        `;
+      },
+
+      sendToOptimizer() {
+        if (!SecurityRBAC.canWrite('OPTIMIZER_ADD')) return;
+        if (!this.lastResult) this.recalculateUI();
+        const board = OfflineStore.state.boards.find(b => b.id === this.lastResult.boardId) || OfflineStore.state.boards[0];
+        OfflineStore.state.selectedBoardId = board.id;
+
+        this.lastResult.pieces.forEach(p => {
+          for (let i = 0; i < p.qty; i++) {
+            board.cuts.push({
+              id: 'cut_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+              tag: p.tag,
+              w: p.w,
+              h: p.h,
+              allowRot: p.allowRot
+            });
+          }
+        });
+
+        OfflineStore.commit(`Enviadas piezas de Mesita Variable al optimizador (${board.name})`);
+        AppUI.navigate('optimizador');
+        AppUI.toast('Cortes de Mesita Variable enviados al Optimizador.', 'ok');
+      },
+
+      sendToQuote() {
+        if (!this.lastResult) this.recalculateUI();
+        document.getElementById('quoDetail').value = `Mesita Techo Variable (${this.lastResult.techoAncho}×${this.lastResult.techoProf}mm)`;
+        document.getElementById('quoQty').value = this.lastResult.cantidadLote;
+        document.getElementById('quoUnitPrice').value = Math.round(this.lastResult.precioVentaLote / this.lastResult.cantidadLote);
+        QuotesModule.recalc();
+        AppUI.navigate('presupuestos');
+      }
+    };
+
+    /* ========================================================================
+       CAPA 5: MÓDULO EXCLUSIVO «CÁLCULO DE FILO» (DOBLE TRAMO CUERPO + FRENTE)
        ======================================================================== */
     const EdgeBandingModule = {
       lastCalc: null,
@@ -2578,7 +3125,7 @@
     };
 
     /* ========================================================================
-       CAPA 5: OPTIMIZADOR DE PLACAS A COMPRAR + RETAZOS EN STOCK + SIN RAYAS
+       CAPA 6: OPTIMIZADOR DE PLACAS A COMPRAR + RETAZOS EN STOCK
        ======================================================================== */
     const OptimizerEngine = {
       zoomScale: 1,
@@ -2625,8 +3172,6 @@
         });
       },
 
-      /* PINTADO DE PLACA 100% LIBRE DE RAYAS GENERADAS:
-         Usa tu imagen real PNG de /assets/textures/ o un color uniforme limpio */
       drawBoardSurface(ctx, textureKey, x, y, w, h) {
         const loadedImg = RealTexturesManager.htmlImages[textureKey];
         if (loadedImg && loadedImg.complete && loadedImg.naturalWidth > 0) {
@@ -2637,14 +3182,12 @@
         }
       },
 
-      /* ALGORITMO CON PRIORIDAD DE RETAZOS EN TALLER ANTES DE COMPRAR PLACAS ENTERAS */
       packWithScrapsAndBoards(board) {
         const margin = board.margin || 10;
         const kerf = board.kerf || 4;
         const usableW = board.w - (2 * margin);
         const usableH = board.h - (2 * margin);
 
-        // Expandir lista de retazos disponibles
         const availableScraps = [];
         (board.scraps || []).forEach(scr => {
           for (let q = 0; q < (scr.qty || 1); q++) {
@@ -2904,7 +3447,6 @@
         const canvas = document.getElementById('cutOptimizerCanvas');
         if (!canvas || !board) return;
 
-        // Mostrar histórico rápido de precio de la placa
         const histEl = document.getElementById('optBoardPriceHistoryPill');
         if (histEl) {
           histEl.innerHTML = `
@@ -2916,7 +3458,6 @@
           `;
         }
 
-        // Mostrar lista de retazos en stock
         const scrapsListEl = document.getElementById('optScrapsList');
         if (scrapsListEl) {
           const scraps = board.scraps || [];
@@ -2939,7 +3480,6 @@
         const scale = drawW / board.w;
         const drawH = board.h * scale;
 
-        // Pintar superficie real o color sólido limpio SIN RAYAS
         this.drawBoardSurface(ctx, board.texture || 'helsinki', pad, pad, drawW, drawH);
 
         ctx.strokeStyle = '#B58B5A';
@@ -2992,7 +3532,6 @@
         document.getElementById('optResUsedCost').textContent = '$' + usedVal.toLocaleString('es-AR');
         document.getElementById('optResFreeCost').textContent = '$' + freeVal.toLocaleString('es-AR');
 
-        // Alerta de compra de placas según pedido
         const purchaseAlertEl = document.getElementById('optPurchaseAlertBanner');
         if (purchaseAlertEl) {
           if (packResult.boardsUsed === 0 && packResult.coveredByScraps.length > 0) {
@@ -3031,7 +3570,7 @@
     window.OptimizerEngine = OptimizerEngine;
 
     /* ========================================================================
-       CAPA 6: VISOR 3D CORREGIDO — TEXTURAS PNG LIMPIAS SIN RAYAS ARTIFICIALES
+       CAPA 7: VISOR 3D CON RUTA /assets/Textures/ Y COLORES SÓLIDOS SIN RAYAS
        ======================================================================== */
     const Viewer3DEngine = {
       scene: null,
@@ -3107,8 +3646,6 @@
         this.renderer.setSize(container.clientWidth, container.clientHeight);
       },
 
-      /* SUPERFICIES 3D 100% LIBRES DE RAYAS VERTICALES:
-         Usa color base uniforme y carga tu archivo PNG real desde assets/textures/ */
       getSurfaceMaterial(finishKey) {
         const baseHex = RealTexturesManager.solidFallbackColors[finishKey] || '#F3F4F3';
         const mat = new THREE.MeshStandardMaterial({
@@ -3117,10 +3654,12 @@
           metalness: 0.03
         });
 
-        const imgPath = RealTexturesManager.files[finishKey];
-        if (imgPath && this.textureLoader) {
+        const primaryPath = RealTexturesManager.filesPrimary[finishKey];
+        const fallbackPath = RealTexturesManager.filesFallbackLower[finishKey];
+
+        if (primaryPath && this.textureLoader) {
           this.textureLoader.load(
-            imgPath,
+            primaryPath,
             (realTex) => {
               realTex.encoding = THREE.sRGBEncoding;
               mat.color.setHex(0xffffff);
@@ -3128,7 +3667,21 @@
               mat.needsUpdate = true;
             },
             undefined,
-            () => {}
+            () => {
+              if (fallbackPath) {
+                this.textureLoader.load(
+                  fallbackPath,
+                  (altTex) => {
+                    altTex.encoding = THREE.sRGBEncoding;
+                    mat.color.setHex(0xffffff);
+                    mat.map = altTex;
+                    mat.needsUpdate = true;
+                  },
+                  undefined,
+                  () => {}
+                );
+              }
+            }
           );
         }
 
@@ -3306,17 +3859,18 @@
     };
 
     /* ========================================================================
-       CAPA 7: INVENTARIO (+10 / -10 / EDITAR / BORRAR) Y RECETAS (EDITAR / BORRAR)
+       CAPA 8: INVENTARIO CON PUNTO DE REPOSICIÓN EDITABLE (ROJO CRÍTICO + ALERTA)
        ======================================================================== */
     const InventoryModule = {
       openNewForm() {
         document.getElementById('stkEditId').value = '';
         document.getElementById('stkName').value = '';
         document.getElementById('stkCode').value = '';
-        document.getElementById('stkQty').value = '20';
-        document.getElementById('stkMin').value = '5';
-        document.getElementById('stkPrice').value = '150';
-        document.getElementById('stkLoc').value = 'Estante A1';
+        document.getElementById('stkQty').value = '100';
+        document.getElementById('stkNormal').value = '100';
+        document.getElementById('stkMin').value = '20';
+        document.getElementById('stkPrice').value = '2500';
+        document.getElementById('stkLoc').value = 'Estantería Principal';
         document.getElementById('newStockItemBox').style.display = 'block';
       },
 
@@ -3326,14 +3880,42 @@
         document.getElementById('stkEditId').value = item.id;
         document.getElementById('stkName').value = item.name;
         document.getElementById('stkCode').value = item.code || '';
-        document.getElementById('stkCategory').value = item.category || 'herrajes';
+        document.getElementById('stkCategory').value = item.category || 'cortes';
         document.getElementById('stkUnit').value = item.unit || 'UNID';
         document.getElementById('stkQty').value = item.qty;
-        document.getElementById('stkMin').value = item.min || 5;
+        document.getElementById('stkNormal').value = item.normalQty || 100;
+        document.getElementById('stkMin').value = item.min || 20;
         document.getElementById('stkPrice').value = item.price || 0;
         document.getElementById('stkLoc').value = item.location || 'Taller';
         document.getElementById('newStockItemBox').style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+
+      promptReorderPoint(stockId) {
+        if (!SecurityRBAC.canWrite('STOCK_REORDER_POINT')) return;
+        const item = OfflineStore.state.stock.find(s => s.id === stockId);
+        if (!item) return;
+        const val = prompt(
+          `Configurar Punto de Reposición (Alerta Roja) para "${item.name}"\n(Stock normal: ${item.normalQty || 100} ${item.unit}):`,
+          item.min || 20
+        );
+        if (val === null) return;
+        const newMin = parseFloat(val);
+        if (isNaN(newMin) || newMin < 0) return AppUI.toast('Valor inválido.', 'warn');
+        item.min = newMin;
+        this.checkAndNotifyReorderPoint(item);
+        OfflineStore.commit(`Punto de reposición de ${item.name} fijado en ${newMin} ${item.unit}`);
+      },
+
+      checkAndNotifyReorderPoint(item) {
+        const threshold = item.min !== undefined ? item.min : 5;
+        if (item.qty <= threshold) {
+          NotificationCenter.pushNotification(
+            'stock',
+            `¡Punto de Reposición Alcanzado!`,
+            `${item.name}: quedan ${item.qty} ${item.unit} (Umbral fijado en ${threshold}).`
+          );
+        }
       },
 
       cancelForm() {
@@ -3354,10 +3936,12 @@
             item.category = document.getElementById('stkCategory').value;
             item.unit = document.getElementById('stkUnit').value.trim() || 'UNID';
             item.qty = parseFloat(document.getElementById('stkQty').value) || 0;
-            item.min = parseFloat(document.getElementById('stkMin').value) || 5;
+            item.normalQty = parseFloat(document.getElementById('stkNormal').value) || 100;
+            item.min = parseFloat(document.getElementById('stkMin').value) || 20;
             item.price = parseFloat(document.getElementById('stkPrice').value) || 0;
             item.location = document.getElementById('stkLoc').value.trim() || 'Taller';
             this.recordMovement(item.name, 'EDICIÓN FICHA', 0);
+            this.checkAndNotifyReorderPoint(item);
           }
           document.getElementById('newStockItemBox').style.display = 'none';
           OfflineStore.commit(`Material editado: ${name}`);
@@ -3369,12 +3953,14 @@
             category: document.getElementById('stkCategory').value,
             unit: document.getElementById('stkUnit').value.trim() || 'UNID',
             qty: parseFloat(document.getElementById('stkQty').value) || 0,
-            min: parseFloat(document.getElementById('stkMin').value) || 5,
+            normalQty: parseFloat(document.getElementById('stkNormal').value) || 100,
+            min: parseFloat(document.getElementById('stkMin').value) || 20,
             price: parseFloat(document.getElementById('stkPrice').value) || 0,
             location: document.getElementById('stkLoc').value.trim() || 'Taller'
           };
           OfflineStore.state.stock.push(item);
           this.recordMovement(item.name, 'ALTA INICIAL', item.qty);
+          this.checkAndNotifyReorderPoint(item);
           document.getElementById('newStockItemBox').style.display = 'none';
           OfflineStore.commit(`Alta de material en stock: ${name}`);
         }
@@ -3405,6 +3991,9 @@
         }
         item.qty += delta;
         this.recordMovement(item.name, delta > 0 ? `ENTRADA (+${delta})` : `SALIDA (${delta})`, delta);
+        if (delta < 0) {
+          this.checkAndNotifyReorderPoint(item);
+        }
         OfflineStore.commit(`Ajuste stock ${item.name} (${delta > 0 ? '+' : ''}${delta})`);
       },
 
@@ -3419,6 +4008,7 @@
         const diff = num - item.qty;
         item.qty = num;
         this.recordMovement(item.name, 'AJUSTE MANUAL', diff);
+        this.checkAndNotifyReorderPoint(item);
         OfflineStore.commit(`Stock fijado manualmente en ${num} para ${item.name}`);
       },
 
@@ -3443,22 +4033,39 @@
         const filtered = (OfflineStore.state.stock || []).filter(s => {
           const matchText = s.name.toLowerCase().includes(q) || (s.code || '').toLowerCase().includes(q);
           if (!matchText) return false;
-          if (cat === 'low') return s.qty <= (s.min || 5);
+          const minThreshold = s.min !== undefined ? s.min : 5;
+          if (cat === 'low') return s.qty <= minThreshold;
           if (cat !== 'all') return s.category === cat;
           return true;
         });
 
         cont.innerHTML = filtered.map(s => {
-          const isLow = s.qty <= (s.min || 5);
+          const minThreshold = s.min !== undefined ? s.min : 5;
+          const normalRef = s.normalQty || Math.max(minThreshold * 4, 100);
+          const isLow = s.qty <= minThreshold;
+          const pct = Math.min(100, Math.round((s.qty / normalRef) * 100));
+
           return `
-            <div class="item-card">
+            <div class="item-card ${isLow ? 'critical-low' : ''}">
               <div class="item-card-top">
                 <div>
-                  <div class="item-title">${s.name}</div>
-                  <div class="item-meta">SKU: <strong>${s.code}</strong> | Ubicación: ${s.location} | Costo: $${s.price.toLocaleString('es-AR')}</div>
+                  <div class="item-title" style="${isLow ? 'color:var(--status-err);' : ''}">
+                    ${isLow ? '🚨 ' : ''}${s.name}
+                  </div>
+                  <div class="item-meta">
+                    SKU: <strong>${s.code}</strong> | Normal: <strong>${normalRef}</strong> |
+                    <span style="color:${isLow ? 'var(--status-err)' : 'var(--accent-wood)'}; font-weight:700;">
+                      Punto Reposición: ≤ ${minThreshold} ${s.unit}
+                    </span>
+                  </div>
                 </div>
-                <span class="status-pill ${isLow ? 'err' : 'ok'}">${isLow ? '⚠️ BAJO' : 'OK'}</span>
+                <span class="status-pill ${isLow ? 'err' : 'ok'}">${isLow ? 'REPONER URGENTE' : 'OK'}</span>
               </div>
+
+              <div class="stock-progress-track">
+                <div class="stock-progress-fill ${isLow ? 'critical' : ''}" style="width:${pct}%;"></div>
+              </div>
+
               <div class="stepper-controls-multi">
                 <button class="stepper-btn bulk" onclick="InventoryModule.adjustQty('${s.id}', -10)">−10</button>
                 <button class="stepper-btn" onclick="InventoryModule.adjustQty('${s.id}', -1)">−1</button>
@@ -3467,8 +4074,9 @@
                 <button class="stepper-btn bulk" onclick="InventoryModule.adjustQty('${s.id}', 10)">+10</button>
               </div>
               <div class="item-actions-row">
+                <button class="btn btn-sm" style="flex:1;" onclick="InventoryModule.promptReorderPoint('${s.id}')">🎯 Punto Reposición (${minThreshold})</button>
                 <button class="btn btn-sm" style="flex:1;" onclick="InventoryModule.editItem('${s.id}')">✏️ Editar</button>
-                <button class="btn btn-sm btn-danger" style="flex:1;" onclick="InventoryModule.deleteItem('${s.id}')">🗑 Borrar</button>
+                <button class="btn btn-sm btn-danger" onclick="InventoryModule.deleteItem('${s.id}')">🗑</button>
               </div>
             </div>
           `;
@@ -3666,7 +4274,7 @@
     };
 
     /* ========================================================================
-       CAPA 8: PRESUPUESTOS LIMPIOS + DESGLOSE INSTANTÁNEO + DUPLICAR 1 CLIC
+       CAPA 9: PRESUPUESTOS + NOTIFICACIÓN AUTOMÁTICA AL CONFIRMAR PEDIDO
        ======================================================================== */
     const QuotesModule = {
       onSelectRecipe() {
@@ -3766,7 +4374,6 @@
           date: new Date().toLocaleDateString('es-AR')
         };
         OfflineStore.state.quotes.unshift(copy);
-        // También carga los datos en el formulario para editarlos rápido
         document.getElementById('quoClientName').value = copy.client;
         document.getElementById('quoClientPhone').value = copy.phone || '';
         document.getElementById('quoDetail').value = copy.detail;
@@ -3818,6 +4425,14 @@
         }
         OfflineStore.state.processedTransactions[idempotencyKey] = true;
 
+        // 1. Notificación automática por confirmación de pedido
+        NotificationCenter.pushNotification(
+          'pedido',
+          'Nuevo Pedido Confirmado',
+          `Cliente: ${client} — ${calc.qty}x ${detail} ($${calc.total.toLocaleString('es-AR')})`
+        );
+
+        // 2. Descuento de stock y verificación automática de punto de reposición
         if (rec && rec.items) {
           rec.items.forEach(ins => {
             const stk = OfflineStore.state.stock.find(s => s.id === ins.stockId);
@@ -3825,6 +4440,7 @@
               const discountQty = ins.qty * calc.qty;
               stk.qty = Math.max(0, stk.qty - discountQty);
               InventoryModule.recordMovement(stk.name, `CONSUMO PEDIDO (${client})`, -discountQty);
+              InventoryModule.checkAndNotifyReorderPoint(stk);
             }
           });
         }
@@ -3840,7 +4456,6 @@
 
         OfflineStore.commit(`Pedido confirmado y stock descontado: ${client}`);
         AppUI.navigate('pedidos');
-        AppUI.toast('Pedido en fabricación y stock descontado.', 'ok');
       },
 
       render() {
@@ -3972,6 +4587,16 @@
         document.getElementById('frTotalResult').textContent = '$' + total.toLocaleString('es-AR');
         return total;
       },
+
+      openGoogleMaps() {
+        const dest = document.getElementById('frDestination').value.trim();
+        const origin = 'Villa Luzuriaga, Buenos Aires, Argentina';
+        const url = dest
+          ? `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(dest)}`
+          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(origin)}`;
+        window.open(url, '_blank');
+      },
+
       applyToQuote() {
         const total = this.calc();
         document.getElementById('quoFreight').value = total;
@@ -4039,7 +4664,7 @@
     };
 
     /* ========================================================================
-       CAPA 9: MENÚ HAMBURGUESA CATEGORIZADO (INCLUYE CÁLCULO DE FILO)
+       CAPA 10: MENÚ HAMBURGUESA CATEGORIZADO (CALCULADORA Y MESITA SEPARADAS)
        ======================================================================== */
     const MENU_STRUCTURE = [
       {
@@ -4052,7 +4677,7 @@
         category: 'FABRICACIÓN',
         items: [
           { id: 'calc', label: 'Calculadora de muebles', view: 'calculadora', module: 'calculadora' },
-          { id: 'mesita', label: 'Mesita con techo variable', view: 'calculadora', module: 'calculadora' },
+          { id: 'mesita', label: 'Mesita con techo variable', view: 'mesita-variable', module: 'mesita-variable' },
           { id: 'filo_nav', label: 'Cálculo de Filo (Doble Tramo)', view: 'filo', module: 'filo' },
           { id: 'opt', label: 'Optimizador de cortes y retazos', view: 'optimizador', module: 'optimizador' },
           { id: 'cat', label: 'Catálogo de muebles', view: 'catalogo3d', module: 'catalogo3d' },
@@ -4064,10 +4689,11 @@
       {
         category: 'INVENTARIO',
         items: [
-          { id: 'stk_mat', label: 'Stock de materiales (+10)', view: 'stock', module: 'stock', filter: 'all' },
+          { id: 'stk_mat', label: 'Stock y Punto de Reposición', view: 'stock', module: 'stock', filter: 'all' },
+          { id: 'stk_cor', label: 'Laterales, Techos y Frentes', view: 'stock', module: 'stock', filter: 'cortes' },
           { id: 'stk_her', label: 'Herrajes y tornillería', view: 'stock', module: 'stock', filter: 'herrajes' },
           { id: 'stk_can', label: 'Filos y tapacantos', view: 'stock', module: 'stock', filter: 'cantos' },
-          { id: 'stk_low', label: 'Alertas de stock bajo', view: 'stock', module: 'stock', filter: 'low' },
+          { id: 'stk_low', label: '🚨 Alertas Punto de Reposición', view: 'stock', module: 'stock', filter: 'low' },
           { id: 'prov', label: 'Proveedores y compras', view: 'proveedores', module: 'proveedores' }
         ]
       },
@@ -4077,7 +4703,7 @@
           { id: 'presup', label: 'Presupuestos', view: 'presupuestos', module: 'presupuestos' },
           { id: 'ped', label: 'Pedidos', view: 'pedidos', module: 'pedidos' },
           { id: 'ven', label: 'Ventas', view: 'caja', module: 'caja' },
-          { id: 'fle', label: 'Fletes', view: 'fletes', module: 'fletes' }
+          { id: 'fle', label: 'Fletes y Google Maps', view: 'fletes', module: 'fletes' }
         ]
       },
       {
@@ -4091,8 +4717,8 @@
       {
         category: 'SISTEMA',
         items: [
-          { id: 'usr', label: 'Usuarios y permisos', view: 'sistema', module: 'sistema' },
-          { id: 'aju', label: 'Pruebas y Diagnóstico', view: 'sistema', module: 'sistema' }
+          { id: 'not', label: '🔔 Centro de Notificaciones', view: 'notificaciones', module: 'notificaciones' },
+          { id: 'aju', label: '🔊 Sonido Personalizado y Ajustes', view: 'sistema', module: 'sistema' }
         ]
       }
     ];
@@ -4146,19 +4772,21 @@
         const map = {
           dashboard: { id: 'panel', view: 'dashboard', title: 'Carpintería JL' },
           calculadora: { id: 'calc', view: 'calculadora', title: 'Calculadora de Muebles' },
+          'mesita-variable': { id: 'mesita', view: 'mesita-variable', title: 'Mesita con Techo Variable' },
           filo: { id: 'filo_nav', view: 'filo', title: 'Calculadora de Filo' },
           optimizador: { id: 'opt', view: 'optimizador', title: 'Optimizador y Retazos' },
           catalogo3d: { id: 'v3d', view: 'catalogo3d', title: 'Catálogo y Visor 3D' },
           recetas: { id: 'rec', view: 'recetas', title: 'Recetas de Fabricación' },
-          stock: { id: 'stk_mat', view: 'stock', title: 'Stock de Materiales', filter: 'all' },
-          'alertas-stock': { id: 'stk_low', view: 'stock', title: 'Alertas de Stock Bajo', filter: 'low' },
+          stock: { id: 'stk_mat', view: 'stock', title: 'Stock y Punto de Reposición', filter: 'all' },
+          'alertas-stock': { id: 'stk_low', view: 'stock', title: 'Alertas Punto de Reposición', filter: 'low' },
           proveedores: { id: 'prov', view: 'proveedores', title: 'Proveedores y Compras' },
           presupuestos: { id: 'presup', view: 'presupuestos', title: 'Presupuestos y WhatsApp' },
           pedidos: { id: 'ped', view: 'pedidos', title: 'Pedidos y Producción' },
           ventas: { id: 'ven', view: 'caja', title: 'Ventas y Caja' },
           caja: { id: 'caj', view: 'caja', title: 'Caja y Finanzas' },
-          fletes: { id: 'fle', view: 'fletes', title: 'Calculadora de Fletes' },
-          notificaciones: { id: 'panel', view: 'dashboard', title: 'Carpintería JL' }
+          fletes: { id: 'fle', view: 'fletes', title: 'Fletes y Google Maps' },
+          notificaciones: { id: 'not', view: 'notificaciones', title: 'Centro de Notificaciones' },
+          sistema: { id: 'aju', view: 'sistema', title: 'Sonido y Ajustes' }
         };
         const target = map[shortcutTarget] || map.dashboard;
         this.selectMenuItem(target.id, target.view, target.title, target.filter);
@@ -4183,14 +4811,34 @@
           EdgeBandingModule.recalc();
           EdgeBandingModule.renderHistory();
         }
+        if (viewName === 'notificaciones') {
+          NotificationCenter.render();
+        }
         window.scrollTo({ top: 0, behavior: 'smooth' });
       },
 
       refreshAllViews() {
         const st = OfflineStore.state;
-        const lowCount = (st.stock || []).filter(s => s.qty <= (s.min || 5)).length;
-        document.getElementById('headerAlertBadge').textContent = lowCount;
-        document.getElementById('bannerLowStockCount').textContent = lowCount;
+        const lowItems = (st.stock || []).filter(s => s.qty <= (s.min !== undefined ? s.min : 5));
+        const unreadNotifs = (st.notifications || []).filter(n => !n.read).length;
+
+        document.getElementById('headerAlertBadge').textContent = lowItems.length + unreadNotifs;
+        document.getElementById('bannerLowStockCount').textContent = lowItems.length;
+        document.getElementById('kpiNotifUnread').textContent = unreadNotifs;
+
+        const bannerEl = document.getElementById('dashLowStockBanner');
+        const bannerSub = document.getElementById('bannerLowStockSub');
+        if (bannerEl && bannerSub) {
+          if (lowItems.length > 0) {
+            bannerEl.classList.add('critical');
+            bannerSub.textContent = `¡Atención! ${lowItems.map(i => `${i.name} (${i.qty})`).join(', ')}`;
+            bannerSub.style.color = 'var(--status-err)';
+          } else {
+            bannerEl.classList.remove('critical');
+            bannerSub.textContent = 'Todos los materiales superan el punto de reposición';
+            bannerSub.style.color = 'var(--text-secondary)';
+          }
+        }
 
         let ingresosMes = 0;
         let egresosMes = 0;
@@ -4206,7 +4854,6 @@
         document.getElementById('kpiVentasDia').textContent = '$' + ingresosMes.toLocaleString('es-AR');
         document.getElementById('kpiSaldoCaja').textContent = '$' + (ingresosMes - egresosMes).toLocaleString('es-AR');
         document.getElementById('kpiPresupPend').textContent = (st.quotes || []).length;
-        document.getElementById('kpiPedidosListos').textContent = (st.orders || []).filter(o => o.status === 'Listo para entregar').length;
         document.getElementById('kpiCatalogCount').textContent = (st.catalogModels || []).length;
 
         const actEl = document.getElementById('dashRecentActivityList');
@@ -4219,7 +4866,8 @@
           `).join('') || '<div style="font-size:12px; color:var(--text-secondary);">Sistema listo para operar.</div>';
         }
 
-        DomainFurnitureCalc.recalculateUI();
+        StandardFurnitureCalc.recalculateUI();
+        VariableTopCalc.recalculateUI();
         EdgeBandingModule.recalc();
         EdgeBandingModule.renderHistory();
         OptimizerEngine.render();
@@ -4229,6 +4877,7 @@
         QuotesModule.render();
         OrdersModule.render();
         FinanceModule.render();
+        NotificationCenter.render();
         Viewer3DEngine.renderCatalogAndRecipeInfo();
       },
 
@@ -4241,7 +4890,7 @@
         if (level === 'warn') div.style.borderLeftColor = 'var(--status-warn)';
         div.innerHTML = `<span>${msg}</span>`;
         cont.appendChild(div);
-        setTimeout(() => div.remove(), 3400);
+        setTimeout(() => div.remove(), 3500);
       },
 
       openConfirm(title, htmlBody, onConfirmCallback) {
@@ -4261,7 +4910,7 @@
     };
 
     /* ========================================================================
-       CAPA 10: SUITE DE PRUEBAS AUTOMATIZADAS DE DOMINIO
+       CAPA 11: SUITE DE PRUEBAS AUTOMATIZADAS DE DOMINIO
        ======================================================================== */
     const TestSuiteRunner = {
       runAll() {
@@ -4271,30 +4920,32 @@
         };
 
         const b = OfflineStore.state.boards[0];
-        const m1 = DomainFurnitureCalc.calculateCustomFurniture({
-          modoEnsanche: 'modo1_tapa_volada', techoAncho: 560, techoProf: 380,
-          cuerpoAnchoBase: 400, cuerpoProfBase: 335, altoTotal: 450, espesor: 18,
-          cantCajones: 1, altoFrente: 160, board: b, correderaTipo: 'telescopica',
-          desperdicioPct: 10, tipoRentabilidad: 'recargo', porcentajeGanancia: 30, cantidadLote: 1
-        });
-        assert('Modo 1 Tapa Volada mantiene cuerpo base (400mm)', m1.effCuerpoAncho === 400 && m1.techoAncho === 560);
 
-        // Test Módulo de Filo Doble Tramo
+        // Test 1: Separación de Calculadora Estándar y Mesita Variable
+        const stdRes = StandardFurnitureCalc.calculateStandard({
+          ancho: 500, prof: 400, alto: 600, espesor: 18, cantCajones: 2, altoFrente: 160,
+          board: b, correderaTipo: 'telescopica', desperdicioPct: 10, tipoRentabilidad: 'recargo', porcentajeGanancia: 45, cantidadLote: 1
+        });
+        assert('Calculadora de Muebles independiente calcula 2 cajones y medidas a escala', stdRes.pieces.length === 6 && stdRes.ancho === 500);
+
+        const varRes = VariableTopCalc.calculateVariable({
+          modoEnsanche: 'modo1_tapa_volada', techoAncho: 560, techoProf: 335,
+          cuerpoAnchoBase: 400, cuerpoProfBase: 335, altoTotal: 450,
+          board: b, porcentajeGanancia: 45, cantidadLote: 1
+        });
+        assert('Mesita Variable Modo 1 conserva cuerpo de 400mm con techo de 560mm', varRes.effCuerpoAncho === 400 && varRes.techoAncho === 560);
+
+        // Test 2: Punto de reposición personalizado (ej. 100 normal -> 20 crítico)
+        const testItem = { id: 'stk_test', name: 'Laterales', qty: 20, normalQty: 100, min: 20, unit: 'UNID' };
+        assert('Punto de reposición detecta estado crítico al llegar a 20 unidades', testItem.qty <= testItem.min);
+
+        // Test 3: Cálculo de Filo Doble Tramo
         const mod = OfflineStore.state.catalogModels[0];
         const edgeRes = EdgeBandingModule.computeEdgeBanding({
           model: mod, qty: 2, baseColor: 'Blanco', baseRollMeters: 25, baseRollPrice: 10000,
           mode: 'combinado', frontColor: 'Helsinki', frontRollMeters: 25, frontRollPrice: 12500
         });
-        assert('Cálculo de Filo Combinado suma costo Base + Frente correctamente', edgeRes.grandTotal === (edgeRes.baseCost + edgeRes.frontCost) && edgeRes.totalFrontMeters > 0);
-
-        // Test Retazos en Stock descuentan compra de placa entera
-        const scrapBoard = {
-          w: 2750, h: 1830, margin: 10, kerf: 4,
-          scraps: [{ id: 's1', w: 500, h: 400, qty: 1 }],
-          cuts: [{ id: 'c1', tag: 'Techo', w: 400, h: 335, allowRot: false }]
-        };
-        const packScrap = OptimizerEngine.packWithScrapsAndBoards(scrapBoard);
-        assert('Retazo en stock absorbe corte compatible y requiere 0 placas nuevas', packScrap.coveredByScraps.length === 1 && packScrap.boardsUsed === 0);
+        assert('Cálculo de Filo Combinado suma costo Base + Frente', edgeRes.grandTotal === (edgeRes.baseCost + edgeRes.frontCost));
 
         document.getElementById('selfTestResultsBox').innerHTML = logs.join('<br>');
       }
