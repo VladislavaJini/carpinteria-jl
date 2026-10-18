@@ -17,7 +17,6 @@ jobs:
       - name: Instalar Herramientas y Compilar APK
         run: |
           npm install -g @bubblewrap/cli
-          # Creamos un archivo de configuración predeterminado (twa-manifest.json) para evitar cualquier pregunta interactiva
           cat <<EOF > twa-manifest.json
           {
             "packageId": "com.carpinteriajl.app",
@@ -43,14 +42,13 @@ jobs:
             "fullScopeUrl": "https://vladislavajini.github.io/carpinteria-jl/"
           }
           EOF
-          # Generamos y construimos el APK usando el manifiesto preestablecido
           bubblewrap update --skip-icon-validation || true
           bubblewrap build || true
 
-      - name: Subir APK como Artefacto
+      - name: Buscar y Subir APK como Artefacto
         uses: actions/upload-artifact@v4
         with:
           name: CarpinteriaJL-APK
           path: |
-            app/build/outputs/apk/release/*.apk
             **/*.apk
+            *.apk
