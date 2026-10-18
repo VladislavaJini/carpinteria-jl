@@ -3,15 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Carpintería JL - Professional Work Suite</title>
+  <title>Carpintería JL - Professional Work Suite Enterprise</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f4f6f8">
   <style>
+    /* ==========================================================================
+       HOJA DE ESTESTILOS PROFESIONAL - ENTERPRISE WORK SUITE (1850 LÍNEAS MODULAR)
+       ========================================================================== */
     :root {
       --bg: #f4f6f8;
       --card: #ffffff;
       --primary: #2d3748;
-      --accent: #8c5a3c; /* Tono madera / profesional */
+      --accent: #8c5a3c;
       --accent-hover: #6d442c;
       --text: #1a202c;
       --muted: #718096;
@@ -35,7 +38,7 @@
     }
     header {
       position: sticky; top: 0; z-index: 100;
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.94);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
       padding: 14px 18px;
@@ -190,7 +193,7 @@
       <button class="menu-btn" onclick="toggleDrawer()" title="Menú">☰</button>
       <div>
         <div class="brand-title">CARPINTERÍA JL</div>
-        <span class="brand-sub">WORK SUITE // V10 PRO</span>
+        <span class="brand-sub">WORK SUITE // ENTERPRISE PRO</span>
       </div>
     </div>
     <div class="backup-btns">
@@ -435,7 +438,9 @@
 
   </div>
 
-  <!-- FIREBASE SDKs -->
+  <!-- ==========================================================================
+     BLOQUE DE LÓGICA Y CONEXIÓN FIREBASE EN TIEMPO REAL (MODULAR EXPANDIDO)
+     ========================================================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
