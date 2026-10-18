@@ -14,9 +14,10 @@ jobs:
         with:
           node-version: 18
 
-      - name: Instalar Herramientas y Compilar APK
+      - name: Compilar y Empaquetar APK
         run: |
           npm install -g @bubblewrap/cli
+          # Generamos la app y forzamos el empaquetado completo
           cat <<EOF > twa-manifest.json
           {
             "packageId": "com.carpinteriajl.app",
@@ -44,11 +45,12 @@ jobs:
           EOF
           bubblewrap update --skip-icon-validation || true
           bubblewrap build || true
+          # Buscamos si se creó y lo movemos a una carpeta fija para asegurarlo
+          mkdir -p final-apk
+          find . -name "*.apk" -exec cp {} final-apk/ \;
 
-      - name: Buscar y Subir APK como Artefacto
+      - name: Subir APK como Artefacto
         uses: actions/upload-artifact@v4
         with:
           name: CarpinteriaJL-APK
-          path: |
-            **/*.apk
-            *.apk
+          path: final-apk/*.apk
