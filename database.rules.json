@@ -1,0 +1,13 @@
+{
+  "rules": {
+    "carpinteria_jl_enterprise_v2": {
+      ".read": "true",
+      ".write": "newData.hasChildren(['schemaVersion', 'stock', 'boards', 'updatedAt'])",
+      "stock": {
+        "$itemId": {
+          ".validate": "newData.child('qty').isNumber() && newData.child('qty').val() >= 0"
+        }
+      }
+    }
+  }
+}
