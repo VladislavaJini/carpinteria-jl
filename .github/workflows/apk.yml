@@ -9,25 +9,42 @@ jobs:
       - name: Clonar Repositorio
         uses: actions/checkout@v4
 
-      - name: Configurar Java (OpenJDK 17)
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: Generar APK con JDK automático
-        env:
-          JAVA_HOME: ${{ steps.setup-java.outputs.maxage }}
+      - name: Instalar Herramientas y Compilar APK
         run: |
           npm install -g @bubblewrap/cli
-          # Usamos echo para responder automáticamente 'No' a instalar el JDK y le pasamos la ruta del sistema
-          echo "No" | bubblewrap init --manifest https://vladislavajini.github.io/carpinteria-jl/manifest.json --directory ./android-app --skip-icon-validation --jdk-path $JAVA_HOME || true
-          cd android-app
+          # Creamos un archivo de configuración predeterminado (twa-manifest.json) para evitar cualquier pregunta interactiva
+          cat <<EOF > twa-manifest.json
+          {
+            "packageId": "com.carpinteriajl.app",
+            "host": "vladislavajini.github.io",
+            "name": "Carpinteria JL",
+            "shortName": "Carpinteria JL",
+            "startUrl": "/carpinteria-jl/",
+            "display": "standalone",
+            "themeColor": "#000000",
+            "backgroundColor": "#000000",
+            "enableNotifications": true,
+            "shortcuts": [],
+            "iconUrl": "https://vladislavajini.github.io/carpinteria-jl/icon-512.png",
+            "splashScreenFadeOutDuration": 300,
+            "signingKey": {
+              "path": "android.keystore",
+              "alias": "android"
+            },
+            "minSdkVersion": 21,
+            "targetSdkVersion": 33,
+            "generatorApp": "bubblewrap-cli",
+            "webManifestUrl": "https://vladislavajini.github.io/carpinteria-jl/manifest.json",
+            "fullScopeUrl": "https://vladislavajini.github.io/carpinteria-jl/"
+          }
+          EOF
+          # Generamos y construimos el APK usando el manifiesto preestablecido
+          bubblewrap update --skip-icon-validation || true
           bubblewrap build || true
 
       - name: Subir APK como Artefacto
@@ -35,5 +52,5 @@ jobs:
         with:
           name: CarpinteriaJL-APK
           path: |
-            android-app/**/*.apk
-            *.apk
+            app/build/outputs/apk/release/*.apk
+            **/*.apk
