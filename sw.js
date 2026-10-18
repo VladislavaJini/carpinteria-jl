@@ -1,4 +1,4 @@
-const CACHE_NAME = 'carpinteria-jl-mobile-v2.4';
+const CACHE_NAME = 'carpinteria-jl-mobile-v2.5';
 const STATIC_ASSETS = [
   './',
   './index.html',
