@@ -3,46 +3,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Carpintería JL Mobile — Suite de Gestión Integral</title>
+  <title>Carpintería JL Mobile — Suite de Gestión Integral v5.0</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0A0A0A">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- TIPOGRAFÍA HÍBRIDA DE ALTA GAMA: PLUS JAKARTA SANS + INTER + JETBRAINS MONO -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+
+  <!-- LEAFLET.JS PARA MAPA VISUAL GPS FUNCIONAL INTEGRADO -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- THREE.JS PARA VISOR 3D INTERACTIVO -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
   <style>
     /* ========================================================================
-       TOKENS DE DISEÑO CENTRALIZADOS — PALETA GRAFITO & NOGAL EXACTA
+       1. TOKENS DE DISEÑO — PALETA INDUSTRIAL HIGH-END (GRAFITO & NOGAL)
        ======================================================================== */
     :root {
-      --bg-primary: #0A0A0A;       /* Negro profundo — Fondo principal */
-      --bg-secondary: #171717;     /* Grafito — Tarjetas y paneles */
-      --bg-card: #171717;          /* Grafito — Tarjetas y contenedores */
-      --bg-elevated: #252525;      /* Gris carbón — Campos, botones secundarios y superficies elevadas */
-      --border-color: #2E2E2E;     /* Bordes sutiles de contraste */
+      --bg-primary: #0A0A0A;       /* Negro grafito profundo — Fondo principal */
+      --bg-secondary: #151515;     /* Grafito — Paneles y cajón de navegación */
+      --bg-card: #171717;          /* Grafito — Tarjetas principales */
+      --bg-elevated: #242424;      /* Gris carbón — Campos, botones secundarios y superficies elevadas */
+      --border-color: #2E2E2E;     /* Bordes sutiles */
       --text-primary: #E8E8E8;     /* Blanco suave — Títulos y texto principal */
       --text-secondary: #A0A0A0;   /* Gris claro — Descripciones, etiquetas y datos secundarios */
-      --accent-wood: #B58B5A;      /* Nogal / madera — Color de acento y botones principales */
-      --accent-wood-hover: #9E774B;
-      --status-ok: #74B49A;        /* Verde confirmación */
-      --status-warn: #E7B45E;      /* Advertencia */
-      --status-err: #E47777;       /* Rojo crítico / Punto de reposición */
+      --accent-wood: #B58B5A;      /* Nogal / madera — Color de acento y acción principal */
+      --accent-wood-hover: #C89D69;
+      --status-ok: #74B49A;        /* Verde esmeralda suave */
+      --status-warn: #E7B45E;      /* Ámbar cálido */
+      --status-err: #E87979;       /* Coral / Rojo crítico de alta legibilidad */
+      --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       --radius-sm: 10px;
-      --radius-md: 14px;
-      --radius-lg: 18px;
+      --radius-md: 16px;
+      --radius-lg: 20px;
       --touch-min: 46px;
-      --shadow-soft: 0 6px 20px rgba(0, 0, 0, 0.55);
-      --transition-fast: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.58);
+      --transition-fast: 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* MODO "VISTA DE TALLER PRO" DE ALTO CONTRASTE BAJO LUZ INTENSA */
+    body.workshop-pro-mode {
+      --bg-primary: #050505;
+      --bg-secondary: #121212;
+      --bg-card: #161616;
+      --bg-elevated: #282828;
+      --border-color: #454545;
+      --text-primary: #FFFFFF;
+      --text-secondary: #CCCCCC;
+      --accent-wood: #D4A76A;
+      --status-err: #FF6B6B;
+      --touch-min: 50px;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      font-family: var(--font-sans);
       -webkit-tap-highlight-color: transparent;
     }
 
@@ -58,31 +87,42 @@
 
     body {
       padding-top: var(--safe-top);
-      padding-bottom: calc(28px + var(--safe-bottom));
+      padding-bottom: calc(92px + var(--safe-bottom));
+    }
+
+    h1, h2, h3, .card-title, .header-section-title, .drawer-logo, .header-brand-badge {
+      font-family: var(--font-display);
+      letter-spacing: -0.3px;
+    }
+
+    .mono-num, .kpi-value, .summary-hero-val, .stepper-val {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
     }
 
     /* ========================================================================
-       CABECERA PRINCIPAL — NAVEGACIÓN EXCLUSIVA POR MENÚ HAMBURGUESA
+       2. CABECERA PRINCIPAL Y NAVEGACIÓN EXCLUSIVA POR MENÚ HAMBURGUESA
        ======================================================================== */
     .app-header {
       position: sticky;
       top: 0;
       z-index: 100;
-      background-color: rgba(10, 10, 10, 0.95);
-      backdrop-filter: blur(10px);
+      background-color: rgba(10, 10, 10, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border-color);
       height: 64px;
-      padding: 0 16px;
+      padding: 0 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
     }
 
     .header-left {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       min-width: 0;
     }
 
@@ -98,27 +138,24 @@
       justify-content: center;
       cursor: pointer;
       flex-shrink: 0;
-      transition: background-color var(--transition-fast), border-color var(--transition-fast);
+      transition: transform var(--transition-fast), border-color 0.15s;
     }
 
-    .hamburger-btn:hover,
-    .hamburger-btn:active,
-    .hamburger-btn:focus-visible {
-      background-color: var(--bg-card);
+    .hamburger-btn:active {
+      transform: scale(0.93);
       border-color: var(--accent-wood);
-      outline: none;
     }
 
     .header-brand-badge {
       width: 38px;
       height: 38px;
-      border-radius: 9px;
-      background-color: var(--accent-wood);
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent-wood) 0%, #966F42 100%);
       color: #0A0A0A;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 900;
+      font-weight: 800;
       font-size: 15px;
       flex-shrink: 0;
     }
@@ -129,7 +166,7 @@
 
     .header-section-title {
       font-size: 16px;
-      font-weight: 700;
+      font-weight: 800;
       color: var(--text-primary);
       white-space: nowrap;
       overflow: hidden;
@@ -137,10 +174,10 @@
     }
 
     .header-subtitle {
-      font-size: 11px;
-      color: var(--text-secondary);
-      font-weight: 600;
-      letter-spacing: 0.6px;
+      font-size: 10.5px;
+      color: var(--accent-wood);
+      font-weight: 700;
+      letter-spacing: 0.7px;
       text-transform: uppercase;
       display: block;
     }
@@ -148,7 +185,7 @@
     .header-right {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       flex-shrink: 0;
     }
 
@@ -156,7 +193,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 11px;
+      padding: 6px 10px;
       border-radius: 20px;
       font-size: 11px;
       font-weight: 700;
@@ -194,16 +231,28 @@
       justify-content: center;
       cursor: pointer;
       position: relative;
+      transition: transform var(--transition-fast), border-color 0.15s;
+    }
+
+    .icon-action-btn:active {
+      transform: scale(0.93);
+    }
+
+    .icon-action-btn.active-pro {
+      border-color: var(--accent-wood);
+      background-color: rgba(181, 139, 90, 0.2);
+      color: var(--accent-wood);
     }
 
     .notif-badge {
       position: absolute;
-      top: 5px;
-      right: 5px;
+      top: 4px;
+      right: 4px;
       background-color: var(--status-err);
       color: #0A0A0A;
+      font-family: var(--font-mono);
       font-size: 10px;
-      font-weight: 900;
+      font-weight: 800;
       min-width: 18px;
       height: 18px;
       border-radius: 9px;
@@ -214,7 +263,7 @@
     }
 
     /* ========================================================================
-       PANEL LATERAL DESLIZABLE (DRAWER 80%–88% ANCHO)
+       3. PANEL LATERAL DESLIZABLE (DRAWER)
        ======================================================================== */
     .drawer-backdrop {
       position: fixed;
@@ -223,7 +272,7 @@
       z-index: 200;
       opacity: 0;
       pointer-events: none;
-      transition: opacity var(--transition-fast);
+      transition: opacity 0.2s ease;
     }
 
     .drawer-backdrop.open {
@@ -242,7 +291,7 @@
       border-right: 1px solid var(--border-color);
       z-index: 201;
       transform: translateX(-102%);
-      transition: transform var(--transition-fast);
+      transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       flex-direction: column;
       padding-top: var(--safe-top);
@@ -275,7 +324,7 @@
       border-radius: 10px;
       background-color: var(--accent-wood);
       color: #0A0A0A;
-      font-weight: 900;
+      font-weight: 800;
       font-size: 18px;
       display: flex;
       align-items: center;
@@ -369,7 +418,7 @@
       justify-content: space-between;
       gap: 12px;
       cursor: pointer;
-      transition: background-color var(--transition-fast);
+      transition: background-color 0.15s, transform 0.1s;
     }
 
     .drawer-nav-btn:hover,
@@ -385,30 +434,36 @@
     }
 
     /* ========================================================================
-       CONTENEDOR PRINCIPAL Y TARJETAS ESTILO RESUMEN DEL TALLER
+       4. CONTENEDOR PRINCIPAL, TARJETAS CON MICRO-INTERACCIONES Y MESITA VECTOR
        ======================================================================== */
     .main-container {
       width: 100%;
-      max-width: 760px;
+      max-width: 780px;
       margin: 0 auto;
       padding: 16px;
     }
 
     .module-view {
       display: none;
+      animation: fadeInView 0.2s ease-out;
     }
 
     .module-view.active {
       display: block;
     }
 
+    @keyframes fadeInView {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .section-overline {
-      font-size: 12px;
-      font-weight: 700;
+      font-size: 11.5px;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.1px;
       color: var(--text-secondary);
-      margin: 6px 0 12px;
+      margin: 4px 0 12px;
     }
 
     .card {
@@ -440,61 +495,99 @@
     }
 
     .card-title {
-      font-size: 15px;
-      font-weight: 700;
+      font-size: 15.5px;
+      font-weight: 800;
       color: var(--text-primary);
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
+    /* TARJETAS HERO DEL PANEL PRINCIPAL CON VECTOR PROGRESIVO DE VENTAS */
     .summary-hero-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr;
       gap: 12px;
       margin-bottom: 12px;
+    }
+
+    @media (min-width: 520px) {
+      .summary-hero-grid {
+        grid-template-columns: 1.35fr 0.85fr;
+      }
     }
 
     .summary-hero-card {
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
+      border-radius: var(--radius-lg);
       padding: 16px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 132px;
+      min-height: 154px;
       cursor: pointer;
-      transition: border-color var(--transition-fast);
+      transition: transform var(--transition-fast), border-color 0.2s;
+      position: relative;
+      overflow: hidden;
     }
 
     .summary-hero-card:hover {
       border-color: var(--accent-wood);
     }
 
-    .summary-hero-icon {
-      color: var(--accent-wood);
-      margin-bottom: 8px;
+    .summary-hero-card:active {
+      transform: scale(0.985);
+    }
+
+    .sales-vector-layout {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .sales-vector-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .sales-vector-box {
+      width: 96px;
+      height: 106px;
+      background-color: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      flex-shrink: 0;
     }
 
     .summary-hero-label {
-      font-size: 13px;
+      font-size: 12.5px;
       color: var(--text-secondary);
-      font-weight: 500;
+      font-weight: 600;
     }
 
     .summary-hero-val {
-      font-size: 26px;
+      font-size: 25px;
       font-weight: 800;
       color: var(--text-primary);
-      margin: 6px 0;
+      margin: 4px 0;
       letter-spacing: -0.5px;
     }
 
     .summary-hero-sub {
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--accent-wood);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
     }
 
     .summary-hero-sub.muted {
@@ -512,12 +605,16 @@
       justify-content: space-between;
       gap: 12px;
       cursor: pointer;
-      transition: border-color var(--transition-fast), background-color var(--transition-fast);
+      transition: transform var(--transition-fast), border-color 0.2s, background-color 0.2s;
+    }
+
+    .alert-banner-card:active {
+      transform: scale(0.985);
     }
 
     .alert-banner-card.critical {
-      background-color: rgba(228, 119, 119, 0.12);
-      border-color: var(--status-err);
+      background-color: rgba(232, 121, 121, 0.13);
+      border: 1.5px solid var(--status-err);
     }
 
     .alert-banner-left {
@@ -543,6 +640,15 @@
       justify-content: space-between;
       min-height: 86px;
       cursor: pointer;
+      transition: transform var(--transition-fast), border-color 0.15s;
+    }
+
+    .kpi-card:hover {
+      border-color: var(--accent-wood);
+    }
+
+    .kpi-card:active {
+      transform: scale(0.975);
     }
 
     .kpi-card.ok { border-left: 3px solid var(--status-ok); }
@@ -559,7 +665,7 @@
     }
 
     .kpi-value {
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 800;
       color: var(--text-primary);
       margin-top: 6px;
@@ -573,7 +679,220 @@
     }
 
     /* ========================================================================
-       FORMULARIOS Y TARJETAS DE STOCK (CON ROJO CRÍTICO EN PUNTO DE REPOSICIÓN)
+       5. CATÁLOGO CON MINIATURAS REALISTAS EN VENTANA INDEPENDIENTE
+       ======================================================================== */
+    .catalog-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    @media (min-width: 540px) {
+      .catalog-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .kpi-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .catalog-thumb-card {
+      background-color: var(--bg-elevated);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+      transition: transform var(--transition-fast), border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .catalog-thumb-card:hover {
+      border-color: var(--accent-wood);
+      box-shadow: 0 8px 22px rgba(181, 139, 90, 0.15);
+    }
+
+    .catalog-thumb-card:active {
+      transform: scale(0.975);
+    }
+
+    .catalog-thumb-preview {
+      width: 100%;
+      height: 150px;
+      background: radial-gradient(circle at 50% 45%, #2E2E2E 0%, #141414 85%);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .catalog-thumb-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background-color: rgba(10, 10, 10, 0.82);
+      border: 1px solid var(--accent-wood);
+      color: var(--accent-wood);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 8px;
+    }
+
+    /* ========================================================================
+       6. SOLAPAS INTERNAS DE CATEGORÍAS EN INVENTARIO (PILLS)
+       ======================================================================== */
+    .category-pills-bar {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+      scrollbar-width: none;
+    }
+
+    .category-pills-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .cat-pill-btn {
+      min-height: 40px;
+      padding: 8px 14px;
+      border-radius: 22px;
+      border: 1.5px solid var(--border-color);
+      background-color: var(--bg-elevated);
+      color: var(--text-secondary);
+      font-size: 12.5px;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .cat-pill-btn.active {
+      background-color: var(--accent-wood);
+      border-color: var(--accent-wood);
+      color: #0A0A0A;
+      font-weight: 800;
+    }
+
+    .cat-pill-btn.alert-pill.active {
+      background-color: var(--status-err);
+      border-color: var(--status-err);
+      color: #0A0A0A;
+    }
+
+    /* ========================================================================
+       7. MAPA VISUAL GPS INTERACTIVO (MODO OSCURO + VISTA ISOMÉTRICA 3D)
+       ======================================================================== */
+    .map-search-wrapper {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .autocomplete-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background-color: var(--bg-secondary);
+      border: 1.5px solid var(--accent-wood);
+      border-radius: var(--radius-sm);
+      z-index: 500;
+      max-height: 240px;
+      overflow-y: auto;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.85);
+      display: none;
+    }
+
+    .autocomplete-dropdown.open {
+      display: block;
+    }
+
+    .autocomplete-item {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border-color);
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      transition: background-color 0.12s;
+    }
+
+    .autocomplete-item:hover,
+    .autocomplete-item:active {
+      background-color: var(--bg-elevated);
+    }
+
+    .autocomplete-item-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .autocomplete-item-sub {
+      font-size: 11.5px;
+      color: var(--accent-wood);
+      margin-top: 2px;
+    }
+
+    .gps-map-stage {
+      width: 100%;
+      height: 330px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border-color);
+      overflow: hidden;
+      position: relative;
+      background-color: #0D1117;
+      margin-bottom: 12px;
+      perspective: 900px;
+    }
+
+    #freightLeafletMap {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* EFECTO CÁMARA ISOMÉTRICA 3D EN EL MAPA GPS */
+    .gps-map-stage.isometric-3d #freightLeafletMap {
+      transform: rotateX(38deg) scale(1.18);
+      transform-origin: center 65%;
+    }
+
+    .map-overlay-controls {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 420;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .map-floating-badge {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      z-index: 420;
+      background-color: rgba(10, 10, 10, 0.88);
+      backdrop-filter: blur(6px);
+      border: 1px solid var(--accent-wood);
+      border-radius: 10px;
+      padding: 6px 11px;
+      font-size: 12px;
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    /* ========================================================================
+       8. FORMULARIOS, BOTONES Y TARJETAS DE INVENTARIO
        ======================================================================== */
     .form-group {
       margin-bottom: 14px;
@@ -590,14 +909,11 @@
       .form-row-responsive {
         grid-template-columns: 1fr 1fr;
       }
-      .kpi-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
     }
 
     label {
       display: block;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
       color: var(--text-secondary);
       margin-bottom: 6px;
@@ -615,7 +931,7 @@
       color: var(--text-primary);
       font-size: 15px;
       outline: none;
-      transition: border-color var(--transition-fast);
+      transition: border-color 0.15s;
     }
 
     input:focus, select:focus, textarea:focus {
@@ -638,7 +954,7 @@
       justify-content: center;
       gap: 8px;
       text-align: center;
-      transition: background-color var(--transition-fast), border-color var(--transition-fast), transform 0.1s;
+      transition: transform var(--transition-fast), border-color 0.15s, background-color 0.15s;
     }
 
     .btn:hover {
@@ -646,7 +962,7 @@
     }
 
     .btn:active {
-      transform: scale(0.99);
+      transform: scale(0.96);
     }
 
     .btn-sm {
@@ -680,7 +996,7 @@
     }
 
     .btn-danger {
-      background-color: rgba(228, 119, 119, 0.18);
+      background-color: rgba(232, 121, 121, 0.18);
       border-color: var(--status-err);
       color: var(--status-err);
     }
@@ -698,24 +1014,22 @@
       margin-bottom: 16px;
     }
 
-    /* TARJETAS DE ÍTEMS Y ESTADO ROJO CRÍTICO PARA PUNTO DE REPOSICIÓN */
     .item-card {
       background-color: var(--bg-elevated);
       border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-md);
       padding: 14px;
       margin-bottom: 10px;
       display: flex;
       flex-direction: column;
       gap: 10px;
-      transition: background-color var(--transition-fast), border-color var(--transition-fast);
     }
 
     .item-card.critical-low {
-      background-color: rgba(228, 119, 119, 0.14);
+      background-color: rgba(232, 121, 121, 0.14);
       border: 1.5px solid var(--status-err);
       border-left: 5px solid var(--status-err);
-      box-shadow: 0 0 16px rgba(228, 119, 119, 0.18);
+      box-shadow: 0 0 16px rgba(232, 121, 121, 0.18);
     }
 
     .item-card-top {
@@ -797,7 +1111,8 @@
       background-color: var(--bg-elevated);
       border: 1px solid var(--border-color);
       color: var(--text-primary);
-      font-size: 14px;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
       font-weight: 800;
       cursor: pointer;
     }
@@ -808,7 +1123,7 @@
     }
 
     .stepper-val {
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 800;
       color: var(--text-primary);
       text-align: center;
@@ -835,7 +1150,7 @@
 
     #threeViewerContainer {
       width: 100%;
-      height: 400px;
+      height: 410px;
       position: relative;
       background: radial-gradient(circle at 50% 45%, #252525 0%, #121212 65%, #0A0A0A 100%);
     }
@@ -861,12 +1176,12 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      transition: all var(--transition-fast);
+      transition: all 0.15s;
     }
 
     .swatch-dot.selected {
       border-color: var(--accent-wood);
-      background-color: rgba(181, 139, 90, 0.16);
+      background-color: rgba(181, 139, 90, 0.18);
       color: var(--text-primary);
       box-shadow: 0 0 0 2px rgba(181, 139, 90, 0.28);
     }
@@ -879,13 +1194,58 @@
       flex-shrink: 0;
     }
 
+    /* ========================================================================
+       9. BARRA FLOTANTE INFERIOR "THUMB-ZONE FIRST" (USO A UNA MANO)
+       ======================================================================== */
+    .thumb-zone-dock {
+      position: fixed;
+      bottom: calc(12px + var(--safe-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 95;
+      background-color: rgba(20, 20, 20, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-color);
+      border-radius: 32px;
+      padding: 6px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75);
+      max-width: 94vw;
+    }
+
+    .dock-pill-btn {
+      min-height: 40px;
+      padding: 6px 13px;
+      border-radius: 22px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .dock-pill-btn.active {
+      background-color: var(--accent-wood);
+      color: #0A0A0A;
+      font-weight: 800;
+    }
+
     /* NOTIFICACIONES TOAST Y DIÁLOGOS */
     .toast-container {
       position: fixed;
       top: calc(72px + var(--safe-top));
       right: 16px;
       left: 16px;
-      z-index: 300;
+      z-index: 600;
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -914,7 +1274,7 @@
       position: fixed;
       inset: 0;
       background-color: rgba(0, 0, 0, 0.82);
-      z-index: 400;
+      z-index: 650;
       display: none;
       align-items: center;
       justify-content: center;
@@ -957,7 +1317,7 @@
     </div>
   </div>
 
-  <!-- CABECERA PRINCIPAL (NAVEGACIÓN EXCLUSIVA POR MENÚ HAMBURGUESA) -->
+  <!-- CABECERA PRINCIPAL (CON INTERRUPTOR MODO TALLER PRO Y NOTIFICACIONES) -->
   <header class="app-header">
     <div class="header-left">
       <button class="hamburger-btn" id="btnOpenDrawer" onclick="AppUI.toggleDrawer(true)" aria-label="Abrir menú de navegación">
@@ -978,6 +1338,9 @@
         <span class="sync-dot" id="syncStatusDot"></span>
         <span id="syncStatusText">Conectado</span>
       </div>
+      <button class="icon-action-btn" id="btnWorkshopProMode" onclick="AppUI.toggleWorkshopProMode()" title="Activar Modo Vista de Taller de Alto Contraste">
+        ☀️
+      </button>
       <button class="icon-action-btn" onclick="AppUI.navigate('notificaciones')" aria-label="Centro de Notificaciones">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -1005,7 +1368,7 @@
     <div class="drawer-user-box">
       <div class="user-meta">
         <strong id="drawerUserName">Leandro Llanes</strong>
-        <span style="font-size:11px; color:var(--text-secondary);">Taller Principal</span>
+        <span style="font-size:11px; color:var(--text-secondary);">Villa Luzuriaga • Taller JL</span>
       </div>
       <span class="role-badge" id="drawerUserRole">ADMINISTRADOR</span>
     </div>
@@ -1013,34 +1376,59 @@
     <nav class="drawer-scroll" id="drawerNavList"></nav>
   </aside>
 
+  <!-- BARRA FLOTANTE INFERIOR "THUMB-ZONE FIRST" -->
+  <nav class="thumb-zone-dock" aria-label="Accesos rápidos de pulgar">
+    <button class="dock-pill-btn active" id="dock_dashboard" onclick="AppUI.navigate('dashboard')">🏠 Taller</button>
+    <button class="dock-pill-btn" id="dock_catalogo" onclick="AppUI.navigate('catalogo')">🪑 Catálogo</button>
+    <button class="dock-pill-btn" id="dock_stock" onclick="AppUI.navigate('stock')">📦 Stock</button>
+    <button class="dock-pill-btn" id="dock_fletes" onclick="AppUI.navigate('fletes')">🗺️ Mapa GPS</button>
+  </nav>
+
   <!-- CONTENEDOR CENTRAL DE MÓDULOS -->
   <main class="main-container">
 
     <!-- ====================================================================
-         1. INICIO: PANEL PRINCIPAL (RESUMEN DEL TALLER)
+         1. INICIO: PANEL PRINCIPAL (CON VECTOR DE MESITA COLOREABLE Y TXT MENSUAL)
          ==================================================================== -->
     <section id="view-dashboard" class="module-view active">
       <div class="section-overline">RESUMEN DEL TALLER</div>
 
       <div class="summary-hero-grid">
-        <div class="summary-hero-card" onclick="AppUI.navigate('caja')">
-          <div>
-            <div class="summary-hero-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-                <path d="M16 12h.01"></path>
-              </svg>
+        <!-- TARJETA DE VENTAS DEL MES CON MESITA VECTORIAL COLOREABLE POR CICLOS -->
+        <div class="summary-hero-card">
+          <div class="sales-vector-layout" onclick="AppUI.navigate('caja')">
+            <div class="sales-vector-info">
+              <div class="summary-hero-label" id="heroMonthLabel">Ventas del mes</div>
+              <div class="summary-hero-val" id="heroVentasMes">$125.000</div>
+              <div class="summary-hero-sub" id="heroCycleBadge">
+                Ciclo 1 • Pintando Mesita (50%)
+              </div>
+              <div style="font-size:11px; color:var(--text-secondary); margin-top:4px;" id="heroNextColorHint">
+                Meta por ciclo: $250.000 (Al llegar al 100% cambia de color)
+              </div>
             </div>
-            <div class="summary-hero-label">Ventas del mes</div>
-            <div class="summary-hero-val" id="heroVentasMes">$125.000</div>
+
+            <!-- VECTOR MINIMALISTA DE LA MESITA QUE SE VA COLOREANDO -->
+            <div class="sales-vector-box" title="La mesita se pinta a medida que vendés. Al completarse inicia un nuevo color.">
+              <svg id="monthlyMesitaVectorSvg" width="76" height="82" viewBox="0 0 100 110"></svg>
+            </div>
           </div>
-          <div class="summary-hero-sub">Ver movimientos</div>
+
+          <div style="display:flex; gap:8px; margin-top:12px; padding-top:10px; border-top:1px solid var(--border-color);">
+            <button class="btn btn-sm" style="flex:1;" onclick="MonthlySalesGoalTracker.exportMonthlySalesTxt(false)">
+              📄 Descargar Ventas (.txt)
+            </button>
+            <button class="btn btn-sm" style="flex:1;" onclick="MonthlySalesGoalTracker.promptGoalConfig()">
+              🎯 Meta Ciclo
+            </button>
+          </div>
         </div>
 
+        <!-- TARJETA DE PEDIDOS ACTIVOS -->
         <div class="summary-hero-card" onclick="AppUI.navigate('pedidos')">
           <div>
             <div class="summary-hero-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
                 <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
                 <line x1="12" y1="22.08" x2="12" y2="12"></line>
@@ -1049,20 +1437,20 @@
             <div class="summary-hero-label">Pedidos activos</div>
             <div class="summary-hero-val" id="heroPedidosActivos">0</div>
           </div>
-          <div class="summary-hero-sub muted">En fabricación</div>
+          <div class="summary-hero-sub muted">En fabricación en taller ➔</div>
         </div>
       </div>
 
       <!-- BANNER DE PUNTO DE REPOSICIÓN (SE PONE ROJO SI HAY ÍTEMS CRÍTICOS) -->
       <div class="alert-banner-card" id="dashLowStockBanner" onclick="AppUI.navigate('alertas-stock')">
         <div class="alert-banner-left">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E47777" stroke-width="2.2">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E87979" stroke-width="2.2">
             <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
             <line x1="12" y1="9" x2="12" y2="13"></line>
             <line x1="12" y1="17" x2="12.01" y2="17"></line>
           </svg>
           <div>
-            <div style="font-size:15px; font-weight:700; color:var(--text-primary);">
+            <div style="font-size:15px; font-weight:800; color:var(--text-primary);">
               Punto de reposición / Stock bajo (<span id="bannerLowStockCount">0</span>)
             </div>
             <div style="font-size:13px; color:var(--text-secondary);" id="bannerLowStockSub">
@@ -1098,9 +1486,9 @@
           <span class="kpi-label">Saldo en Caja</span>
           <span class="kpi-value" id="kpiSaldoCaja">$0</span>
         </div>
-        <div class="kpi-card wood" onclick="AppUI.navigate('catalogo3d')">
-          <span class="kpi-label">Modelos 3D</span>
-          <span class="kpi-value" id="kpiCatalogCount">4</span>
+        <div class="kpi-card wood" onclick="AppUI.navigate('catalogo')">
+          <span class="kpi-label">Catálogo</span>
+          <span class="kpi-value" id="kpiCatalogCount">4 Modelos</span>
         </div>
       </div>
 
@@ -1110,12 +1498,12 @@
           <span class="status-pill wood" id="dashPendingQueueBadge">0 Pendientes Sync</span>
         </div>
         <div class="quick-actions-grid">
+          <button class="btn" onclick="AppUI.navigate('catalogo')">🪑 Catálogo de Muebles</button>
+          <button class="btn" onclick="AppUI.navigate('visor3d')">🧊 Visor 3D Interactivo</button>
           <button class="btn" onclick="AppUI.navigate('calculadora')">🧮 Calculadora Mueble</button>
           <button class="btn" onclick="AppUI.navigate('mesita-variable')">✨ Mesita Variable</button>
           <button class="btn" onclick="AppUI.navigate('filo')">📏 Calculadora de Filo</button>
-          <button class="btn" onclick="AppUI.navigate('optimizador')">📐 Optimizador + Retazos</button>
-          <button class="btn" onclick="AppUI.navigate('catalogo3d')">🪑 Catálogo y Visor 3D</button>
-          <button class="btn" onclick="AppUI.navigate('stock')">📦 Inventario (+10)</button>
+          <button class="btn" onclick="AppUI.navigate('fletes')">🗺️ Mapa GPS y Fletes</button>
         </div>
       </div>
 
@@ -1138,7 +1526,7 @@
         </div>
 
         <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
-          Ingresá las medidas exactas que pidió el cliente. El <strong>Esquema Proporcional en Tiempo Real</strong> se actualiza al instante mostrando cómo va a quedar el mueble y sus cajones.
+          Ingresá las medidas exactas que pidió el cliente. El <strong>Esquema Proporcional en Tiempo Real</strong> dibuja a escala el mueble y sus cajones en el acto.
         </p>
 
         <div class="form-row-responsive">
@@ -1221,7 +1609,7 @@
         <!-- ESQUEMA PROPORCIONAL EN TIEMPO REAL DEL MUEBLE PEDIDO POR EL CLIENTE -->
         <div class="card-elevated" style="text-align:center; border:1px solid var(--accent-wood);">
           <div style="font-size:12px; color:var(--accent-wood); font-weight:700; margin-bottom:8px;">
-            Esquema Proporcional en Tiempo Real (Vista Frontal + Cotas de Cliente)
+            Esquema Proporcional en Tiempo Real (Vista Previa de Medidas del Cliente)
           </div>
           <svg id="stdSvgDiagram" width="100%" height="210" viewBox="0 0 360 210"></svg>
         </div>
@@ -1262,10 +1650,6 @@
           <span class="card-title">Mesita con Techo Variable (Tapa Volada / Ensanche)</span>
           <span class="status-pill wood">Módulo Independiente</span>
         </div>
-
-        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
-          Apartado exclusivo para mesitas especiales donde el techo sobresale (por ejemplo, para porta secador) o donde querés ensanchar proporcionalmente a partir del techo.
-        </p>
 
         <div class="form-group">
           <label for="varModoEnsanche">Modo de Comportamiento del Techo</label>
@@ -1363,10 +1747,6 @@
           <span class="status-pill wood">Cuerpo + Frente Combinado</span>
         </div>
 
-        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
-          Calculá cuántos metros de filo lleva el mueble, separando la cuenta del <strong>Filo Base (Blanco o Negro)</strong> y la segunda cuenta con el <strong>Filo del Color requerido (ej. Helsinki)</strong>.
-        </p>
-
         <div class="form-row-responsive">
           <div>
             <label for="edgeModelSelect">Seleccionar Modelo de Mueble</label>
@@ -1460,7 +1840,7 @@
 
         <div class="card-elevated" style="border:1.5px solid var(--accent-wood); text-align:center;">
           <span class="kpi-label">TOTAL COMBINADO EN FILO (BASE + COLOR FRENTE)</span>
-          <div style="font-size:28px; font-weight:900; color:var(--accent-wood); margin:6px 0;" id="edgeOutGrandTotal">$0</div>
+          <div class="mono-num" style="font-size:28px; font-weight:900; color:var(--accent-wood); margin:6px 0;" id="edgeOutGrandTotal">$0</div>
           <div style="font-size:12px; color:var(--text-secondary);" id="edgeOutRollsRequired"></div>
         </div>
 
@@ -1542,10 +1922,6 @@
             <strong style="font-size:13px; color:var(--status-ok);">♻️ Retazos y Recortes Disponibles en Taller</strong>
             <button class="btn btn-sm" onclick="OptimizerEngine.toggleScrapForm()">+ Cargar Retazo</button>
           </div>
-          <div style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">
-            El optimizador usa primero estos retazos antes de sumar placas enteras nuevas a tu lista de compra.
-          </div>
-
           <div id="newScrapFormBox" style="display:none; margin-bottom:10px; padding-top:8px; border-top:1px solid var(--border-color);">
             <div class="form-row-responsive">
               <div><label>Largo Retazo (mm)</label><input type="number" id="scrW" inputmode="numeric" placeholder="600"></div>
@@ -1557,7 +1933,6 @@
             </div>
             <button class="btn btn-success btn-block" onclick="OptimizerEngine.addScrap()">Guardar Retazo en este Diseño</button>
           </div>
-
           <div id="optScrapsList"></div>
         </div>
 
@@ -1614,23 +1989,35 @@
     </section>
 
     <!-- ====================================================================
-         5. FABRICACIÓN: CATÁLOGO DE MUEBLES Y VISOR 3D (CON TEXTURAS PNG REALES)
+         5A. FABRICACIÓN: CATÁLOGO DE MUEBLES (VENTANA INDEPENDIENTE CON MINIATURAS)
          ==================================================================== -->
-    <section id="view-catalogo3d" class="module-view">
+    <section id="view-catalogo" class="module-view">
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Catálogo de Modelos de Mesitas JL</span>
+          <span class="card-title">Catálogo de Muebles con Miniaturas</span>
+          <span class="status-pill wood">Tocar para abrir en 3D</span>
         </div>
-        <div id="catalogGridContainer" class="form-row-responsive"></div>
+        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
+          Tocá cualquiera de los muebles del catálogo para cargarlo automáticamente y abrirlo en la ventana exclusiva del <strong>Visor 3D Interactivo</strong>.
+        </p>
+        <div id="catalogGridContainer" class="catalog-cards-grid"></div>
       </div>
+    </section>
 
+    <!-- ====================================================================
+         5B. FABRICACIÓN: VISOR 3D INTERACTIVO (VENTANA INDEPENDIENTE DEDICADA)
+         ==================================================================== -->
+    <section id="view-visor3d" class="module-view">
       <div class="card" id="viewer3DFullCard">
         <div class="card-header">
           <div>
             <span class="card-title" id="viewer3DModelTitle">Mesita de Luz Clásica 1 Cajón</span>
-            <span style="font-size:12px; color:var(--text-secondary);" id="viewer3DModelDims">400 × 335 × 450 mm</span>
+            <span class="mono-num" style="font-size:12px; color:var(--text-secondary); display:block;" id="viewer3DModelDims">400 × 335 × 450 mm</span>
           </div>
-          <span class="status-pill wood" id="viewer3DPriceTag">$55.500</span>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <span class="status-pill wood mono-num" id="viewer3DPriceTag">$55.500</span>
+            <button class="btn btn-sm" onclick="AppUI.navigate('catalogo')">← Catálogo</button>
+          </div>
         </div>
 
         <div class="canvas-viewport" id="threeViewerContainer"></div>
@@ -1723,13 +2110,23 @@
     </section>
 
     <!-- ====================================================================
-         7. INVENTARIO: PUNTO DE REPOSICIÓN EDITABLE (ROJO CRÍTICO) + BOTONES +10
+         7. INVENTARIO: STOCK Y PUNTO DE REPOSICIÓN (CON SOLAPAS DE CATEGORÍAS INTERNAS)
          ==================================================================== -->
     <section id="view-stock" class="module-view">
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Inventario y Punto de Reposición en Tiempo Real</span>
+          <span class="card-title">Stock y Punto de Reposición</span>
           <button class="btn btn-primary" onclick="InventoryModule.openNewForm()">+ Material</button>
+        </div>
+
+        <!-- SOLAPAS DE CATEGORÍAS INTERNAS (PARA ELEGIR QUÉ CATEGORÍA VER ADENTRO) -->
+        <div class="category-pills-bar" id="stockCategoryPillsBar">
+          <button class="cat-pill-btn active" data-cat="all" onclick="InventoryModule.selectCategoryTab('all')">Todos</button>
+          <button class="cat-pill-btn" data-cat="cortes" onclick="InventoryModule.selectCategoryTab('cortes')">🪵 Piezas Cortadas</button>
+          <button class="cat-pill-btn" data-cat="herrajes" onclick="InventoryModule.selectCategoryTab('herrajes')">🔩 Herrajes</button>
+          <button class="cat-pill-btn" data-cat="cantos" onclick="InventoryModule.selectCategoryTab('cantos')">📏 Filos y Tapacantos</button>
+          <button class="cat-pill-btn" data-cat="consumibles" onclick="InventoryModule.selectCategoryTab('consumibles')">🧰 Consumibles</button>
+          <button class="cat-pill-btn alert-pill" data-cat="low" onclick="InventoryModule.selectCategoryTab('low')">🚨 Punto Reposición</button>
         </div>
 
         <div id="newStockItemBox" class="card-elevated" style="display:none;">
@@ -1768,19 +2165,9 @@
           </div>
         </div>
 
-        <div class="form-row-responsive">
-          <div>
-            <input type="search" id="stkSearchInput" placeholder="Buscar material por nombre o código..." oninput="InventoryModule.render()">
-          </div>
-          <div>
-            <select id="stkFilterCat" onchange="InventoryModule.render()">
-              <option value="all">Todas las Categorías</option>
-              <option value="cortes">Piezas Cortadas (Laterales, Techos, Frentes)</option>
-              <option value="herrajes">Herrajes y Tornillería</option>
-              <option value="cantos">Filos / Tapacantos y Adhesivos</option>
-              <option value="low">🚨 En Punto de Reposición (Alerta Roja)</option>
-            </select>
-          </div>
+        <div class="form-group">
+          <input type="search" id="stkSearchInput" placeholder="Buscar material o pieza por nombre o código SKU..." oninput="InventoryModule.render()">
+          <input type="hidden" id="stkFilterCat" value="all">
         </div>
 
         <div id="inventoryCardsContainer"></div>
@@ -1861,7 +2248,7 @@
 
         <div class="card-elevated" style="border:1.5px solid var(--status-ok); text-align:center; margin-bottom:14px;">
           <span class="kpi-label">TOTAL FINAL DEL PRESUPUESTO</span>
-          <div style="font-size:28px; font-weight:900; color:var(--text-primary); margin-top:4px;" id="quoTotalDisplay">$55.500</div>
+          <div class="mono-num" style="font-size:28px; font-weight:900; color:var(--text-primary); margin-top:4px;" id="quoTotalDisplay">$55.500</div>
         </div>
 
         <div class="quick-actions-grid">
@@ -1905,7 +2292,10 @@
       </div>
 
       <div class="card">
-        <div class="card-header"><span class="card-title">Registrar Movimiento de Caja</span></div>
+        <div class="card-header">
+          <span class="card-title">Registrar Venta o Movimiento de Caja</span>
+          <button class="btn btn-sm" onclick="MonthlySalesGoalTracker.exportMonthlySalesTxt(false)">📄 Descargar Ventas Mes (.txt)</button>
+        </div>
         <div class="form-row-responsive">
           <div>
             <label>Tipo de Movimiento</label>
@@ -1925,7 +2315,7 @@
           </div>
         </div>
         <div class="form-row-responsive">
-          <div><label>Concepto / Referencia</label><input type="text" id="cashConcept" placeholder="Ej: Cobro Mesita de Luz..."></div>
+          <div><label>Concepto / Referencia</label><input type="text" id="cashConcept" placeholder="Ej: Venta 2 Mesitas Helsinki..."></div>
           <div><label>Importe ($)</label><input type="number" id="cashAmount" inputmode="numeric" placeholder="55500"></div>
         </div>
         <button class="btn btn-primary btn-block" onclick="FinanceModule.addEntry()">Registrar Movimiento</button>
@@ -1938,31 +2328,61 @@
     </section>
 
     <!-- ====================================================================
-         12. COMERCIAL: CALCULADORA DE FLETES + BOTÓN DIRECTO A GOOGLE MAPS
+         12. COMERCIAL: MAPA VISUAL GPS INTERACTIVO + AUTOCOMPLETADO DE DIRECCIONES
          ==================================================================== -->
     <section id="view-fletes" class="module-view">
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Calculadora de Fletes y Ruta en Google Maps</span>
-        </div>
-        <div class="form-group">
-          <label for="frDestination">Dirección o Localidad de Entrega</label>
-          <input type="text" id="frDestination" placeholder="Ej: Av. Rivadavia 14200, Ramos Mejía">
+          <span class="card-title">Mapa GPS Interactivo y Calculadora de Fletes</span>
+          <span class="status-pill ok">Autocompletado Activo</span>
         </div>
 
-        <!-- BOTÓN SOLICITADO PARA ABRIR RUTA EN GOOGLE MAPS -->
+        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
+          Escribí la calle y altura (ej. <em>Rivadavia 14000</em>, <em>Arieta 3200</em>, <em>Presidente Perón</em>). El buscador te mostrará las coincidencias diferenciando <strong>Morón, San Justo, Ramos Mejía, Haedo, Ituzaingó</strong>, etc., para trazar la ruta y calcular los kilómetros automáticamente desde <strong>Villa Luzuriaga</strong>.
+        </p>
+
+        <!-- BUSCADOR CON SUGERENCIAS DESPLEGABLES DE DIRECCIONES Y LOCALIDADES -->
+        <div class="map-search-wrapper">
+          <label for="frDestination">Buscar Dirección y Seleccionar Localidad Exacta</label>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="frDestination" autocomplete="off"
+              placeholder="Escribí calle, altura o localidad (ej: Rivadavia 14000)..."
+              oninput="FreightModule.onTypeAddress(this.value)"
+              onfocus="FreightModule.onTypeAddress(this.value)">
+            <button class="btn btn-primary" onclick="FreightModule.forceSearchAddress()">🔍 Buscar</button>
+          </div>
+          <div id="frAutocompleteList" class="autocomplete-dropdown"></div>
+        </div>
+
+        <!-- MAPA VISUAL GPS FUNCIONAL (CON MODO ISOMÉTRICO 3D Y TRAZADO DE RUTA) -->
+        <div class="gps-map-stage" id="gpsMapStage">
+          <div id="freightLeafletMap"></div>
+          <div class="map-overlay-controls">
+            <button class="btn btn-sm btn-primary" id="btnToggleIso3D" onclick="FreightModule.toggleIsometric3D()">
+              🧊 Vista 3D Isométrica
+            </button>
+            <button class="btn btn-sm" onclick="FreightModule.centerOnWorkshop()">
+              📍 Taller JL
+            </button>
+          </div>
+          <div class="map-floating-badge" id="mapRouteBadge">
+            Origen: Taller Villa Luzuriaga ➔ Seleccioná un destino
+          </div>
+        </div>
+
+        <!-- BOTÓN ADICIONAL PARA ABRIR LA RUTA EN LA APP EXTERNA DE GOOGLE MAPS -->
         <button class="btn btn-warn btn-block" style="margin-bottom:14px;" onclick="FreightModule.openGoogleMaps()">
-          🗺️ Abrir Ruta en Google Maps
+          🗺️ Abrir Navegación en Google Maps Externo
         </button>
 
         <div class="form-row-responsive">
-          <div><label>Distancia (Km)</label><input type="number" id="frKm" inputmode="decimal" value="10" oninput="FreightModule.calc()"></div>
+          <div><label>Distancia Calculada por GPS (Km)</label><input type="number" id="frKm" inputmode="decimal" value="6.5" step="0.1" oninput="FreightModule.calc()"></div>
           <div><label>Tarifa por Km ($)</label><input type="number" id="frRateKm" inputmode="numeric" value="1400" oninput="FreightModule.calc()"></div>
         </div>
         <div class="form-row-responsive">
           <div><label>Cargo Base Fijo ($)</label><input type="number" id="frBaseFee" inputmode="numeric" value="4000" oninput="FreightModule.calc()"></div>
           <div>
-            <label>Modalidad</label>
+            <label>Modalidad de Viaje</label>
             <select id="frRoundTrip" onchange="FreightModule.calc()">
               <option value="1">Solo Ida (×1)</option>
               <option value="2">Ida y Vuelta (×2)</option>
@@ -1971,7 +2391,7 @@
         </div>
         <div class="kpi-card wood" style="margin:12px 0;">
           <span class="kpi-label">Costo Estimado de Envío</span>
-          <span class="kpi-value" id="frTotalResult">$18.000</span>
+          <span class="kpi-value" id="frTotalResult">$13.100</span>
         </div>
         <button class="btn btn-primary btn-block" onclick="FreightModule.applyToQuote()">Sumar Flete al Presupuesto Actual</button>
       </div>
@@ -1989,9 +2409,6 @@
             <button class="btn btn-sm btn-danger" onclick="NotificationCenter.clearAll()">🗑 Vaciar</button>
           </div>
         </div>
-        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
-          Aquí se registran automáticamente las alertas cuando se <strong>confirma un pedido</strong> y cuando cualquier insumo llega a su <strong>punto de reposición</strong>.
-        </p>
         <div id="notificationsListContainer"></div>
       </div>
     </section>
@@ -2000,16 +2417,11 @@
          14. SISTEMA: AJUSTES DE SONIDO PERSONALIZADO, RESPALDOS Y ROLES
          ==================================================================== -->
     <section id="view-sistema" class="module-view">
-      <!-- APARTADO DE SONIDO DE NOTIFICACIÓN PERSONALIZADO -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">🔊 Sonido de Notificación Personalizado</span>
           <span class="status-pill wood" id="soundActiveBadge">Activo</span>
         </div>
-        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
-          Configurá el sonido que reproducirá la aplicación al confirmar un pedido o cuando un material entre en punto de reposición rojo.
-        </p>
-
         <div class="form-row-responsive">
           <div>
             <label for="soundPresetSelect">Tipo de Tono de Alerta</label>
@@ -2028,7 +2440,7 @@
         </div>
 
         <div class="form-group" style="margin-top:8px;">
-          <label for="customSoundFileInput">Subir Sonido Personalizado desde tu Teléfono o PC (.mp3, .wav, .ogg)</label>
+          <label for="customSoundFileInput">Subir Sonido Personalizado (.mp3, .wav, .ogg)</label>
           <input type="file" id="customSoundFileInput" accept="audio/*" onchange="NotificationCenter.uploadCustomAudio(event)">
           <div id="customSoundFileName" style="font-size:12px; color:var(--accent-wood); margin-top:6px;"></div>
         </div>
@@ -2040,13 +2452,10 @@
       </div>
 
       <div class="card">
-        <div class="card-header"><span class="card-title">Respaldos JSON y Restauración Segura</span></div>
-        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
-          Exportá o importá toda la base de datos del taller en formato <code>.json</code> con validación previa.
-        </p>
+        <div class="card-header"><span class="card-title">Respaldos JSON y Reportes Mensuales</span></div>
         <div class="quick-actions-grid">
           <button class="btn btn-primary" onclick="BackupModule.exportJSON()">⬇ Exportar JSON</button>
-          <button class="btn" onclick="BackupModule.exportCSVReport()">📊 Exportar CSV Caja</button>
+          <button class="btn" onclick="MonthlySalesGoalTracker.exportMonthlySalesTxt(false)">📄 Ventas del Mes (.txt)</button>
         </div>
         <div class="form-group" style="margin-top:14px;">
           <label>Importar Respaldo (.json)</label>
@@ -2074,7 +2483,7 @@
           <button class="btn btn-primary" onclick="TestSuiteRunner.runAll()">▶ Ejecutar Tests</button>
         </div>
         <div id="selfTestResultsBox" style="font-size:13px; color:var(--text-secondary);">
-          Presioná "Ejecutar Tests" para validar los cálculos de filo doble tramo, punto de reposición rojo, retazos y esquema proporcional.
+          Presioná "Ejecutar Tests" para validar el vector de ventas por ciclos, el autocompletado GPS, el catálogo separado y el punto de reposición.
         </div>
       </div>
     </section>
@@ -2101,7 +2510,7 @@
     try {
       const fbApp = initializeApp(firebaseConfig);
       const fbDb = getDatabase(fbApp);
-      const rootRef = ref(fbDb, 'carpinteria_jl_enterprise_v4');
+      const rootRef = ref(fbDb, 'carpinteria_jl_enterprise_v5');
 
       onValue(rootRef, (snapshot) => {
         const remoteData = snapshot.val();
@@ -2123,12 +2532,12 @@
   </script>
 
   <!-- ========================================================================
-       LÓGICA DE NEGOCIO, NOTIFICACIONES SONORAS, PUNTO DE REPOSICIÓN Y 3D
+       LÓGICA DE NEGOCIO, VECTOR DE VENTAS MENSUALES, MAPA GPS Y VISOR 3D
        ======================================================================== -->
   <script>
     /* LIMPIEZA AUTOMÁTICA DE CACHÉS ANTERIORES */
     (async function purgeOldCachesOnce() {
-      const PURGE_KEY = 'jl_theme_v4_0_applied';
+      const PURGE_KEY = 'jl_theme_v5_0_applied';
       if (!localStorage.getItem(PURGE_KEY)) {
         if ('caches' in window) {
           const keys = await caches.keys();
@@ -2142,7 +2551,7 @@
       }
     })();
 
-    /* GESTOR CENTRAL DE TEXTURAS REALES (COMPATIBLE CON /assets/Textures/ Y /assets/textures/) */
+    /* GESTOR CENTRAL DE TEXTURAS REALES (/assets/Textures/ y /assets/textures/) */
     const RealTexturesManager = {
       filesPrimary: {
         helsinki: 'assets/Textures/Helsinki.png',
@@ -2200,2770 +2609,3 @@
        ======================================================================== */
     const SecurityRBAC = {
       currentUser: {
-        id: 'usr_leandro',
-        name: 'Leandro Llanes',
-        role: 'ADMINISTRADOR'
-      },
-      rolePermissions: {
-        ADMINISTRADOR: ['*'],
-        ENCARGADO: ['dashboard', 'calculadora', 'mesita-variable', 'filo', 'optimizador', 'catalogo3d', 'recetas', 'stock', 'proveedores', 'presupuestos', 'pedidos', 'fletes', 'notificaciones'],
-        OPERADOR: ['dashboard', 'calculadora', 'mesita-variable', 'filo', 'optimizador', 'catalogo3d', 'recetas', 'stock', 'pedidos', 'notificaciones'],
-        CONSULTA: ['dashboard', 'catalogo3d', 'stock', 'pedidos', 'notificaciones']
-      },
-      canViewModule(moduleId) {
-        const allowed = this.rolePermissions[this.currentUser.role] || [];
-        return allowed.includes('*') || allowed.includes(moduleId);
-      },
-      canWrite(operationName) {
-        if (this.currentUser.role === 'CONSULTA') {
-          AppUI.toast(`Permiso denegado: El rol CONSULTA es de solo lectura.`, 'err');
-          return false;
-        }
-        if (this.currentUser.role === 'OPERADOR' && ['CAJA_WRITE', 'BACKUP_RESTORE'].includes(operationName)) {
-          AppUI.toast(`Permiso denegado: Se requiere rol ENCARGADO o ADMINISTRADOR.`, 'err');
-          return false;
-        }
-        return true;
-      },
-      switchRole(newRole) {
-        this.currentUser.role = newRole;
-        document.getElementById('drawerUserRole').textContent = newRole;
-        AppUI.renderDrawerMenu();
-        AppUI.toast(`Rol activo cambiado a ${newRole}`, 'ok');
-      }
-    };
-
-    /* ========================================================================
-       CAPA 2: ESTADO INICIAL Y PERSISTENCIA OFFLINE-FIRST (INDEXEDDB)
-       ======================================================================== */
-    const INITIAL_ENTERPRISE_STATE = {
-      schemaVersion: '4.0-enterprise',
-      updatedAt: Date.now(),
-      boards: [
-        { id: 'b_blanco', name: 'Melamina 18mm Blanco', w: 2750, h: 1830, thickness: 18, price: 146000, prevPrice: 139000, priceUpdatedAt: '15/10/2026', texture: 'blanco', margin: 10, kerf: 4, cuts: [], scraps: [] },
-        { id: 'b_negro', name: 'Melamina 18mm Negro Profundo', w: 2750, h: 1830, thickness: 18, price: 155000, prevPrice: 148000, priceUpdatedAt: '15/10/2026', texture: 'negro', margin: 10, kerf: 4, cuts: [], scraps: [] },
-        { id: 'b_helsinki', name: 'Melamina 18mm Helsinki', w: 2750, h: 1830, thickness: 18, price: 168000, prevPrice: 160000, priceUpdatedAt: '16/10/2026', texture: 'helsinki', margin: 10, kerf: 4, cuts: [], scraps: [{ id: 'scr_init_1', w: 600, h: 400, qty: 1 }] },
-        { id: 'b_artico', name: 'Melamina 18mm Teka Ártico', w: 2750, h: 1830, thickness: 18, price: 168000, prevPrice: 160000, priceUpdatedAt: '16/10/2026', texture: 'artico', margin: 10, kerf: 4, cuts: [], scraps: [] },
-        { id: 'b_baltico', name: 'Melamina 18mm Báltico', w: 2750, h: 1830, thickness: 18, price: 172000, prevPrice: 165000, priceUpdatedAt: '16/10/2026', texture: 'baltico', margin: 10, kerf: 4, cuts: [], scraps: [] },
-        { id: 'b_carvalho', name: 'Melamina 18mm Carvalho Mezzo', w: 2750, h: 1830, thickness: 18, price: 172000, prevPrice: 165000, priceUpdatedAt: '16/10/2026', texture: 'carvalho', margin: 10, kerf: 4, cuts: [], scraps: [] },
-        { id: 'b_gaudi', name: 'Melamina 18mm Gaudí', w: 2750, h: 1830, thickness: 18, price: 172000, prevPrice: 165000, priceUpdatedAt: '16/10/2026', texture: 'gaudi', margin: 10, kerf: 4, cuts: [], scraps: [] },
-        { id: 'b_kiri', name: 'Melamina 18mm Kiri', w: 2750, h: 1830, thickness: 18, price: 169000, prevPrice: 162000, priceUpdatedAt: '16/10/2026', texture: 'kiri', margin: 10, kerf: 4, cuts: [], scraps: [] }
-      ],
-      selectedBoardId: 'b_helsinki',
-      stock: [
-        { id: 'stk_lat', code: 'COR-LAT-18', name: 'Laterales de Mesita Cortados 18mm', category: 'cortes', qty: 100, normalQty: 100, min: 20, unit: 'UNID', price: 3200, location: 'Estante Cortes A' },
-        { id: 'stk_tec', code: 'COR-TEC-18', name: 'Techos y Pisos Cortados 18mm', category: 'cortes', qty: 80, normalQty: 100, min: 20, unit: 'UNID', price: 3400, location: 'Estante Cortes B' },
-        { id: 'stk_3', code: 'HER-COR-30', name: 'Corredera Telescópica 300mm (Par)', category: 'herrajes', qty: 14, normalQty: 30, min: 5, unit: 'PAR', price: 5800, location: 'Gaveta H1' },
-        { id: 'stk_4', code: 'TOR-35-30', name: 'Tornillos Autoperforantes 3.5x30', category: 'herrajes', qty: 450, normalQty: 1000, min: 100, unit: 'UNID', price: 35, location: 'Gaveta T2' },
-        { id: 'stk_5', code: 'FIL-BLA-22', name: 'Rollo Filo Melamínico Blanco 22mm (25m)', category: 'cantos', qty: 4, normalQty: 10, min: 2, unit: 'ROLLO', price: 9500, location: 'Sector Filos' },
-        { id: 'stk_6', code: 'FIL-HEL-22', name: 'Rollo Filo Melamínico Helsinki 22mm (25m)', category: 'cantos', qty: 2, normalQty: 6, min: 2, unit: 'ROLLO', price: 12500, location: 'Sector Filos' }
-      ],
-      stockMovements: [],
-      catalogModels: [
-        { id: 'mod_mesita_std', name: 'Mesita de Luz Clásica 1 Cajón', dims: '400 × 335 × 450 mm', w: 400, d: 335, h: 450, basePrice: 55500, glbPath: 'assets/models/mesita_1.glb', hasHole: false, topOverhang: 0, defaultBase: 'blanco', baseEdgeM: 5.2, frontEdgeM: 1.15 },
-        { id: 'mod_mesita_neg', name: 'Mesita Minimalista Negra', dims: '400 × 335 × 450 mm', w: 400, d: 335, h: 450, basePrice: 58000, glbPath: 'assets/models/mesita_2.glb', hasHole: false, topOverhang: 0, defaultBase: 'negro', baseEdgeM: 5.2, frontEdgeM: 1.15 },
-        { id: 'mod_mesita_sec_neg', name: 'Mesita Negra c/ Porta Secador', dims: '520 × 335 × 450 mm', w: 400, d: 335, h: 450, basePrice: 64800, glbPath: 'assets/models/mesita_3.glb', hasHole: true, topOverhang: 120, defaultBase: 'negro', baseEdgeM: 5.65, frontEdgeM: 1.15 },
-        { id: 'mod_mesita_sec_bla', name: 'Mesita Blanca c/ Porta Secador', dims: '520 × 335 × 450 mm', w: 400, d: 335, h: 450, basePrice: 64800, glbPath: 'assets/models/mesita_4.glb', hasHole: true, topOverhang: 120, defaultBase: 'blanco', baseEdgeM: 5.65, frontEdgeM: 1.15 }
-      ],
-      viewerConfig: {
-        activeModelId: 'mod_mesita_std',
-        baseColor: 'blanco',
-        frontFinish: 'helsinki',
-        drawerOpen: false
-      },
-      recipes: [
-        {
-          id: 'rec_1',
-          version: 1,
-          name: 'Mesita de Luz Clásica (Cuerpo + 1 Cajón)',
-          dims: '400x335x450',
-          costTotal: 22540,
-          items: [
-            { stockId: 'stk_lat', name: 'Laterales de Mesita Cortados 18mm', qty: 2, unitPrice: 3200 },
-            { stockId: 'stk_4', name: 'Tornillos Autoperforantes 3.5x30', qty: 24, unitPrice: 35 },
-            { stockId: 'stk_3', name: 'Corredera Telescópica 300mm (Par)', qty: 1, unitPrice: 5800 },
-            { stockId: 'stk_5', name: 'Rollo Filo Melamínico Blanco 22mm (25m)', qty: 1, unitPrice: 9500 }
-          ]
-        }
-      ],
-      edgeCalculations: [],
-      quotes: [],
-      orders: [],
-      purchases: [],
-      cashLedger: [
-        { id: 'csh_init', date: new Date().toISOString(), type: 'ingreso', concept: 'Apertura de Caja Taller JL', amount: 125000, method: 'Efectivo', user: 'Leandro Llanes' }
-      ],
-      notifications: [
-        { id: 'not_welcome', date: new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }), type: 'sistema', title: 'Sistema de Alertas Activo', message: 'Recibirás notificaciones sonoras al confirmar pedidos o alcanzar el punto de reposición.', read: false }
-      ],
-      soundSettings: {
-        preset: 'chime',
-        volume: 85,
-        customAudioDataUrl: null,
-        customAudioName: ''
-      },
-      processedTransactions: {},
-      auditLog: []
-    };
-
-    const OfflineStore = {
-      dbName: 'CarpinteriaJLEnterpriseDB_v4',
-      dbVersion: 1,
-      idb: null,
-      state: JSON.parse(JSON.stringify(INITIAL_ENTERPRISE_STATE)),
-      pendingQueue: [],
-
-      async init() {
-        return new Promise((resolve) => {
-          const req = indexedDB.open(this.dbName, this.dbVersion);
-          req.onupgradeneeded = (e) => {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains('app_state')) db.createObjectStore('app_state');
-            if (!db.objectStoreNames.contains('sync_queue')) db.createObjectStore('sync_queue', { keyPath: 'txId' });
-          };
-          req.onsuccess = async (e) => {
-            this.idb = e.target.result;
-            await this.loadFromIndexedDB();
-            this.setupConnectivityListeners();
-            resolve();
-          };
-          req.onerror = () => resolve();
-        });
-      },
-
-      async loadFromIndexedDB() {
-        if (!this.idb) return;
-        return new Promise((resolve) => {
-          const tx = this.idb.transaction(['app_state', 'sync_queue'], 'readonly');
-          const reqState = tx.objectStore('app_state').get('root');
-          const reqQueue = tx.objectStore('sync_queue').getAll();
-          tx.oncomplete = () => {
-            if (reqState.result) {
-              this.state = Object.assign({}, INITIAL_ENTERPRISE_STATE, reqState.result);
-              this.state.catalogModels = INITIAL_ENTERPRISE_STATE.catalogModels;
-              if (!this.state.notifications) this.state.notifications = INITIAL_ENTERPRISE_STATE.notifications;
-              if (!this.state.soundSettings) this.state.soundSettings = INITIAL_ENTERPRISE_STATE.soundSettings;
-            }
-            if (reqQueue.result) {
-              this.pendingQueue = reqQueue.result;
-            }
-            this.updateSyncBadge();
-            resolve();
-          };
-        });
-      },
-
-      async commit(actionDescription) {
-        this.state.updatedAt = Date.now();
-        this.logAudit(actionDescription);
-
-        const txRecord = {
-          txId: 'tx_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
-          timestamp: Date.now(),
-          action: actionDescription
-        };
-
-        if (this.idb) {
-          const tx = this.idb.transaction(['app_state', 'sync_queue'], 'readwrite');
-          tx.objectStore('app_state').put(this.state, 'root');
-          if (!navigator.onLine) {
-            tx.objectStore('sync_queue').put(txRecord);
-            this.pendingQueue.push(txRecord);
-          }
-        }
-
-        if (navigator.onLine && window.pushToFirebaseCloud) {
-          this.setSyncIndicator('syncing', 'Sincronizando...');
-          try {
-            await window.pushToFirebaseCloud(this.state);
-            await this.clearSyncQueue();
-            this.setSyncIndicator('online', 'Conectado');
-          } catch (err) {
-            this.setSyncIndicator('error', 'Pendiente Sync');
-          }
-        } else {
-          this.setSyncIndicator('offline', `Sin conexión (${this.pendingQueue.length})`);
-        }
-
-        this.updateSyncBadge();
-        AppUI.refreshAllViews();
-      },
-
-      async clearSyncQueue() {
-        this.pendingQueue = [];
-        if (!this.idb) return;
-        const tx = this.idb.transaction(['sync_queue'], 'readwrite');
-        tx.objectStore('sync_queue').clear();
-      },
-
-      receiveRemoteSnapshot(remoteData) {
-        if (!remoteData || (remoteData.updatedAt && remoteData.updatedAt <= this.state.updatedAt)) return;
-        this.state = Object.assign({}, INITIAL_ENTERPRISE_STATE, remoteData);
-        this.state.catalogModels = INITIAL_ENTERPRISE_STATE.catalogModels;
-        if (this.idb) {
-          const tx = this.idb.transaction(['app_state'], 'readwrite');
-          tx.objectStore('app_state').put(this.state, 'root');
-        }
-        AppUI.toast('Sincronizado en tiempo real con la nube.', 'ok');
-        AppUI.refreshAllViews();
-      },
-
-      logAudit(description) {
-        if (!this.state.auditLog) this.state.auditLog = [];
-        this.state.auditLog.unshift({
-          id: 'aud_' + Date.now(),
-          date: new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
-          user: SecurityRBAC.currentUser.name,
-          role: SecurityRBAC.currentUser.role,
-          action: description
-        });
-        if (this.state.auditLog.length > 40) this.state.auditLog.pop();
-      },
-
-      setSyncIndicator(mode, label) {
-        const dot = document.getElementById('syncStatusDot');
-        const txt = document.getElementById('syncStatusText');
-        if (!dot || !txt) return;
-        dot.className = 'sync-dot';
-        if (mode === 'offline') dot.classList.add('offline');
-        if (mode === 'syncing') dot.classList.add('syncing');
-        if (mode === 'error') dot.classList.add('error');
-        txt.textContent = label;
-      },
-
-      updateSyncBadge() {
-        const badge = document.getElementById('dashPendingQueueBadge');
-        if (badge) {
-          badge.textContent = `${this.pendingQueue.length} Pendientes Sync`;
-        }
-      },
-
-      setupConnectivityListeners() {
-        window.addEventListener('online', async () => {
-          this.setSyncIndicator('syncing', 'Reconectando...');
-          if (window.pushToFirebaseCloud) {
-            await window.pushToFirebaseCloud(this.state);
-            await this.clearSyncQueue();
-          }
-          this.setSyncIndicator('online', 'Conectado');
-          this.updateSyncBadge();
-          AppUI.toast('Conexión restablecida y sincronizada.', 'ok');
-        });
-        window.addEventListener('offline', () => {
-          this.setSyncIndicator('offline', 'Sin conexión');
-          AppUI.toast('Modo Sin Conexión activo.', 'warn');
-        });
-      }
-    };
-    window.OfflineStore = OfflineStore;
-
-    /* ========================================================================
-       CAPA 3: CENTRO DE NOTIFICACIONES Y SONIDO PERSONALIZADO (WEB AUDIO + MP3)
-       ======================================================================== */
-    const NotificationCenter = {
-      audioCtx: null,
-
-      pushNotification(type, title, message) {
-        if (!OfflineStore.state.notifications) OfflineStore.state.notifications = [];
-        OfflineStore.state.notifications.unshift({
-          id: 'not_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-          date: new Date().toLocaleString('es-AR', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }),
-          type, // 'pedido' | 'stock' | 'sistema'
-          title,
-          message,
-          read: false
-        });
-        if (OfflineStore.state.notifications.length > 60) {
-          OfflineStore.state.notifications.pop();
-        }
-        this.playAlertSound();
-        AppUI.toast(`🔔 ${title}: ${message}`, type === 'stock' ? 'err' : 'ok');
-      },
-
-      playAlertSound() {
-        const cfg = OfflineStore.state.soundSettings || { preset: 'chime', volume: 85 };
-        if (cfg.preset === 'mute') return;
-        const vol = Math.min(1, Math.max(0.05, (cfg.volume || 85) / 100));
-
-        // Si el usuario subió un archivo personalizado y seleccionó 'custom'
-        if (cfg.preset === 'custom' && cfg.customAudioDataUrl) {
-          try {
-            const audio = new Audio(cfg.customAudioDataUrl);
-            audio.volume = vol;
-            audio.play().catch(() => {});
-            return;
-          } catch (e) {}
-        }
-
-        // Sintetizador Web Audio API para tonos limpios sin depender de archivos externos
-        try {
-          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-          if (!this.audioCtx) this.audioCtx = new AudioContextClass();
-          if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
-
-          const now = this.audioCtx.currentTime;
-          const osc = this.audioCtx.createOscillator();
-          const gain = this.audioCtx.createGain();
-          osc.connect(gain);
-          gain.connect(this.audioCtx.destination);
-
-          if (cfg.preset === 'industrial') {
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(620, now);
-            osc.frequency.setValueAtTime(880, now + 0.14);
-            osc.frequency.setValueAtTime(620, now + 0.28);
-            gain.gain.setValueAtTime(vol * 0.45, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.48);
-            osc.start(now);
-            osc.stop(now + 0.48);
-          } else if (cfg.preset === 'pulse') {
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(528, now);
-            gain.gain.setValueAtTime(vol * 0.5, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-            osc.start(now);
-            osc.stop(now + 0.25);
-          } else {
-            // 'chime' — Doble acorde armónico de taller
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(587.33, now);       // D5
-            osc.frequency.setValueAtTime(880.00, now + 0.12); // A5
-            gain.gain.setValueAtTime(vol * 0.6, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
-            osc.start(now);
-            osc.stop(now + 0.42);
-          }
-        } catch (err) {
-          console.warn("Audio no disponible:", err);
-        }
-      },
-
-      uploadCustomAudio(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        if (file.size > 4 * 1024 * 1024) {
-          return AppUI.toast('Elegí un archivo de sonido menor a 4 MB.', 'warn');
-        }
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          OfflineStore.state.soundSettings.customAudioDataUrl = e.target.result;
-          OfflineStore.state.soundSettings.customAudioName = file.name;
-          OfflineStore.state.soundSettings.preset = 'custom';
-          document.getElementById('soundPresetSelect').value = 'custom';
-          OfflineStore.commit(`Sonido personalizado cargado: ${file.name}`);
-          this.playAlertSound();
-          AppUI.toast(`Sonido "${file.name}" configurado correctamente.`, 'ok');
-        };
-        reader.readAsDataURL(file);
-      },
-
-      saveSoundSettings() {
-        if (!OfflineStore.state.soundSettings) OfflineStore.state.soundSettings = {};
-        OfflineStore.state.soundSettings.preset = document.getElementById('soundPresetSelect').value;
-        OfflineStore.state.soundSettings.volume = parseInt(document.getElementById('soundVolumeRange').value) || 85;
-        OfflineStore.commit('Ajustes de sonido actualizados');
-      },
-
-      triggerTestNotification() {
-        this.pushNotification('pedido', 'Prueba de Notificación', 'El sonido y el aviso visual funcionan correctamente.');
-        OfflineStore.commit('Notificación de prueba disparada');
-      },
-
-      markAllRead() {
-        (OfflineStore.state.notifications || []).forEach(n => { n.read = true; });
-        OfflineStore.commit('Notificaciones marcadas como leídas');
-      },
-
-      clearAll() {
-        OfflineStore.state.notifications = [];
-        OfflineStore.commit('Historial de notificaciones vaciado');
-      },
-
-      render() {
-        const cfg = OfflineStore.state.soundSettings || { preset: 'chime', volume: 85 };
-        const selEl = document.getElementById('soundPresetSelect');
-        if (selEl) selEl.value = cfg.preset || 'chime';
-        const volEl = document.getElementById('soundVolumeRange');
-        if (volEl) volEl.value = cfg.volume || 85;
-        const nameEl = document.getElementById('customSoundFileName');
-        if (nameEl) {
-          nameEl.textContent = cfg.customAudioName
-            ? `🎵 Archivo cargado: ${cfg.customAudioName}`
-            : 'Sin archivo personalizado subido (usando sintetizador interno).';
-        }
-
-        const list = document.getElementById('notificationsListContainer');
-        if (!list) return;
-        const arr = OfflineStore.state.notifications || [];
-        list.innerHTML = arr.map(n => {
-          const isStock = n.type === 'stock';
-          const isOrder = n.type === 'pedido';
-          return `
-            <div class="item-card ${isStock ? 'critical-low' : ''}">
-              <div class="item-card-top">
-                <div>
-                  <div class="item-title">${isStock ? '🚨 ' : (isOrder ? '✅ ' : '🔔 ')}${n.title}</div>
-                  <div class="item-meta">${n.date} — ${n.message}</div>
-                </div>
-                <span class="status-pill ${isStock ? 'err' : (isOrder ? 'ok' : 'wood')}">
-                  ${n.type.toUpperCase()}
-                </span>
-              </div>
-            </div>
-          `;
-        }).join('') || '<div style="font-size:13px; color:var(--text-secondary);">No hay notificaciones registradas.</div>';
-      }
-    };
-
-    /* ========================================================================
-       CAPA 4A: CALCULADORA DE MUEBLES ESTÁNDAR (CON ESQUEMA PROPORCIONAL EN TIEMPO REAL)
-       ======================================================================== */
-    const StandardFurnitureCalc = {
-      lastResult: null,
-
-      calculateStandard(params) {
-        const {
-          ancho,
-          prof,
-          alto,
-          espesor,
-          cantCajones,
-          altoFrente,
-          board,
-          correderaTipo,
-          desperdicioPct,
-          tipoRentabilidad,
-          porcentajeGanancia,
-          cantidadLote
-        } = params;
-
-        const altoLateral = Math.max(80, alto - (2 * espesor));
-        const anchoInterior = Math.max(80, ancho - (2 * espesor));
-        const anchoCajonInterno = Math.max(60, anchoInterior - 26);
-        const profCajon = Math.max(120, prof - 35);
-
-        const pieces = [
-          { tag: 'Techo Superior', w: ancho, h: prof, qty: 1 * cantidadLote, allowRot: false },
-          { tag: 'Piso Inferior', w: ancho, h: prof, qty: 1 * cantidadLote, allowRot: false },
-          { tag: 'Lateral Estructural', w: altoLateral, h: prof, qty: 2 * cantidadLote, allowRot: false }
-        ];
-
-        if (cantCajones > 0) {
-          pieces.push(
-            { tag: 'Frente de Cajón', w: anchoInterior - 4, h: altoFrente, qty: cantCajones * cantidadLote, allowRot: false },
-            { tag: 'Lateral de Cajón', w: profCajon, h: Math.max(60, altoFrente - 35), qty: 2 * cantCajones * cantidadLote, allowRot: true },
-            { tag: 'Contrafrente Cajón', w: anchoCajonInterno, h: Math.max(60, altoFrente - 35), qty: 2 * cantCajones * cantidadLote, allowRot: true }
-          );
-        }
-
-        const areaPlacaMm2 = board.w * board.h;
-        let areaConsumidaMm2 = 0;
-        pieces.forEach(p => { areaConsumidaMm2 += (p.w * p.h * p.qty); });
-
-        const costoMelaminaRaw = (areaConsumidaMm2 / areaPlacaMm2) * board.price;
-        const preciosCorredera = { telescopica: 5800, comun: 2600, oculta: 14500 };
-        const costoCorrederas = (preciosCorredera[correderaTipo] || 5800) * cantCajones * cantidadLote;
-        const costoTornillosYFilo = 4200 * cantidadLote;
-        const subtotalMateriales = costoMelaminaRaw + costoCorrederas + costoTornillosYFilo;
-        const costoTotalLote = Math.round(subtotalMateriales * (1 + (desperdicioPct / 100)));
-
-        let precioVentaLote = costoTotalLote;
-        if (tipoRentabilidad === 'margen') {
-          const marginRatio = Math.min(0.9, Math.max(0, porcentajeGanancia / 100));
-          precioVentaLote = Math.round(costoTotalLote / (1 - marginRatio));
-        } else {
-          precioVentaLote = Math.round(costoTotalLote * (1 + (porcentajeGanancia / 100)));
-        }
-
-        return {
-          ancho, prof, alto, espesor, cantCajones, altoFrente,
-          pieces, boardId: board.id,
-          costoTotalLote, precioVentaLote,
-          utilidadNeta: precioVentaLote - costoTotalLote,
-          cantidadLote
-        };
-      },
-
-      recalculateUI() {
-        const boards = OfflineStore.state.boards;
-        const selEl = document.getElementById('stdPlacaSelect');
-        if (selEl && selEl.options.length === 0) {
-          boards.forEach(b => {
-            const opt = document.createElement('option');
-            opt.value = b.id;
-            opt.textContent = `${b.name} ($${b.price.toLocaleString('es-AR')})`;
-            selEl.appendChild(opt);
-          });
-        }
-
-        const board = boards.find(b => b.id === (selEl ? selEl.value : '')) || boards[0];
-        const res = this.calculateStandard({
-          ancho: parseFloat(document.getElementById('stdAncho').value) || 400,
-          prof: parseFloat(document.getElementById('stdProf').value) || 335,
-          alto: parseFloat(document.getElementById('stdAlto').value) || 450,
-          espesor: parseFloat(document.getElementById('stdEspesor').value) || 18,
-          cantCajones: parseInt(document.getElementById('stdCajones').value) || 0,
-          altoFrente: parseFloat(document.getElementById('stdAltoFrente').value) || 160,
-          board,
-          correderaTipo: document.getElementById('stdCorrederaTipo').value,
-          desperdicioPct: parseFloat(document.getElementById('stdDesperdicioPct').value) || 10,
-          tipoRentabilidad: document.getElementById('stdTipoRentabilidad').value,
-          porcentajeGanancia: parseFloat(document.getElementById('stdPorcentajeGanancia').value) || 45,
-          cantidadLote: parseInt(document.getElementById('stdCantMuebles').value) || 1
-        });
-
-        this.lastResult = res;
-
-        document.getElementById('stdOutCosto').textContent = '$' + res.costoTotalLote.toLocaleString('es-AR');
-        document.getElementById('stdOutVenta').textContent = '$' + res.precioVentaLote.toLocaleString('es-AR');
-        document.getElementById('stdOutUtilidad').textContent = '$' + res.utilidadNeta.toLocaleString('es-AR');
-
-        document.getElementById('stdPiecesBreakdown').innerHTML = res.pieces.map(p => `
-          <div style="display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px solid var(--border-color);">
-            <span><strong>${p.qty}x</strong> ${p.tag}</span>
-            <span style="color:var(--accent-wood); font-weight:700;">${p.w} × ${p.h} mm</span>
-          </div>
-        `).join('');
-
-        this.renderRealTimeProportionalSVG(res);
-      },
-
-      renderRealTimeProportionalSVG(res) {
-        const svg = document.getElementById('stdSvgDiagram');
-        if (!svg) return;
-
-        const maxDim = Math.max(res.ancho, res.alto, 300);
-        const scale = 135 / maxDim;
-
-        const drawW = Math.max(40, Math.round(res.ancho * scale));
-        const drawH = Math.max(40, Math.round(res.alto * scale));
-        const drawT = Math.max(3, Math.round(res.espesor * scale));
-
-        const startX = Math.round((360 - drawW) / 2);
-        const startY = Math.round((185 - drawH) / 2) + 8;
-
-        let drawersSvg = '';
-        const innerX = startX + drawT + 2;
-        const innerW = Math.max(10, drawW - (2 * drawT) - 4);
-        const singleDrawerH = Math.max(10, Math.round(res.altoFrente * scale));
-
-        let currentY = startY + drawT + 2;
-        for (let i = 0; i < res.cantCajones; i++) {
-          if (currentY + singleDrawerH <= startY + drawH - drawT) {
-            drawersSvg += `
-              <rect x="${innerX}" y="${currentY}" width="${innerW}" height="${singleDrawerH}"
-                fill="#252525" stroke="#B58B5A" stroke-width="1.6" rx="2" />
-              <line x1="${innerX + (innerW * 0.38)}" y1="${currentY + 6}" x2="${innerX + (innerW * 0.62)}" y2="${currentY + 6}"
-                stroke="#E8E8E8" stroke-width="2" stroke-linecap="round" />
-            `;
-            currentY += singleDrawerH + 3;
-          }
-        }
-
-        const freeNicheH = Math.max(0, Math.round(res.alto - (2 * res.espesor) - (res.cantCajones * res.altoFrente)));
-
-        svg.innerHTML = `
-          <!-- Cota Superior de Ancho -->
-          <text x="180" y="15" fill="#E8E8E8" font-size="11" text-anchor="middle" font-weight="bold">
-            Ancho: ${res.ancho} mm × Prof: ${res.prof} mm
-          </text>
-          <!-- Cuerpo Exterior Proporcional -->
-          <rect x="${startX}" y="${startY}" width="${drawW}" height="${drawH}"
-            fill="#121212" stroke="#A0A0A0" stroke-width="2" rx="3" />
-          <!-- Techo y Piso -->
-          <rect x="${startX}" y="${startY}" width="${drawW}" height="${drawT}" fill="#B58B5A" />
-          <rect x="${startX}" y="${startY + drawH - drawT}" width="${drawW}" height="${drawT}" fill="#B58B5A" />
-          <!-- Laterales -->
-          <rect x="${startX}" y="${startY + drawT}" width="${drawT}" height="${drawH - (2 * drawT)}" fill="#8C6B43" />
-          <rect x="${startX + drawW - drawT}" y="${startY + drawT}" width="${drawT}" height="${drawH - (2 * drawT)}" fill="#8C6B43" />
-          <!-- Cajones Proporcionales -->
-          ${drawersSvg}
-          <!-- Cota Lateral de Altura -->
-          <text x="${ Math.min(345, startX + drawW + 8) }" y="${ startY + Math.round(drawH / 2) }" fill="#B58B5A" font-size="11" font-weight="bold">
-            ↕ ${res.alto}mm
-          </text>
-          <!-- Resumen Inferior -->
-          <text x="180" y="202" fill="#A0A0A0" font-size="11" text-anchor="middle">
-            ${res.cantCajones} Cajón(es) de ${res.altoFrente}mm | Hueco libre inferior: ${freeNicheH} mm
-          </text>
-        `;
-      },
-
-      sendToOptimizer() {
-        if (!SecurityRBAC.canWrite('OPTIMIZER_ADD')) return;
-        if (!this.lastResult) this.recalculateUI();
-        const board = OfflineStore.state.boards.find(b => b.id === this.lastResult.boardId) || OfflineStore.state.boards[0];
-        OfflineStore.state.selectedBoardId = board.id;
-
-        this.lastResult.pieces.forEach(p => {
-          for (let i = 0; i < p.qty; i++) {
-            board.cuts.push({
-              id: 'cut_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-              tag: p.tag,
-              w: p.w,
-              h: p.h,
-              allowRot: p.allowRot
-            });
-          }
-        });
-
-        OfflineStore.commit(`Enviadas piezas de Calculadora de Muebles al optimizador (${board.name})`);
-        AppUI.navigate('optimizador');
-        AppUI.toast('Cortes enviados al Optimizador.', 'ok');
-      },
-
-      sendToQuote() {
-        if (!this.lastResult) this.recalculateUI();
-        document.getElementById('quoDetail').value = `Mueble a Medida (${this.lastResult.ancho}×${this.lastResult.prof}×${this.lastResult.alto}mm)`;
-        document.getElementById('quoQty').value = this.lastResult.cantidadLote;
-        document.getElementById('quoUnitPrice').value = Math.round(this.lastResult.precioVentaLote / this.lastResult.cantidadLote);
-        QuotesModule.recalc();
-        AppUI.navigate('presupuestos');
-      }
-    };
-
-    /* ========================================================================
-       CAPA 4B: MÓDULO INDEPENDIENTE «MESITA CON TECHO VARIABLE»
-       ======================================================================== */
-    const VariableTopCalc = {
-      lastResult: null,
-
-      calculateVariable(params) {
-        const {
-          modoEnsanche,
-          techoAncho,
-          techoProf,
-          cuerpoAnchoBase,
-          cuerpoProfBase,
-          altoTotal,
-          board,
-          porcentajeGanancia,
-          cantidadLote
-        } = params;
-
-        const espesor = 18;
-        const altoFrente = 160;
-        const effCuerpoAncho = modoEnsanche === 'modo2_proporcional' ? techoAncho : cuerpoAnchoBase;
-        const effCuerpoProf = modoEnsanche === 'modo2_proporcional' ? techoProf : cuerpoProfBase;
-        const altoLateral = Math.max(100, altoTotal - (2 * espesor));
-        const anchoInterior = Math.max(80, effCuerpoAncho - (2 * espesor));
-
-        const pieces = [
-          { tag: 'Techo Variable', w: techoAncho, h: techoProf, qty: 1 * cantidadLote, allowRot: false },
-          { tag: 'Piso Cuerpo', w: effCuerpoAncho, h: effCuerpoProf, qty: 1 * cantidadLote, allowRot: false },
-          { tag: 'Lateral Cuerpo', w: altoLateral, h: effCuerpoProf, qty: 2 * cantidadLote, allowRot: false },
-          { tag: 'Frente Cajón', w: anchoInterior - 4, h: altoFrente, qty: 1 * cantidadLote, allowRot: false }
-        ];
-
-        const areaPlacaMm2 = board.w * board.h;
-        let areaConsumidaMm2 = 0;
-        pieces.forEach(p => { areaConsumidaMm2 += (p.w * p.h * p.qty); });
-
-        const costoMelamina = (areaConsumidaMm2 / areaPlacaMm2) * board.price;
-        const costoHerrajes = (5800 + 4200) * cantidadLote;
-        const costoTotalLote = Math.round((costoMelamina + costoHerrajes) * 1.10);
-        const precioVentaLote = Math.round(costoTotalLote * (1 + (porcentajeGanancia / 100)));
-
-        return {
-          modoEnsanche, techoAncho, techoProf, effCuerpoAncho, effCuerpoProf, altoTotal,
-          pieces, boardId: board.id,
-          costoTotalLote, precioVentaLote,
-          utilidadNeta: precioVentaLote - costoTotalLote,
-          cantidadLote
-        };
-      },
-
-      recalculateUI() {
-        const boards = OfflineStore.state.boards;
-        const selEl = document.getElementById('varPlacaSelect');
-        if (selEl && selEl.options.length === 0) {
-          boards.forEach(b => {
-            const opt = document.createElement('option');
-            opt.value = b.id;
-            opt.textContent = `${b.name} ($${b.price.toLocaleString('es-AR')})`;
-            selEl.appendChild(opt);
-          });
-        }
-
-        const board = boards.find(b => b.id === (selEl ? selEl.value : '')) || boards[0];
-        const res = this.calculateVariable({
-          modoEnsanche: document.getElementById('varModoEnsanche').value,
-          techoAncho: parseFloat(document.getElementById('varTechoAncho').value) || 520,
-          techoProf: parseFloat(document.getElementById('varTechoProf').value) || 335,
-          cuerpoAnchoBase: parseFloat(document.getElementById('varCuerpoAnchoBase').value) || 400,
-          cuerpoProfBase: parseFloat(document.getElementById('varCuerpoProfBase').value) || 335,
-          altoTotal: parseFloat(document.getElementById('varAltoTotal').value) || 450,
-          board,
-          porcentajeGanancia: parseFloat(document.getElementById('varPorcentajeGanancia').value) || 45,
-          cantidadLote: parseInt(document.getElementById('varCantMuebles').value) || 1
-        });
-
-        this.lastResult = res;
-
-        document.getElementById('varOutCosto').textContent = '$' + res.costoTotalLote.toLocaleString('es-AR');
-        document.getElementById('varOutVenta').textContent = '$' + res.precioVentaLote.toLocaleString('es-AR');
-        document.getElementById('varOutUtilidad').textContent = '$' + res.utilidadNeta.toLocaleString('es-AR');
-
-        document.getElementById('varPiecesBreakdown').innerHTML = res.pieces.map(p => `
-          <div style="display:flex; justify-content:space-between; font-size:13px; padding:6px 0; border-bottom:1px solid var(--border-color);">
-            <span><strong>${p.qty}x</strong> ${p.tag}</span>
-            <span style="color:var(--accent-wood); font-weight:700;">${p.w} × ${p.h} mm</span>
-          </div>
-        `).join('');
-
-        this.renderVariableDiagramSVG(res);
-      },
-
-      renderVariableDiagramSVG(res) {
-        const svg = document.getElementById('varSvgDiagram');
-        if (!svg) return;
-        const maxW = Math.max(res.techoAncho, res.effCuerpoAncho, 450);
-        const scale = 210 / maxW;
-        const topW = Math.round(res.techoAncho * scale);
-        const bodyW = Math.round(res.effCuerpoAncho * scale);
-        const topX = Math.round((360 - topW) / 2);
-        const bodyX = Math.round((360 - bodyW) / 2);
-        const overhangMm = Math.max(0, res.techoAncho - res.effCuerpoAncho);
-
-        svg.innerHTML = `
-          <text x="180" y="16" fill="#E8E8E8" font-size="11" text-anchor="middle" font-weight="bold">
-            Techo: ${res.techoAncho} × ${res.techoProf} mm ${overhangMm > 0 ? `(Vuelo: +${overhangMm} mm)` : '(Sin vuelo)'}
-          </text>
-          <rect x="${topX}" y="24" width="${topW}" height="12" fill="#B58B5A" rx="2" />
-          <rect x="${bodyX}" y="36" width="${bodyW}" height="105" fill="#171717" stroke="#A0A0A0" stroke-width="2" rx="3" />
-          <rect x="${bodyX + 6}" y="42" width="${bodyW - 12}" height="42" fill="#252525" stroke="#B58B5A" stroke-width="1.5" rx="2" />
-          <text x="180" y="162" fill="#A0A0A0" font-size="11" text-anchor="middle">
-            Cuerpo Inferior: ${res.effCuerpoAncho} × ${res.effCuerpoProf} × ${res.altoTotal} mm
-          </text>
-        `;
-      },
-
-      sendToOptimizer() {
-        if (!SecurityRBAC.canWrite('OPTIMIZER_ADD')) return;
-        if (!this.lastResult) this.recalculateUI();
-        const board = OfflineStore.state.boards.find(b => b.id === this.lastResult.boardId) || OfflineStore.state.boards[0];
-        OfflineStore.state.selectedBoardId = board.id;
-
-        this.lastResult.pieces.forEach(p => {
-          for (let i = 0; i < p.qty; i++) {
-            board.cuts.push({
-              id: 'cut_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-              tag: p.tag,
-              w: p.w,
-              h: p.h,
-              allowRot: p.allowRot
-            });
-          }
-        });
-
-        OfflineStore.commit(`Enviadas piezas de Mesita Variable al optimizador (${board.name})`);
-        AppUI.navigate('optimizador');
-        AppUI.toast('Cortes de Mesita Variable enviados al Optimizador.', 'ok');
-      },
-
-      sendToQuote() {
-        if (!this.lastResult) this.recalculateUI();
-        document.getElementById('quoDetail').value = `Mesita Techo Variable (${this.lastResult.techoAncho}×${this.lastResult.techoProf}mm)`;
-        document.getElementById('quoQty').value = this.lastResult.cantidadLote;
-        document.getElementById('quoUnitPrice').value = Math.round(this.lastResult.precioVentaLote / this.lastResult.cantidadLote);
-        QuotesModule.recalc();
-        AppUI.navigate('presupuestos');
-      }
-    };
-
-    /* ========================================================================
-       CAPA 5: MÓDULO EXCLUSIVO «CÁLCULO DE FILO» (DOBLE TRAMO CUERPO + FRENTE)
-       ======================================================================== */
-    const EdgeBandingModule = {
-      lastCalc: null,
-
-      computeEdgeBanding(params) {
-        const {
-          model,
-          qty,
-          baseColor,
-          baseRollMeters,
-          baseRollPrice,
-          mode,
-          frontColor,
-          frontRollMeters,
-          frontRollPrice
-        } = params;
-
-        const baseMetersPerUnit = mode === 'completo'
-          ? (model.baseEdgeM + model.frontEdgeM)
-          : model.baseEdgeM;
-
-        const frontMetersPerUnit = mode === 'completo'
-          ? 0
-          : model.frontEdgeM;
-
-        const totalBaseMeters = Number((baseMetersPerUnit * qty).toFixed(2));
-        const totalFrontMeters = Number((frontMetersPerUnit * qty).toFixed(2));
-
-        const basePricePerMeter = baseRollMeters > 0 ? (baseRollPrice / baseRollMeters) : 0;
-        const frontPricePerMeter = frontRollMeters > 0 ? (frontRollPrice / frontRollMeters) : 0;
-
-        const baseCost = Math.round(totalBaseMeters * basePricePerMeter);
-        const frontCost = Math.round(totalFrontMeters * frontPricePerMeter);
-        const grandTotal = baseCost + frontCost;
-
-        const baseRollsNeeded = baseRollMeters > 0 ? Number((totalBaseMeters / baseRollMeters).toFixed(2)) : 0;
-        const frontRollsNeeded = frontRollMeters > 0 ? Number((totalFrontMeters / frontRollMeters).toFixed(2)) : 0;
-
-        return {
-          modelName: model.name,
-          qty,
-          mode,
-          baseColor,
-          frontColor: mode === 'completo' ? 'Sin 2° color' : frontColor,
-          totalBaseMeters,
-          totalFrontMeters,
-          baseCost,
-          frontCost,
-          grandTotal,
-          baseRollsNeeded,
-          frontRollsNeeded,
-          basePricePerMeter: Math.round(basePricePerMeter),
-          frontPricePerMeter: Math.round(frontPricePerMeter)
-        };
-      },
-
-      recalc() {
-        const sel = document.getElementById('edgeModelSelect');
-        if (!sel) return;
-        if (sel.options.length === 0) {
-          OfflineStore.state.catalogModels.forEach(m => {
-            const opt = document.createElement('option');
-            opt.value = m.id;
-            opt.textContent = `${m.name} (Cuerpo: ${m.baseEdgeM}m | Frente: ${m.frontEdgeM}m)`;
-            sel.appendChild(opt);
-          });
-        }
-
-        const model = OfflineStore.state.catalogModels.find(m => m.id === sel.value) || OfflineStore.state.catalogModels[0];
-        const mode = document.getElementById('edgeBaseIncludeFront').value;
-
-        document.getElementById('edgeFrontBox').style.display = mode === 'combinado' ? 'block' : 'none';
-
-        const res = this.computeEdgeBanding({
-          model,
-          qty: parseInt(document.getElementById('edgeFurnitureQty').value) || 1,
-          baseColor: document.getElementById('edgeBaseColor').value,
-          baseRollMeters: parseFloat(document.getElementById('edgeBaseRollMeters').value) || 25,
-          baseRollPrice: parseFloat(document.getElementById('edgeBaseRollPrice').value) || 9500,
-          mode,
-          frontColor: document.getElementById('edgeFrontColor').value,
-          frontRollMeters: parseFloat(document.getElementById('edgeFrontRollMeters').value) || 25,
-          frontRollPrice: parseFloat(document.getElementById('edgeFrontRollPrice').value) || 12500
-        });
-
-        this.lastCalc = res;
-
-        document.getElementById('edgeBaseSummaryLine').innerHTML =
-          `Valor por metro (${res.baseColor}): <strong>$${res.basePricePerMeter.toLocaleString('es-AR')}/m</strong> — Consume <strong>${res.totalBaseMeters} m</strong> (${res.baseRollsNeeded} rollos de ${document.getElementById('edgeBaseRollMeters').value}m).`;
-
-        document.getElementById('edgeFrontSummaryLine').innerHTML =
-          `Valor por metro (${res.frontColor}): <strong>$${res.frontPricePerMeter.toLocaleString('es-AR')}/m</strong> — Consume <strong>${res.totalFrontMeters} m</strong> (${res.frontRollsNeeded} rollos de ${document.getElementById('edgeFrontRollMeters').value}m).`;
-
-        document.getElementById('edgeOutBaseMeters').textContent = `${res.totalBaseMeters} m`;
-        document.getElementById('edgeOutFrontMeters').textContent = `${res.totalFrontMeters} m`;
-        document.getElementById('edgeOutBaseCost').textContent = '$' + res.baseCost.toLocaleString('es-AR');
-        document.getElementById('edgeOutFrontCost').textContent = '$' + res.frontCost.toLocaleString('es-AR');
-        document.getElementById('edgeOutGrandTotal').textContent = '$' + res.grandTotal.toLocaleString('es-AR');
-        document.getElementById('edgeOutRollsRequired').textContent =
-          mode === 'combinado'
-            ? `Suma de Filo Base ${res.baseColor} ($${res.baseCost.toLocaleString('es-AR')}) + Filo Frente ${res.frontColor} ($${res.frontCost.toLocaleString('es-AR')})`
-            : `Cálculo completo en un único tono de filo (${res.baseColor})`;
-      },
-
-      saveCalculationRecord() {
-        if (!SecurityRBAC.canWrite('EDGE_SAVE')) return;
-        if (!this.lastCalc) this.recalc();
-        if (!OfflineStore.state.edgeCalculations) OfflineStore.state.edgeCalculations = [];
-
-        OfflineStore.state.edgeCalculations.unshift({
-          id: 'edg_' + Date.now(),
-          date: new Date().toLocaleDateString('es-AR'),
-          ...this.lastCalc
-        });
-
-        OfflineStore.commit(`Cálculo de filo guardado: ${this.lastCalc.qty}x ${this.lastCalc.modelName}`);
-        this.renderHistory();
-        AppUI.toast('Cálculo de filo registrado en el historial.', 'ok');
-      },
-
-      deleteRecord(id) {
-        if (!SecurityRBAC.canWrite('EDGE_DELETE')) return;
-        OfflineStore.state.edgeCalculations = (OfflineStore.state.edgeCalculations || []).filter(e => e.id !== id);
-        OfflineStore.commit('Registro de cálculo de filo eliminado');
-        this.renderHistory();
-      },
-
-      renderHistory() {
-        const list = document.getElementById('edgeHistoryList');
-        if (!list) return;
-        const arr = OfflineStore.state.edgeCalculations || [];
-        list.innerHTML = arr.map(e => `
-          <div class="item-card">
-            <div class="item-card-top">
-              <div>
-                <div class="item-title">${e.qty}x ${e.modelName}</div>
-                <div class="item-meta">
-                  Base ${e.baseColor}: ${e.totalBaseMeters}m ($${e.baseCost.toLocaleString('es-AR')})
-                  ${e.mode === 'combinado' ? ` + Frente ${e.frontColor}: ${e.totalFrontMeters}m ($${e.frontCost.toLocaleString('es-AR')})` : ''}
-                </div>
-              </div>
-              <span class="status-pill wood">$${e.grandTotal.toLocaleString('es-AR')}</span>
-            </div>
-            <div class="item-actions-row">
-              <button class="btn btn-sm btn-danger" onclick="EdgeBandingModule.deleteRecord('${e.id}')">🗑 Borrar</button>
-            </div>
-          </div>
-        `).join('') || '<div style="font-size:12px; color:var(--text-secondary);">No hay cálculos de filo guardados aún.</div>';
-      }
-    };
-
-    /* ========================================================================
-       CAPA 6: OPTIMIZADOR DE PLACAS A COMPRAR + RETAZOS EN STOCK
-       ======================================================================== */
-    const OptimizerEngine = {
-      zoomScale: 1,
-      panX: 0,
-      panY: 0,
-      isDragging: false,
-      startX: 0,
-      startY: 0,
-      lastPlacedRects: [],
-      selectedRect: null,
-
-      initCanvasEvents() {
-        const canvas = document.getElementById('cutOptimizerCanvas');
-        if (!canvas) return;
-
-        const getPoint = (e) => {
-          const rect = canvas.getBoundingClientRect();
-          const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-          const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-          return {
-            x: (clientX - rect.left) * (canvas.width / rect.width),
-            y: (clientY - rect.top) * (canvas.height / rect.height)
-          };
-        };
-
-        canvas.addEventListener('pointerdown', (e) => {
-          const pt = getPoint(e);
-          this.isDragging = true;
-          this.startX = pt.x - this.panX;
-          this.startY = pt.y - this.panY;
-          this.checkPieceSelection(pt.x, pt.y);
-        });
-
-        canvas.addEventListener('pointermove', (e) => {
-          if (!this.isDragging) return;
-          const pt = getPoint(e);
-          this.panX = pt.x - this.startX;
-          this.panY = pt.y - this.startY;
-          this.render();
-        });
-
-        window.addEventListener('pointerup', () => {
-          this.isDragging = false;
-        });
-      },
-
-      drawBoardSurface(ctx, textureKey, x, y, w, h) {
-        const loadedImg = RealTexturesManager.htmlImages[textureKey];
-        if (loadedImg && loadedImg.complete && loadedImg.naturalWidth > 0) {
-          ctx.drawImage(loadedImg, x, y, w, h);
-        } else {
-          ctx.fillStyle = RealTexturesManager.solidFallbackColors[textureKey] || '#C9C3B9';
-          ctx.fillRect(x, y, w, h);
-        }
-      },
-
-      packWithScrapsAndBoards(board) {
-        const margin = board.margin || 10;
-        const kerf = board.kerf || 4;
-        const usableW = board.w - (2 * margin);
-        const usableH = board.h - (2 * margin);
-
-        const availableScraps = [];
-        (board.scraps || []).forEach(scr => {
-          for (let q = 0; q < (scr.qty || 1); q++) {
-            availableScraps.push({ id: scr.id, w: scr.w, h: scr.h, used: false });
-          }
-        });
-
-        const sortedCuts = [...(board.cuts || [])].sort((a, b) => Math.max(b.w, b.h) - Math.max(a.w, a.h));
-        const coveredByScraps = [];
-        const remainingForNewBoards = [];
-
-        sortedCuts.forEach(piece => {
-          const matchScrap = availableScraps.find(s => !s.used && (
-            (piece.w <= s.w && piece.h <= s.h) ||
-            (piece.allowRot && piece.h <= s.w && piece.w <= s.h)
-          ));
-          if (matchScrap) {
-            matchScrap.used = true;
-            coveredByScraps.push({ ...piece, scrapW: matchScrap.w, scrapH: matchScrap.h });
-          } else {
-            remainingForNewBoards.push(piece);
-          }
-        });
-
-        const placed = [];
-        const unplaced = [];
-        let curX = margin;
-        let curY = margin;
-        let shelfH = 0;
-        let boardsUsed = remainingForNewBoards.length > 0 ? 1 : 0;
-
-        remainingForNewBoards.forEach((piece) => {
-          let pw = piece.w;
-          let ph = piece.h;
-          let rotated = false;
-
-          if (piece.allowRot) {
-            if ((curX + pw > margin + usableW) && (curX + ph <= margin + usableW) && (ph <= usableH)) {
-              pw = piece.h;
-              ph = piece.w;
-              rotated = true;
-            } else if (ph > pw && pw <= usableH && (curX + ph <= margin + usableW)) {
-              pw = piece.h;
-              ph = piece.w;
-              rotated = true;
-            }
-          }
-
-          if (pw > usableW || ph > usableH) {
-            unplaced.push(piece);
-            return;
-          }
-
-          if (curX + pw > margin + usableW) {
-            curX = margin;
-            curY += shelfH + kerf;
-            shelfH = 0;
-          }
-
-          if (curY + ph > margin + usableH) {
-            boardsUsed++;
-            curX = margin;
-            curY = margin;
-            shelfH = 0;
-          }
-
-          placed.push({
-            ...piece,
-            x: curX,
-            y: curY,
-            drawW: pw,
-            drawH: ph,
-            rotated,
-            boardIndex: boardsUsed
-          });
-
-          curX += pw + kerf;
-          if (ph > shelfH) shelfH = ph;
-        });
-
-        return { placed, unplaced, boardsUsed, coveredByScraps };
-      },
-
-      getCurrentBoard() {
-        const boards = OfflineStore.state.boards;
-        return boards.find(b => b.id === OfflineStore.state.selectedBoardId) || boards[0];
-      },
-
-      onSelectBoard() {
-        OfflineStore.state.selectedBoardId = document.getElementById('optSelectPlaca').value;
-        this.selectedRect = null;
-        this.render();
-      },
-
-      toggleNewBoardForm() {
-        const el = document.getElementById('newBoardFormBox');
-        el.style.display = el.style.display === 'none' ? 'block' : 'none';
-      },
-
-      togglePriceUpdateForm() {
-        const el = document.getElementById('updateBoardPriceBox');
-        const b = this.getCurrentBoard();
-        document.getElementById('optNewPriceInput').value = b.price;
-        el.style.display = el.style.display === 'none' ? 'block' : 'none';
-      },
-
-      updateCurrentBoardPrice() {
-        if (!SecurityRBAC.canWrite('BOARD_PRICE')) return;
-        const b = this.getCurrentBoard();
-        const newPrice = parseFloat(document.getElementById('optNewPriceInput').value);
-        if (!newPrice || newPrice <= 0) return AppUI.toast('Ingresá un precio válido.', 'warn');
-        b.prevPrice = b.price;
-        b.price = newPrice;
-        b.priceUpdatedAt = new Date().toLocaleDateString('es-AR');
-        document.getElementById('updateBoardPriceBox').style.display = 'none';
-        OfflineStore.commit(`Precio actualizado para ${b.name}: $${newPrice.toLocaleString('es-AR')}`);
-      },
-
-      toggleScrapForm() {
-        const el = document.getElementById('newScrapFormBox');
-        el.style.display = el.style.display === 'none' ? 'block' : 'none';
-      },
-
-      addScrap() {
-        if (!SecurityRBAC.canWrite('SCRAP_ADD')) return;
-        const b = this.getCurrentBoard();
-        const w = parseFloat(document.getElementById('scrW').value);
-        const h = parseFloat(document.getElementById('scrH').value);
-        const qty = parseInt(document.getElementById('scrQty').value) || 1;
-        if (!w || !h || w <= 0 || h <= 0) return AppUI.toast('Ingresá largo y ancho del retazo.', 'warn');
-        if (!b.scraps) b.scraps = [];
-        b.scraps.push({ id: 'scr_' + Date.now(), w, h, qty });
-        document.getElementById('newScrapFormBox').style.display = 'none';
-        OfflineStore.commit(`Retazo (${w}×${h}mm) registrado en ${b.name}`);
-      },
-
-      removeScrap(scrapId) {
-        if (!SecurityRBAC.canWrite('SCRAP_DEL')) return;
-        const b = this.getCurrentBoard();
-        b.scraps = (b.scraps || []).filter(s => s.id !== scrapId);
-        OfflineStore.commit(`Retazo eliminado de ${b.name}`);
-      },
-
-      saveNewBoard() {
-        if (!SecurityRBAC.canWrite('BOARD_CREATE')) return;
-        const name = document.getElementById('optBoardName').value.trim();
-        if (!name) return AppUI.toast('Ingresá el nombre de la placa.', 'warn');
-        const price = parseFloat(document.getElementById('optBoardPrice').value) || 168000;
-        const newB = {
-          id: 'b_' + Date.now(),
-          name,
-          w: parseFloat(document.getElementById('optBoardW').value) || 2750,
-          h: parseFloat(document.getElementById('optBoardH').value) || 1830,
-          thickness: 18,
-          price,
-          prevPrice: price,
-          priceUpdatedAt: new Date().toLocaleDateString('es-AR'),
-          texture: document.getElementById('optBoardTexture').value,
-          margin: parseFloat(document.getElementById('optBoardMargin').value) || 10,
-          kerf: parseFloat(document.getElementById('optBoardKerf').value) || 4,
-          cuts: [],
-          scraps: []
-        };
-        OfflineStore.state.boards.push(newB);
-        OfflineStore.state.selectedBoardId = newB.id;
-        document.getElementById('newBoardFormBox').style.display = 'none';
-        OfflineStore.commit(`Nueva placa creada: ${name}`);
-      },
-
-      addPiece() {
-        if (!SecurityRBAC.canWrite('CUT_ADD')) return;
-        const board = this.getCurrentBoard();
-        const tag = document.getElementById('optPieceTag').value.trim() || 'Pieza Melamina';
-        const qty = parseInt(document.getElementById('optPieceQty').value) || 1;
-        const w = parseFloat(document.getElementById('optPieceW').value);
-        const h = parseFloat(document.getElementById('optPieceH').value);
-        const allowRot = document.getElementById('optPieceAllowRot').value === 'true';
-
-        if (!w || !h || w <= 0 || h <= 0) {
-          return AppUI.toast('Ingresá medidas válidas en milímetros.', 'warn');
-        }
-
-        if (!board.cuts) board.cuts = [];
-        for (let i = 0; i < qty; i++) {
-          board.cuts.push({
-            id: 'c_' + Date.now() + '_' + i,
-            tag,
-            w,
-            h,
-            allowRot
-          });
-        }
-
-        OfflineStore.commit(`Agregados ${qty} cortes (${tag} ${w}×${h}mm) en ${board.name}`);
-      },
-
-      removePiece(cutId) {
-        if (!SecurityRBAC.canWrite('CUT_DELETE')) return;
-        const board = this.getCurrentBoard();
-        board.cuts = (board.cuts || []).filter(c => c.id !== cutId);
-        OfflineStore.commit(`Corte eliminado de ${board.name}`);
-      },
-
-      clearCuts() {
-        if (!SecurityRBAC.canWrite('CUT_CLEAR')) return;
-        const board = this.getCurrentBoard();
-        board.cuts = [];
-        this.selectedRect = null;
-        OfflineStore.commit(`Limpieza de cortes en ${board.name}`);
-      },
-
-      zoom(factor) {
-        this.zoomScale = Math.min(3.2, Math.max(0.6, this.zoomScale * factor));
-        this.render();
-      },
-
-      resetView() {
-        this.zoomScale = 1;
-        this.panX = 0;
-        this.panY = 0;
-        this.render();
-      },
-
-      checkPieceSelection(canvasX, canvasY) {
-        const hit = this.lastPlacedRects.find(r =>
-          canvasX >= r.screenX &&
-          canvasX <= r.screenX + r.screenW &&
-          canvasY >= r.screenY &&
-          canvasY <= r.screenY + r.screenH
-        );
-        if (hit) {
-          this.selectedRect = hit;
-          const infoEl = document.getElementById('optSelectedPieceInfo');
-          infoEl.innerHTML = `
-            <strong style="color:var(--text-primary);">${hit.tag}</strong> —
-            Medida: <strong>${hit.w} × ${hit.h} mm</strong> |
-            Posición: (${hit.x}, ${hit.y} mm) |
-            Veta: <span style="color:var(--accent-wood); font-weight:700;">${hit.rotated ? 'Girada 90°' : 'Veta Original Respetada'}</span>
-          `;
-          this.render();
-        }
-      },
-
-      render() {
-        const sel = document.getElementById('optSelectPlaca');
-        if (!sel) return;
-        sel.innerHTML = '';
-        OfflineStore.state.boards.forEach(b => {
-          const opt = document.createElement('option');
-          opt.value = b.id;
-          opt.textContent = `${b.name} (${b.w}×${b.h}mm) — $${b.price.toLocaleString('es-AR')}`;
-          if (b.id === OfflineStore.state.selectedBoardId) opt.selected = true;
-          sel.appendChild(opt);
-        });
-
-        const board = this.getCurrentBoard();
-        const canvas = document.getElementById('cutOptimizerCanvas');
-        if (!canvas || !board) return;
-
-        const histEl = document.getElementById('optBoardPriceHistoryPill');
-        if (histEl) {
-          histEl.innerHTML = `
-            <div style="font-size:12px;">
-              <strong>Precio actual:</strong> <span style="color:var(--accent-wood); font-weight:800;">$${board.price.toLocaleString('es-AR')}</span>
-              <span style="color:var(--text-secondary); margin-left:8px;">(Anterior: $${(board.prevPrice || board.price).toLocaleString('es-AR')})</span>
-            </div>
-            <span class="status-pill ok">Actualizado: ${board.priceUpdatedAt || 'Hoy'}</span>
-          `;
-        }
-
-        const scrapsListEl = document.getElementById('optScrapsList');
-        if (scrapsListEl) {
-          const scraps = board.scraps || [];
-          scrapsListEl.innerHTML = scraps.map(s => `
-            <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; padding:4px 0; border-bottom:1px solid var(--border-color);">
-              <span><strong>${s.qty}x</strong> Retazo de <strong>${s.w} × ${s.h} mm</strong></span>
-              <button class="btn btn-sm btn-danger" style="min-height:28px; padding:2px 8px;" onclick="OptimizerEngine.removeScrap('${s.id}')">✕</button>
-            </div>
-          `).join('') || '<div style="font-size:12px; color:var(--text-secondary);">Sin retazos cargados para este diseño.</div>';
-        }
-
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.save();
-        ctx.translate(this.panX, this.panY);
-        ctx.scale(this.zoomScale, this.zoomScale);
-
-        const pad = 16;
-        const drawW = canvas.width - (pad * 2);
-        const scale = drawW / board.w;
-        const drawH = board.h * scale;
-
-        this.drawBoardSurface(ctx, board.texture || 'helsinki', pad, pad, drawW, drawH);
-
-        ctx.strokeStyle = '#B58B5A';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(pad, pad, drawW, drawH);
-
-        const packResult = this.packWithScrapsAndBoards(board);
-        this.lastPlacedRects = [];
-        let occupiedArea = 0;
-
-        packResult.placed.forEach((p) => {
-          occupiedArea += (p.drawW * p.drawH);
-          if (p.boardIndex > 1) return;
-
-          const rx = pad + (p.x * scale);
-          const ry = pad + (p.y * scale);
-          const rw = p.drawW * scale;
-          const rh = p.drawH * scale;
-
-          const isSelected = this.selectedRect && this.selectedRect.id === p.id;
-          ctx.fillStyle = isSelected ? 'rgba(181, 139, 90, 0.85)' : 'rgba(23, 23, 23, 0.78)';
-          ctx.fillRect(rx, ry, rw, rh);
-
-          ctx.strokeStyle = isSelected ? '#E8E8E8' : '#B58B5A';
-          ctx.lineWidth = isSelected ? 2.2 : 1.3;
-          ctx.strokeRect(rx, ry, rw, rh);
-
-          if (rw > 42 && rh > 20) {
-            ctx.fillStyle = isSelected ? '#0A0A0A' : '#E8E8E8';
-            ctx.font = 'bold 11px sans-serif';
-            ctx.fillText(`${p.drawW}×${p.drawH}`, rx + 4, ry + 14);
-          }
-
-          this.lastPlacedRects.push({
-            ...p,
-            screenX: (rx * this.zoomScale) + this.panX,
-            screenY: (ry * this.zoomScale) + this.panY,
-            screenW: rw * this.zoomScale,
-            screenH: rh * this.zoomScale
-          });
-        });
-
-        ctx.restore();
-
-        const usedVal = Math.round((occupiedArea / (board.w * board.h)) * board.price);
-        const freeVal = Math.max(0, (board.price * packResult.boardsUsed) - usedVal);
-
-        document.getElementById('optResBoardsCount').textContent = packResult.boardsUsed;
-        document.getElementById('optResScrapSaved').textContent = `${packResult.coveredByScraps.length} pzs`;
-        document.getElementById('optResUsedCost').textContent = '$' + usedVal.toLocaleString('es-AR');
-        document.getElementById('optResFreeCost').textContent = '$' + freeVal.toLocaleString('es-AR');
-
-        const purchaseAlertEl = document.getElementById('optPurchaseAlertBanner');
-        if (purchaseAlertEl) {
-          if (packResult.boardsUsed === 0 && packResult.coveredByScraps.length > 0) {
-            purchaseAlertEl.innerHTML = `<strong style="color:var(--status-ok);">✓ ¡0 Placas a comprar! Todas las piezas (${packResult.coveredByScraps.length}) se cubren con tus retazos en taller.</strong>`;
-          } else if (packResult.boardsUsed > 1) {
-            purchaseAlertEl.innerHTML = `<strong style="color:var(--status-warn);">⚠️ Atención Compra: Los cortes superan 1 placa. Necesitás mandar a cortar ${packResult.boardsUsed} placas enteras de ${board.name} ($${(packResult.boardsUsed * board.price).toLocaleString('es-AR')}).</strong>`;
-          } else if (packResult.boardsUsed === 1) {
-            purchaseAlertEl.innerHTML = `<span style="font-size:13px; color:var(--text-secondary);">📦 Compra requerida: <strong>1 placa entera</strong> de ${board.name} (${packResult.coveredByScraps.length} pieza/s resuelta/s con retazos).</span>`;
-          } else {
-            purchaseAlertEl.innerHTML = `<span style="font-size:13px; color:var(--text-secondary);">Agregá cortes arriba para calcular cuántas placas enteras encargar al proveedor.</span>`;
-          }
-        }
-
-        const unplacedEl = document.getElementById('optUnplacedAlert');
-        if (packResult.unplaced.length > 0) {
-          unplacedEl.style.display = 'block';
-          unplacedEl.innerHTML = `<strong style="color:var(--status-err);">⚠️ ${packResult.unplaced.length} pieza(s) superan las medidas máximas de la placa.</strong>`;
-        } else {
-          unplacedEl.style.display = 'none';
-        }
-
-        const listCont = document.getElementById('optPiecesListContainer');
-        listCont.innerHTML = (board.cuts || []).map(c => `
-          <div class="item-card" style="padding:10px 12px;">
-            <div class="item-card-top">
-              <div>
-                <div class="item-title">${c.tag} (${c.w} × ${c.h} mm)</div>
-                <div class="item-meta">${c.allowRot ? '🔄 Giro 90° Permitido' : '🔒 Veta Bloqueada (No gira)'}</div>
-              </div>
-              <button class="btn btn-sm btn-danger" onclick="OptimizerEngine.removePiece('${c.id}')">Quitar</button>
-            </div>
-          </div>
-        `).join('');
-      }
-    };
-    window.OptimizerEngine = OptimizerEngine;
-
-    /* ========================================================================
-       CAPA 7: VISOR 3D CON RUTA /assets/Textures/ Y COLORES SÓLIDOS SIN RAYAS
-       ======================================================================== */
-    const Viewer3DEngine = {
-      scene: null,
-      camera: null,
-      renderer: null,
-      controls: null,
-      bodyGroup: null,
-      drawerGroup: null,
-      targetDrawerZ: 0,
-      currentDrawerZ: 0,
-      initialized: false,
-      textureLoader: null,
-
-      init() {
-        const container = document.getElementById('threeViewerContainer');
-        if (!container) return;
-        if (this.initialized) {
-          this.onResize();
-          return;
-        }
-
-        try {
-          this.textureLoader = new THREE.TextureLoader();
-          this.scene = new THREE.Scene();
-
-          this.camera = new THREE.PerspectiveCamera(38, container.clientWidth / container.clientHeight, 0.05, 50);
-          this.camera.position.set(0.68, 0.46, 0.78);
-
-          this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-          this.renderer.setSize(container.clientWidth, container.clientHeight);
-          this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-          container.innerHTML = '';
-          container.appendChild(this.renderer.domElement);
-
-          if (THREE.OrbitControls) {
-            this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
-            this.controls.enableDamping = true;
-            this.controls.dampingFactor = 0.08;
-            this.controls.target.set(0, 0.21, 0);
-            this.controls.update();
-          }
-
-          this.scene.add(new THREE.AmbientLight(0xffffff, 0.88));
-          const mainLight = new THREE.DirectionalLight(0xfffbf2, 0.92);
-          mainLight.position.set(1.8, 3.2, 2.5);
-          this.scene.add(mainLight);
-
-          const rimLight = new THREE.DirectionalLight(0xd8e2ec, 0.45);
-          rimLight.position.set(-2.0, 1.5, -1.8);
-          this.scene.add(rimLight);
-
-          const pedGeo = new THREE.RingGeometry(0.30, 0.312, 64);
-          pedGeo.rotateX(-Math.PI / 2);
-          const pedMat = new THREE.MeshBasicMaterial({ color: 0xB58B5A, side: THREE.DoubleSide });
-          this.scene.add(new THREE.Mesh(pedGeo, pedMat));
-
-          this.buildAccurateMesita();
-          this.initialized = true;
-          this.animate();
-
-          window.addEventListener('resize', () => this.onResize());
-        } catch (err) {
-          container.innerHTML = `<div style="padding:30px; text-align:center; color:var(--text-secondary);">Visor 3D no disponible en este navegador.</div>`;
-        }
-      },
-
-      onResize() {
-        const container = document.getElementById('threeViewerContainer');
-        if (!container || !this.renderer || !this.camera) return;
-        if (container.clientWidth === 0 || container.clientHeight === 0) return;
-        this.camera.aspect = container.clientWidth / container.clientHeight;
-        this.camera.updateProjectionMatrix();
-        this.renderer.setSize(container.clientWidth, container.clientHeight);
-      },
-
-      getSurfaceMaterial(finishKey) {
-        const baseHex = RealTexturesManager.solidFallbackColors[finishKey] || '#F3F4F3';
-        const mat = new THREE.MeshStandardMaterial({
-          color: new THREE.Color(baseHex),
-          roughness: finishKey === 'negro' ? 0.42 : 0.38,
-          metalness: 0.03
-        });
-
-        const primaryPath = RealTexturesManager.filesPrimary[finishKey];
-        const fallbackPath = RealTexturesManager.filesFallbackLower[finishKey];
-
-        if (primaryPath && this.textureLoader) {
-          this.textureLoader.load(
-            primaryPath,
-            (realTex) => {
-              realTex.encoding = THREE.sRGBEncoding;
-              mat.color.setHex(0xffffff);
-              mat.map = realTex;
-              mat.needsUpdate = true;
-            },
-            undefined,
-            () => {
-              if (fallbackPath) {
-                this.textureLoader.load(
-                  fallbackPath,
-                  (altTex) => {
-                    altTex.encoding = THREE.sRGBEncoding;
-                    mat.color.setHex(0xffffff);
-                    mat.map = altTex;
-                    mat.needsUpdate = true;
-                  },
-                  undefined,
-                  () => {}
-                );
-              }
-            }
-          );
-        }
-
-        return mat;
-      },
-
-      buildAccurateMesita() {
-        if (!this.scene) return;
-        if (this.bodyGroup) this.scene.remove(this.bodyGroup);
-        if (this.drawerGroup) this.scene.remove(this.drawerGroup);
-
-        this.bodyGroup = new THREE.Group();
-        this.bodyGroup.name = 'body';
-        this.drawerGroup = new THREE.Group();
-        this.drawerGroup.name = 'drawer';
-
-        const cfg = OfflineStore.state.viewerConfig;
-        const activeMod = OfflineStore.state.catalogModels.find(m => m.id === cfg.activeModelId) || OfflineStore.state.catalogModels[0];
-
-        const bodyMat = this.getSurfaceMaterial(cfg.baseColor);
-        const frontFinishKey = cfg.baseColor === 'negro' ? 'negro' : cfg.frontFinish;
-        const frontMat = this.getSurfaceMaterial(frontFinishKey);
-
-        const W = 0.40;
-        const D = 0.335;
-        const H = 0.35;
-        const T = 0.018;
-        const overhang = (activeMod.topOverhang || 0) / 1000;
-
-        const addBoxWithEdges = (group, w, h, d, mat, x, y, z) => {
-          const geo = new THREE.BoxGeometry(w, h, d);
-          const mesh = new THREE.Mesh(geo, mat);
-          mesh.position.set(x, y, z);
-          const edgeGeo = new THREE.EdgesGeometry(geo);
-          const edgeColor = cfg.baseColor === 'negro' ? 0x383838 : 0xD0D0D0;
-          const edges = new THREE.LineSegments(edgeGeo, new THREE.LineBasicMaterial({ color: edgeColor }));
-          mesh.add(edges);
-          group.add(mesh);
-          return mesh;
-        };
-
-        const innerW = W - (2 * T);
-        addBoxWithEdges(this.bodyGroup, innerW, T, D, bodyMat, 0, T / 2, 0);
-
-        const sideH = H - T;
-        addBoxWithEdges(this.bodyGroup, T, sideH, D, bodyMat, -(W / 2) + (T / 2), sideH / 2, 0);
-        addBoxWithEdges(this.bodyGroup, T, sideH, D, bodyMat, (W / 2) - (T / 2), sideH / 2, 0);
-
-        const topW = W + overhang;
-        addBoxWithEdges(this.bodyGroup, topW, T, D, bodyMat, overhang / 2, H - (T / 2), 0);
-
-        if (activeMod.hasHole && overhang > 0) {
-          const holeGeo = new THREE.CylinderGeometry(0.038, 0.038, T + 0.002, 32);
-          const holeMat = new THREE.MeshBasicMaterial({ color: 0x0A0A0A });
-          const holeMesh = new THREE.Mesh(holeGeo, holeMat);
-          holeMesh.position.set((W / 2) + (overhang / 2), H - (T / 2), -0.06);
-          this.bodyGroup.add(holeMesh);
-        }
-
-        addBoxWithEdges(this.bodyGroup, innerW, sideH - T, 0.006, bodyMat, 0, (sideH / 2) + (T / 2), -(D / 2) + 0.003);
-
-        const drawerFrontW = innerW - 0.004;
-        const drawerFrontH = 0.155;
-        const drawerFrontCenterY = H - T - (drawerFrontH / 2) - 0.002;
-        const drawerFrontZ = (D / 2) - (T / 2);
-
-        addBoxWithEdges(this.drawerGroup, drawerFrontW, drawerFrontH, T, frontMat, 0, drawerFrontCenterY, drawerFrontZ);
-
-        const boxDepth = D - 0.045;
-        const boxHeight = 0.115;
-        const boxInnerW = drawerFrontW - (2 * T);
-        const boxCenterY = drawerFrontCenterY - 0.01;
-        const boxCenterZ = drawerFrontZ - (T / 2) - (boxDepth / 2);
-
-        addBoxWithEdges(this.drawerGroup, T, boxHeight, boxDepth, bodyMat, -(drawerFrontW / 2) + (T / 2), boxCenterY, boxCenterZ);
-        addBoxWithEdges(this.drawerGroup, T, boxHeight, boxDepth, bodyMat, (drawerFrontW / 2) - (T / 2), boxCenterY, boxCenterZ);
-        addBoxWithEdges(this.drawerGroup, boxInnerW, 0.012, boxDepth, bodyMat, 0, boxCenterY - (boxHeight / 2) + 0.006, boxCenterZ);
-        addBoxWithEdges(this.drawerGroup, boxInnerW, boxHeight, T, bodyMat, 0, boxCenterY, boxCenterZ - (boxDepth / 2) + (T / 2));
-
-        this.drawerGroup.position.z = this.currentDrawerZ;
-        this.scene.add(this.bodyGroup);
-        this.scene.add(this.drawerGroup);
-      },
-
-      selectCatalogModel(modelId) {
-        const mod = OfflineStore.state.catalogModels.find(m => m.id === modelId);
-        if (!mod) return;
-        OfflineStore.state.viewerConfig.activeModelId = modelId;
-        if (mod.defaultBase) {
-          OfflineStore.state.viewerConfig.baseColor = mod.defaultBase;
-        }
-        document.getElementById('viewer3DModelTitle').textContent = mod.name;
-        document.getElementById('viewer3DModelDims').textContent = mod.dims;
-        document.getElementById('viewer3DPriceTag').textContent = '$' + mod.basePrice.toLocaleString('es-AR');
-
-        this.syncColorButtonsUI();
-        this.buildAccurateMesita();
-        this.renderCatalogAndRecipeInfo();
-      },
-
-      syncColorButtonsUI() {
-        const cfg = OfflineStore.state.viewerConfig;
-        document.getElementById('btnBaseBlanco').classList.toggle('selected', cfg.baseColor === 'blanco');
-        document.getElementById('btnBaseNegro').classList.toggle('selected', cfg.baseColor === 'negro');
-        document.getElementById('drawerFrontSubmenu').style.display = cfg.baseColor === 'blanco' ? 'block' : 'none';
-
-        document.querySelectorAll('#frontTextureSwatches .swatch-dot').forEach(btn => {
-          btn.classList.toggle('selected', btn.getAttribute('data-front') === cfg.frontFinish);
-        });
-      },
-
-      setBaseColor(colorKey) {
-        OfflineStore.state.viewerConfig.baseColor = colorKey;
-        this.syncColorButtonsUI();
-        this.buildAccurateMesita();
-        OfflineStore.commit(`Color base del modelo 3D cambiado a ${colorKey}`);
-      },
-
-      setFrontFinish(finishKey) {
-        if (OfflineStore.state.viewerConfig.baseColor !== 'blanco') return;
-        OfflineStore.state.viewerConfig.frontFinish = finishKey;
-        this.syncColorButtonsUI();
-        this.buildAccurateMesita();
-        OfflineStore.commit(`Frente del cajón 3D cambiado a ${finishKey}`);
-      },
-
-      toggleDrawerAnim() {
-        const isOpen = !OfflineStore.state.viewerConfig.drawerOpen;
-        OfflineStore.state.viewerConfig.drawerOpen = isOpen;
-        this.targetDrawerZ = isOpen ? 0.19 : 0;
-      },
-
-      resetCamera() {
-        if (!this.camera || !this.controls) return;
-        this.camera.position.set(0.68, 0.46, 0.78);
-        this.controls.target.set(0, 0.18, 0);
-        this.controls.update();
-      },
-
-      animate() {
-        requestAnimationFrame(() => this.animate());
-        if (this.drawerGroup) {
-          this.currentDrawerZ += (this.targetDrawerZ - this.currentDrawerZ) * 0.14;
-          this.drawerGroup.position.z = this.currentDrawerZ;
-        }
-        if (this.controls) this.controls.update();
-        if (this.renderer && this.scene && this.camera) {
-          this.renderer.render(this.scene, this.camera);
-        }
-      },
-
-      renderCatalogAndRecipeInfo() {
-        const grid = document.getElementById('catalogGridContainer');
-        if (grid) {
-          const activeId = OfflineStore.state.viewerConfig.activeModelId;
-          grid.innerHTML = OfflineStore.state.catalogModels.map(m => `
-            <div class="card-elevated" style="border-color:${m.id === activeId ? 'var(--accent-wood)' : 'var(--border-color)'};">
-              <div style="font-weight:700; font-size:14px; color:var(--text-primary);">${m.name}</div>
-              <div style="font-size:12px; color:var(--text-secondary); margin:4px 0;">
-                ${m.dims} — <strong style="color:var(--accent-wood);">$${m.basePrice.toLocaleString('es-AR')}</strong>
-              </div>
-              <button class="btn ${m.id === activeId ? 'btn-primary' : ''}" style="width:100%; min-height:40px; margin-top:6px;" onclick="Viewer3DEngine.selectCatalogModel('${m.id}')">
-                ${m.id === activeId ? '✓ Activo en el Visor 3D' : 'Cargar en Visor 3D'}
-              </button>
-            </div>
-          `).join('');
-        }
-
-        const recBox = document.getElementById('viewer3DRecipeDetails');
-        const rec = OfflineStore.state.recipes[0];
-        if (recBox && rec) {
-          recBox.innerHTML = rec.items.map(i => `• <strong>${i.qty}x</strong> ${i.name}`).join('<br>');
-        }
-      }
-    };
-
-    /* ========================================================================
-       CAPA 8: INVENTARIO CON PUNTO DE REPOSICIÓN EDITABLE (ROJO CRÍTICO + ALERTA)
-       ======================================================================== */
-    const InventoryModule = {
-      openNewForm() {
-        document.getElementById('stkEditId').value = '';
-        document.getElementById('stkName').value = '';
-        document.getElementById('stkCode').value = '';
-        document.getElementById('stkQty').value = '100';
-        document.getElementById('stkNormal').value = '100';
-        document.getElementById('stkMin').value = '20';
-        document.getElementById('stkPrice').value = '2500';
-        document.getElementById('stkLoc').value = 'Estantería Principal';
-        document.getElementById('newStockItemBox').style.display = 'block';
-      },
-
-      editItem(stockId) {
-        const item = OfflineStore.state.stock.find(s => s.id === stockId);
-        if (!item) return;
-        document.getElementById('stkEditId').value = item.id;
-        document.getElementById('stkName').value = item.name;
-        document.getElementById('stkCode').value = item.code || '';
-        document.getElementById('stkCategory').value = item.category || 'cortes';
-        document.getElementById('stkUnit').value = item.unit || 'UNID';
-        document.getElementById('stkQty').value = item.qty;
-        document.getElementById('stkNormal').value = item.normalQty || 100;
-        document.getElementById('stkMin').value = item.min || 20;
-        document.getElementById('stkPrice').value = item.price || 0;
-        document.getElementById('stkLoc').value = item.location || 'Taller';
-        document.getElementById('newStockItemBox').style.display = 'block';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      },
-
-      promptReorderPoint(stockId) {
-        if (!SecurityRBAC.canWrite('STOCK_REORDER_POINT')) return;
-        const item = OfflineStore.state.stock.find(s => s.id === stockId);
-        if (!item) return;
-        const val = prompt(
-          `Configurar Punto de Reposición (Alerta Roja) para "${item.name}"\n(Stock normal: ${item.normalQty || 100} ${item.unit}):`,
-          item.min || 20
-        );
-        if (val === null) return;
-        const newMin = parseFloat(val);
-        if (isNaN(newMin) || newMin < 0) return AppUI.toast('Valor inválido.', 'warn');
-        item.min = newMin;
-        this.checkAndNotifyReorderPoint(item);
-        OfflineStore.commit(`Punto de reposición de ${item.name} fijado en ${newMin} ${item.unit}`);
-      },
-
-      checkAndNotifyReorderPoint(item) {
-        const threshold = item.min !== undefined ? item.min : 5;
-        if (item.qty <= threshold) {
-          NotificationCenter.pushNotification(
-            'stock',
-            `¡Punto de Reposición Alcanzado!`,
-            `${item.name}: quedan ${item.qty} ${item.unit} (Umbral fijado en ${threshold}).`
-          );
-        }
-      },
-
-      cancelForm() {
-        document.getElementById('newStockItemBox').style.display = 'none';
-      },
-
-      saveItem() {
-        if (!SecurityRBAC.canWrite('STOCK_SAVE')) return;
-        const editId = document.getElementById('stkEditId').value;
-        const name = document.getElementById('stkName').value.trim();
-        if (!name) return AppUI.toast('Ingresá el nombre del material.', 'warn');
-
-        if (editId) {
-          const item = OfflineStore.state.stock.find(s => s.id === editId);
-          if (item) {
-            item.name = name;
-            item.code = document.getElementById('stkCode').value.trim() || item.code;
-            item.category = document.getElementById('stkCategory').value;
-            item.unit = document.getElementById('stkUnit').value.trim() || 'UNID';
-            item.qty = parseFloat(document.getElementById('stkQty').value) || 0;
-            item.normalQty = parseFloat(document.getElementById('stkNormal').value) || 100;
-            item.min = parseFloat(document.getElementById('stkMin').value) || 20;
-            item.price = parseFloat(document.getElementById('stkPrice').value) || 0;
-            item.location = document.getElementById('stkLoc').value.trim() || 'Taller';
-            this.recordMovement(item.name, 'EDICIÓN FICHA', 0);
-            this.checkAndNotifyReorderPoint(item);
-          }
-          document.getElementById('newStockItemBox').style.display = 'none';
-          OfflineStore.commit(`Material editado: ${name}`);
-        } else {
-          const item = {
-            id: 'stk_' + Date.now(),
-            code: document.getElementById('stkCode').value.trim() || 'MAT-' + Math.floor(Math.random() * 900),
-            name,
-            category: document.getElementById('stkCategory').value,
-            unit: document.getElementById('stkUnit').value.trim() || 'UNID',
-            qty: parseFloat(document.getElementById('stkQty').value) || 0,
-            normalQty: parseFloat(document.getElementById('stkNormal').value) || 100,
-            min: parseFloat(document.getElementById('stkMin').value) || 20,
-            price: parseFloat(document.getElementById('stkPrice').value) || 0,
-            location: document.getElementById('stkLoc').value.trim() || 'Taller'
-          };
-          OfflineStore.state.stock.push(item);
-          this.recordMovement(item.name, 'ALTA INICIAL', item.qty);
-          this.checkAndNotifyReorderPoint(item);
-          document.getElementById('newStockItemBox').style.display = 'none';
-          OfflineStore.commit(`Alta de material en stock: ${name}`);
-        }
-      },
-
-      deleteItem(stockId) {
-        if (!SecurityRBAC.canWrite('STOCK_DELETE')) return;
-        const item = OfflineStore.state.stock.find(s => s.id === stockId);
-        if (!item) return;
-        AppUI.openConfirm(
-          'Eliminar Material del Stock',
-          `<p>¿Seguro que querés eliminar <strong>${item.name}</strong> del inventario?</p>`,
-          () => {
-            OfflineStore.state.stock = OfflineStore.state.stock.filter(s => s.id !== stockId);
-            this.recordMovement(item.name, 'BAJA DE ÍTEM', -item.qty);
-            OfflineStore.commit(`Material eliminado: ${item.name}`);
-            AppUI.toast('Material eliminado del inventario.', 'ok');
-          }
-        );
-      },
-
-      adjustQty(stockId, delta) {
-        if (!SecurityRBAC.canWrite('STOCK_ADJUST')) return;
-        const item = OfflineStore.state.stock.find(s => s.id === stockId);
-        if (!item) return;
-        if (item.qty + delta < 0) {
-          return AppUI.toast('No se permiten existencias negativas.', 'err');
-        }
-        item.qty += delta;
-        this.recordMovement(item.name, delta > 0 ? `ENTRADA (+${delta})` : `SALIDA (${delta})`, delta);
-        if (delta < 0) {
-          this.checkAndNotifyReorderPoint(item);
-        }
-        OfflineStore.commit(`Ajuste stock ${item.name} (${delta > 0 ? '+' : ''}${delta})`);
-      },
-
-      promptManualQty(stockId) {
-        if (!SecurityRBAC.canWrite('STOCK_ADJUST')) return;
-        const item = OfflineStore.state.stock.find(s => s.id === stockId);
-        if (!item) return;
-        const val = prompt(`Ingresá la nueva cantidad exacta para ${item.name}:`, item.qty);
-        if (val === null) return;
-        const num = parseFloat(val);
-        if (isNaN(num) || num < 0) return AppUI.toast('Cantidad inválida.', 'warn');
-        const diff = num - item.qty;
-        item.qty = num;
-        this.recordMovement(item.name, 'AJUSTE MANUAL', diff);
-        this.checkAndNotifyReorderPoint(item);
-        OfflineStore.commit(`Stock fijado manualmente en ${num} para ${item.name}`);
-      },
-
-      recordMovement(itemName, type, qtyDelta) {
-        if (!OfflineStore.state.stockMovements) OfflineStore.state.stockMovements = [];
-        OfflineStore.state.stockMovements.unshift({
-          id: 'mov_' + Date.now() + '_' + Math.random().toString(36).slice(2, 5),
-          date: new Date().toLocaleString('es-AR'),
-          itemName,
-          type,
-          qtyDelta,
-          user: SecurityRBAC.currentUser.name
-        });
-      },
-
-      render() {
-        const cont = document.getElementById('inventoryCardsContainer');
-        if (!cont) return;
-        const q = (document.getElementById('stkSearchInput')?.value || '').toLowerCase();
-        const cat = document.getElementById('stkFilterCat')?.value || 'all';
-
-        const filtered = (OfflineStore.state.stock || []).filter(s => {
-          const matchText = s.name.toLowerCase().includes(q) || (s.code || '').toLowerCase().includes(q);
-          if (!matchText) return false;
-          const minThreshold = s.min !== undefined ? s.min : 5;
-          if (cat === 'low') return s.qty <= minThreshold;
-          if (cat !== 'all') return s.category === cat;
-          return true;
-        });
-
-        cont.innerHTML = filtered.map(s => {
-          const minThreshold = s.min !== undefined ? s.min : 5;
-          const normalRef = s.normalQty || Math.max(minThreshold * 4, 100);
-          const isLow = s.qty <= minThreshold;
-          const pct = Math.min(100, Math.round((s.qty / normalRef) * 100));
-
-          return `
-            <div class="item-card ${isLow ? 'critical-low' : ''}">
-              <div class="item-card-top">
-                <div>
-                  <div class="item-title" style="${isLow ? 'color:var(--status-err);' : ''}">
-                    ${isLow ? '🚨 ' : ''}${s.name}
-                  </div>
-                  <div class="item-meta">
-                    SKU: <strong>${s.code}</strong> | Normal: <strong>${normalRef}</strong> |
-                    <span style="color:${isLow ? 'var(--status-err)' : 'var(--accent-wood)'}; font-weight:700;">
-                      Punto Reposición: ≤ ${minThreshold} ${s.unit}
-                    </span>
-                  </div>
-                </div>
-                <span class="status-pill ${isLow ? 'err' : 'ok'}">${isLow ? 'REPONER URGENTE' : 'OK'}</span>
-              </div>
-
-              <div class="stock-progress-track">
-                <div class="stock-progress-fill ${isLow ? 'critical' : ''}" style="width:${pct}%;"></div>
-              </div>
-
-              <div class="stepper-controls-multi">
-                <button class="stepper-btn bulk" onclick="InventoryModule.adjustQty('${s.id}', -10)">−10</button>
-                <button class="stepper-btn" onclick="InventoryModule.adjustQty('${s.id}', -1)">−1</button>
-                <span class="stepper-val" onclick="InventoryModule.promptManualQty('${s.id}')" title="Tocar para ingreso manual">${s.qty} ${s.unit}</span>
-                <button class="stepper-btn" onclick="InventoryModule.adjustQty('${s.id}', 1)">+1</button>
-                <button class="stepper-btn bulk" onclick="InventoryModule.adjustQty('${s.id}', 10)">+10</button>
-              </div>
-              <div class="item-actions-row">
-                <button class="btn btn-sm" style="flex:1;" onclick="InventoryModule.promptReorderPoint('${s.id}')">🎯 Punto Reposición (${minThreshold})</button>
-                <button class="btn btn-sm" style="flex:1;" onclick="InventoryModule.editItem('${s.id}')">✏️ Editar</button>
-                <button class="btn btn-sm btn-danger" onclick="InventoryModule.deleteItem('${s.id}')">🗑</button>
-              </div>
-            </div>
-          `;
-        }).join('') || '<div style="font-size:13px; color:var(--text-secondary);">No se encontraron materiales con ese filtro.</div>';
-
-        const movCont = document.getElementById('inventoryMovementsList');
-        if (movCont) {
-          movCont.innerHTML = (OfflineStore.state.stockMovements || []).slice(0, 12).map(m => `
-            <div style="font-size:12px; padding:6px 0; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between;">
-              <span><strong>${m.type}</strong> — ${m.itemName} (${m.user})</span>
-              <span style="font-weight:700; color:${m.qtyDelta >= 0 ? 'var(--status-ok)' : 'var(--status-err)'};">${m.qtyDelta >= 0 ? '+' : ''}${m.qtyDelta}</span>
-            </div>
-          `).join('') || '<div style="font-size:12px; color:var(--text-secondary);">Sin movimientos registrados.</div>';
-        }
-      }
-    };
-
-    const RecipesModule = {
-      openNewForm() {
-        document.getElementById('recEditIdInput').value = '';
-        document.getElementById('recNombreInput').value = '';
-        document.getElementById('recDimsInput').value = '400x335x450';
-        this.renderStockChecks([]);
-        document.getElementById('newRecipeFormBox').style.display = 'block';
-      },
-
-      editRecipe(recId) {
-        const rec = OfflineStore.state.recipes.find(r => r.id === recId);
-        if (!rec) return;
-        document.getElementById('recEditIdInput').value = rec.id;
-        document.getElementById('recNombreInput').value = rec.name;
-        document.getElementById('recDimsInput').value = rec.dims || '400x335x450';
-        this.renderStockChecks(rec.items || []);
-        document.getElementById('newRecipeFormBox').style.display = 'block';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      },
-
-      cancelForm() {
-        document.getElementById('newRecipeFormBox').style.display = 'none';
-      },
-
-      renderStockChecks(existingItems = []) {
-        const list = document.getElementById('recipeStockSelectorList');
-        if (!list) return;
-        list.innerHTML = (OfflineStore.state.stock || []).map(s => {
-          const found = existingItems.find(i => i.stockId === s.id);
-          const checked = found ? 'checked' : '';
-          const qtyVal = found ? found.qty : 1;
-          return `
-            <div class="card-elevated" style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 10px;">
-              <label style="margin:0; display:flex; align-items:center; gap:8px; color:var(--text-primary); flex:1;">
-                <input type="checkbox" id="rec_chk_${s.id}" ${checked} style="width:22px; min-height:22px;">
-                <span>${s.name} ($${s.price})</span>
-              </label>
-              <input type="number" id="rec_qty_${s.id}" inputmode="numeric" value="${qtyVal}" min="1" style="width:76px; min-height:38px;">
-            </div>
-          `;
-        }).join('');
-      },
-
-      saveRecipe() {
-        if (!SecurityRBAC.canWrite('RECIPE_SAVE')) return;
-        const editId = document.getElementById('recEditIdInput').value;
-        const name = document.getElementById('recNombreInput').value.trim();
-        if (!name) return AppUI.toast('Ingresá el nombre del mueble.', 'warn');
-
-        const items = [];
-        let materialsCost = 0;
-
-        (OfflineStore.state.stock || []).forEach(s => {
-          const chk = document.getElementById(`rec_chk_${s.id}`);
-          const qtyInput = document.getElementById(`rec_qty_${s.id}`);
-          if (chk && chk.checked) {
-            const q = parseFloat(qtyInput.value) || 1;
-            items.push({ stockId: s.id, name: s.name, qty: q, unitPrice: s.price });
-            materialsCost += (q * s.price);
-          }
-        });
-
-        if (editId) {
-          const rec = OfflineStore.state.recipes.find(r => r.id === editId);
-          if (rec) {
-            rec.name = name;
-            rec.dims = document.getElementById('recDimsInput').value.trim();
-            rec.version = (rec.version || 1) + 1;
-            rec.costTotal = Math.round(materialsCost);
-            rec.items = items;
-          }
-          document.getElementById('newRecipeFormBox').style.display = 'none';
-          OfflineStore.commit(`Receta actualizada: ${name}`);
-        } else {
-          OfflineStore.state.recipes.push({
-            id: 'rec_' + Date.now(),
-            version: 1,
-            name,
-            dims: document.getElementById('recDimsInput').value.trim(),
-            costTotal: Math.round(materialsCost),
-            items
-          });
-          document.getElementById('newRecipeFormBox').style.display = 'none';
-          OfflineStore.commit(`Nueva receta creada: ${name}`);
-        }
-      },
-
-      deleteRecipe(recId) {
-        if (!SecurityRBAC.canWrite('RECIPE_DELETE')) return;
-        const rec = OfflineStore.state.recipes.find(r => r.id === recId);
-        if (!rec) return;
-        AppUI.openConfirm(
-          'Eliminar Receta de Fabricación',
-          `<p>¿Seguro que deseas borrar la receta <strong>${rec.name}</strong>?</p>`,
-          () => {
-            OfflineStore.state.recipes = OfflineStore.state.recipes.filter(r => r.id !== recId);
-            OfflineStore.commit(`Receta eliminada: ${rec.name}`);
-            AppUI.toast('Receta eliminada correctamente.', 'ok');
-          }
-        );
-      },
-
-      render() {
-        const cont = document.getElementById('recipesListContainer');
-        if (!cont) return;
-        cont.innerHTML = (OfflineStore.state.recipes || []).map(r => `
-          <div class="item-card">
-            <div class="item-card-top">
-              <div>
-                <div class="item-title">${r.name} <span style="font-size:11px; color:var(--accent-wood);">(v${r.version || 1})</span></div>
-                <div class="item-meta">Medidas: ${r.dims} | Costo Insumos: <strong>$${(r.costTotal || 0).toLocaleString('es-AR')}</strong></div>
-              </div>
-            </div>
-            <div style="font-size:12px; color:var(--text-secondary);">
-              ${(r.items || []).map(i => `${i.qty}x ${i.name}`).join(' • ') || 'Sin insumos vinculados'}
-            </div>
-            <div class="item-actions-row">
-              <button class="btn btn-sm" style="flex:1;" onclick="RecipesModule.editRecipe('${r.id}')">✏️ Editar Receta</button>
-              <button class="btn btn-sm btn-danger" style="flex:1;" onclick="RecipesModule.deleteRecipe('${r.id}')">🗑 Borrar</button>
-            </div>
-          </div>
-        `).join('') || '<div style="font-size:13px; color:var(--text-secondary);">No hay recetas registradas.</div>';
-      }
-    };
-
-    const PurchasesModule = {
-      registerPurchase() {
-        if (!SecurityRBAC.canWrite('PURCHASE_CREATE')) return;
-        const supplier = document.getElementById('purSupplier').value.trim() || 'Proveedor General';
-        const stockId = document.getElementById('purStockId').value;
-        const qty = parseFloat(document.getElementById('purQty').value) || 1;
-        const unitCost = parseFloat(document.getElementById('purUnitCost').value) || 0;
-        const status = document.getElementById('purStatus').value;
-
-        const stockItem = OfflineStore.state.stock.find(s => s.id === stockId);
-        if (!stockItem) return;
-
-        if (status === 'recibido') {
-          stockItem.qty += qty;
-          stockItem.price = unitCost;
-          InventoryModule.recordMovement(stockItem.name, `COMPRA RECIBIDA (${supplier})`, qty);
-        }
-
-        const total = Math.round(qty * unitCost);
-        OfflineStore.state.purchases.unshift({
-          id: 'pur_' + Date.now(),
-          date: new Date().toLocaleDateString('es-AR'),
-          supplier,
-          itemName: stockItem.name,
-          qty,
-          total,
-          status
-        });
-
-        OfflineStore.commit(`Compra registrada (${supplier}): ${qty}x ${stockItem.name}`);
-      },
-
-      render() {
-        const sel = document.getElementById('purStockId');
-        if (sel) {
-          sel.innerHTML = (OfflineStore.state.stock || []).map(s => `<option value="${s.id}">${s.name} (Stock: ${s.qty})</option>`).join('');
-        }
-        const list = document.getElementById('purchasesHistoryList');
-        if (list) {
-          list.innerHTML = (OfflineStore.state.purchases || []).map(p => `
-            <div class="item-card">
-              <div class="item-card-top">
-                <div>
-                  <div class="item-title">${p.supplier} — ${p.qty}x ${p.itemName}</div>
-                  <div class="item-meta">Fecha: ${p.date} | Total: $${p.total.toLocaleString('es-AR')}</div>
-                </div>
-                <span class="status-pill ${p.status === 'recibido' ? 'ok' : 'warn'}">${p.status.toUpperCase()}</span>
-              </div>
-            </div>
-          `).join('');
-        }
-      }
-    };
-
-    /* ========================================================================
-       CAPA 9: PRESUPUESTOS + NOTIFICACIÓN AUTOMÁTICA AL CONFIRMAR PEDIDO
-       ======================================================================== */
-    const QuotesModule = {
-      onSelectRecipe() {
-        const recId = document.getElementById('quoRecipeSelect').value;
-        const rec = OfflineStore.state.recipes.find(r => r.id === recId);
-        const breakdownCard = document.getElementById('quoInstantBreakdownCard');
-
-        if (rec) {
-          document.getElementById('quoDetail').value = `${rec.name} (${rec.dims})`;
-          document.getElementById('quoUnitPrice').value = Math.round(rec.costTotal * 1.45);
-          if (breakdownCard) {
-            breakdownCard.style.display = 'block';
-            breakdownCard.innerHTML = `
-              <strong style="font-size:12px; color:var(--accent-wood); display:block; margin-bottom:4px;">
-                🔍 Desglose Instantáneo de Costo por Unidad ($${rec.costTotal.toLocaleString('es-AR')}):
-              </strong>
-              <div style="font-size:12px; color:var(--text-secondary);">
-                ${(rec.items || []).map(i => `• ${i.qty}x ${i.name} ($${(i.qty * i.unitPrice).toLocaleString('es-AR')})`).join('<br>')}
-              </div>
-            `;
-          }
-          this.recalc();
-        } else if (breakdownCard) {
-          breakdownCard.style.display = 'none';
-        }
-      },
-
-      recalc() {
-        const qty = parseInt(document.getElementById('quoQty').value) || 1;
-        const unitP = parseFloat(document.getElementById('quoUnitPrice').value) || 0;
-        const freight = parseFloat(document.getElementById('quoFreight').value) || 0;
-
-        const total = Math.round((qty * unitP) + freight);
-        document.getElementById('quoTotalDisplay').textContent = '$' + total.toLocaleString('es-AR');
-        return { qty, unitP, freight, total };
-      },
-
-      buildMessageText() {
-        const calc = this.recalc();
-        const client = document.getElementById('quoClientName').value.trim() || 'Cliente';
-        const detail = document.getElementById('quoDetail').value.trim() || 'Mueble Carpintería JL';
-        return `Hola *${client}*! Te pasamos el presupuesto de *Carpintería JL*:\n\n` +
-          `• *Mueble:* ${calc.qty}x ${detail}\n` +
-          `• *Precio Unitario:* $${calc.unitP.toLocaleString('es-AR')}\n` +
-          (calc.freight > 0 ? `• *Envío / Flete:* $${calc.freight.toLocaleString('es-AR')}\n` : '') +
-          `• *Total Final:* $${calc.total.toLocaleString('es-AR')}`;
-      },
-
-      copyWhatsAppText() {
-        const text = this.buildMessageText();
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text).then(() => {
-            AppUI.toast('Mensaje copiado al portapapeles.', 'ok');
-          });
-        } else {
-          AppUI.toast('Texto generado listo para copiar.', 'ok');
-        }
-      },
-
-      sendWhatsApp() {
-        const phone = (document.getElementById('quoClientPhone').value || '').replace(/\D/g, '');
-        const msg = this.buildMessageText();
-        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
-      },
-
-      saveDraft() {
-        if (!SecurityRBAC.canWrite('QUOTE_SAVE')) return;
-        const calc = this.recalc();
-        const client = document.getElementById('quoClientName').value.trim() || 'Cliente Mostrador';
-        const phone = document.getElementById('quoClientPhone').value.trim();
-        const detail = document.getElementById('quoDetail').value.trim() || 'Mueble a Medida';
-
-        OfflineStore.state.quotes.unshift({
-          id: 'quo_' + Date.now(),
-          client,
-          phone,
-          detail,
-          qty: calc.qty,
-          unitP: calc.unitP,
-          freight: calc.freight,
-          total: calc.total,
-          status: 'PENDIENTE',
-          date: new Date().toLocaleDateString('es-AR')
-        });
-        OfflineStore.commit(`Presupuesto guardado para ${client}`);
-        AppUI.toast('Presupuesto guardado.', 'ok');
-      },
-
-      duplicateQuote(quoId) {
-        if (!SecurityRBAC.canWrite('QUOTE_DUP')) return;
-        const orig = OfflineStore.state.quotes.find(q => q.id === quoId);
-        if (!orig) return;
-        const copy = {
-          ...orig,
-          id: 'quo_' + Date.now(),
-          client: `${orig.client} (Copia)`,
-          date: new Date().toLocaleDateString('es-AR')
-        };
-        OfflineStore.state.quotes.unshift(copy);
-        document.getElementById('quoClientName').value = copy.client;
-        document.getElementById('quoClientPhone').value = copy.phone || '';
-        document.getElementById('quoDetail').value = copy.detail;
-        document.getElementById('quoQty').value = copy.qty;
-        document.getElementById('quoUnitPrice').value = copy.unitP || Math.round(copy.total / copy.qty);
-        document.getElementById('quoFreight').value = copy.freight || 0;
-        this.recalc();
-        OfflineStore.commit(`Presupuesto duplicado: ${copy.client}`);
-        AppUI.toast('Presupuesto duplicado y cargado en el formulario.', 'ok');
-      },
-
-      deleteQuote(quoId) {
-        if (!SecurityRBAC.canWrite('QUOTE_DEL')) return;
-        OfflineStore.state.quotes = (OfflineStore.state.quotes || []).filter(q => q.id !== quoId);
-        OfflineStore.commit('Presupuesto eliminado');
-      },
-
-      confirmAndDeductStockPrompt() {
-        if (!SecurityRBAC.canWrite('ORDER_CONFIRM_DEDUCT')) return;
-        const recId = document.getElementById('quoRecipeSelect').value;
-        const rec = OfflineStore.state.recipes.find(r => r.id === recId) || OfflineStore.state.recipes[0];
-        const calc = this.recalc();
-
-        let summaryHtml = `<p style="margin-bottom:8px;">Se confirmará el pedido y se descontarán del inventario los insumos para <strong>${calc.qty} unidad(es)</strong>:</p>`;
-        if (rec && rec.items) {
-          summaryHtml += rec.items.map(i => {
-            const stk = OfflineStore.state.stock.find(s => s.id === i.stockId);
-            const needed = i.qty * calc.qty;
-            const avail = stk ? stk.qty : 0;
-            const warn = avail < needed ? `<span style="color:var(--status-err);">(Faltan ${needed - avail})</span>` : `<span style="color:var(--status-ok);">(Stock: ${avail})</span>`;
-            return `<div style="font-size:13px; margin-bottom:4px;">• ${needed}x ${i.name} ${warn}</div>`;
-          }).join('');
-        }
-
-        AppUI.openConfirm(
-          'Confirmar Pedido y Descontar Stock',
-          summaryHtml,
-          () => this.executeIdempotentOrderAndStockDeduction(rec, calc)
-        );
-      },
-
-      executeIdempotentOrderAndStockDeduction(rec, calc) {
-        const client = document.getElementById('quoClientName').value.trim() || 'Cliente Confirmado';
-        const detail = document.getElementById('quoDetail').value.trim() || (rec ? rec.name : 'Mueble');
-        const idempotencyKey = `deduct_${client}_${detail}_${calc.total}_${Math.floor(Date.now() / 5000)}`;
-
-        if (OfflineStore.state.processedTransactions[idempotencyKey]) {
-          return AppUI.toast('Descuento duplicado prevenido automáticamente.', 'warn');
-        }
-        OfflineStore.state.processedTransactions[idempotencyKey] = true;
-
-        // 1. Notificación automática por confirmación de pedido
-        NotificationCenter.pushNotification(
-          'pedido',
-          'Nuevo Pedido Confirmado',
-          `Cliente: ${client} — ${calc.qty}x ${detail} ($${calc.total.toLocaleString('es-AR')})`
-        );
-
-        // 2. Descuento de stock y verificación automática de punto de reposición
-        if (rec && rec.items) {
-          rec.items.forEach(ins => {
-            const stk = OfflineStore.state.stock.find(s => s.id === ins.stockId);
-            if (stk) {
-              const discountQty = ins.qty * calc.qty;
-              stk.qty = Math.max(0, stk.qty - discountQty);
-              InventoryModule.recordMovement(stk.name, `CONSUMO PEDIDO (${client})`, -discountQty);
-              InventoryModule.checkAndNotifyReorderPoint(stk);
-            }
-          });
-        }
-
-        OfflineStore.state.orders.unshift({
-          id: 'ord_' + Date.now(),
-          client,
-          detail: `${calc.qty}x ${detail}`,
-          total: calc.total,
-          status: 'En fabricación',
-          date: new Date().toLocaleDateString('es-AR')
-        });
-
-        OfflineStore.commit(`Pedido confirmado y stock descontado: ${client}`);
-        AppUI.navigate('pedidos');
-      },
-
-      render() {
-        const sel = document.getElementById('quoRecipeSelect');
-        if (sel) {
-          sel.innerHTML = `<option value="">-- Seleccionar Receta Vinculada --</option>` +
-            (OfflineStore.state.recipes || []).map(r => `<option value="${r.id}">${r.name} (Costo Insumos: $${r.costTotal})</option>`).join('');
-        }
-        const list = document.getElementById('quotesListContainer');
-        if (list) {
-          list.innerHTML = (OfflineStore.state.quotes || []).map(q => `
-            <div class="item-card">
-              <div class="item-card-top">
-                <div>
-                  <div class="item-title">${q.client} — ${q.qty}x ${q.detail}</div>
-                  <div class="item-meta">Fecha: ${q.date} | Total: <strong>$${q.total.toLocaleString('es-AR')}</strong></div>
-                </div>
-                <span class="status-pill warn">${q.status}</span>
-              </div>
-              <div class="item-actions-row">
-                <button class="btn btn-sm" style="flex:2;" onclick="QuotesModule.duplicateQuote('${q.id}')">📑 Duplicar en 1 Clic</button>
-                <button class="btn btn-sm btn-danger" style="flex:1;" onclick="QuotesModule.deleteQuote('${q.id}')">🗑 Borrar</button>
-              </div>
-            </div>
-          `).join('') || '<div style="font-size:12px; color:var(--text-secondary);">Sin presupuestos guardados.</div>';
-        }
-      }
-    };
-
-    const OrdersModule = {
-      cycleStatus(orderId) {
-        if (!SecurityRBAC.canWrite('ORDER_STATUS')) return;
-        const states = ['Confirmado', 'Esperando materiales', 'En fabricación', 'En montaje', 'Terminado', 'Listo para entregar', 'Entregado'];
-        const ord = OfflineStore.state.orders.find(o => o.id === orderId);
-        if (!ord) return;
-        const idx = states.indexOf(ord.status);
-        ord.status = states[(idx + 1) % states.length];
-        OfflineStore.commit(`Estado de pedido ${ord.client} cambiado a ${ord.status}`);
-      },
-
-      render() {
-        const cont = document.getElementById('ordersListContainer');
-        if (!cont) return;
-        cont.innerHTML = (OfflineStore.state.orders || []).map(o => `
-          <div class="item-card">
-            <div class="item-card-top">
-              <div>
-                <div class="item-title">${o.client}</div>
-                <div class="item-meta">${o.detail} | Total: $${o.total.toLocaleString('es-AR')}</div>
-              </div>
-              <span class="status-pill ${o.status === 'Listo para entregar' || o.status === 'Entregado' ? 'ok' : 'wood'}">${o.status}</span>
-            </div>
-            <button class="btn" onclick="OrdersModule.cycleStatus('${o.id}')">Avanzar Etapa de Producción ➔</button>
-          </div>
-        `).join('') || '<div style="font-size:13px; color:var(--text-secondary);">No hay pedidos activos en fabricación.</div>';
-      }
-    };
-
-    const FinanceModule = {
-      addEntry() {
-        if (!SecurityRBAC.canWrite('CAJA_WRITE')) return;
-        const type = document.getElementById('cashType').value;
-        const method = document.getElementById('cashMethod').value;
-        const concept = document.getElementById('cashConcept').value.trim();
-        const amount = parseFloat(document.getElementById('cashAmount').value);
-
-        if (!concept || !amount || amount <= 0) {
-          return AppUI.toast('Ingresá concepto e importe mayor a cero.', 'warn');
-        }
-
-        OfflineStore.state.cashLedger.unshift({
-          id: 'csh_' + Date.now(),
-          date: new Date().toISOString(),
-          type,
-          concept,
-          amount,
-          method,
-          user: SecurityRBAC.currentUser.name
-        });
-
-        document.getElementById('cashConcept').value = '';
-        document.getElementById('cashAmount').value = '';
-        OfflineStore.commit(`Movimiento de caja (${type}): $${amount}`);
-      },
-
-      render() {
-        let income = 0;
-        let expense = 0;
-        const list = document.getElementById('cashLedgerContainer');
-
-        (OfflineStore.state.cashLedger || []).forEach(c => {
-          if (c.type === 'egreso') expense += c.amount;
-          else income += c.amount;
-        });
-
-        const bal = income - expense;
-        const balEl = document.getElementById('cashBalanceVal');
-        if (balEl) {
-          balEl.textContent = '$' + bal.toLocaleString('es-AR');
-          document.getElementById('cashIncomeVal').textContent = '$' + income.toLocaleString('es-AR');
-          document.getElementById('cashExpenseVal').textContent = '$' + expense.toLocaleString('es-AR');
-        }
-
-        if (list) {
-          list.innerHTML = (OfflineStore.state.cashLedger || []).map(c => `
-            <div class="item-card" style="padding:10px 12px;">
-              <div class="item-card-top">
-                <div>
-                  <div class="item-title">${c.concept}</div>
-                  <div class="item-meta">${new Date(c.date).toLocaleDateString('es-AR')} • ${c.method} • ${c.user}</div>
-                </div>
-                <strong style="color:${c.type === 'egreso' ? 'var(--status-err)' : 'var(--status-ok)'};">
-                  ${c.type === 'egreso' ? '-' : '+'}$${c.amount.toLocaleString('es-AR')}
-                </strong>
-              </div>
-            </div>
-          `).join('');
-        }
-      }
-    };
-
-    const FreightModule = {
-      calc() {
-        const km = parseFloat(document.getElementById('frKm').value) || 0;
-        const rate = parseFloat(document.getElementById('frRateKm').value) || 0;
-        const base = parseFloat(document.getElementById('frBaseFee').value) || 0;
-        const mult = parseFloat(document.getElementById('frRoundTrip').value) || 1;
-        const total = Math.round(base + (km * rate * mult));
-        document.getElementById('frTotalResult').textContent = '$' + total.toLocaleString('es-AR');
-        return total;
-      },
-
-      openGoogleMaps() {
-        const dest = document.getElementById('frDestination').value.trim();
-        const origin = 'Villa Luzuriaga, Buenos Aires, Argentina';
-        const url = dest
-          ? `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(dest)}`
-          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(origin)}`;
-        window.open(url, '_blank');
-      },
-
-      applyToQuote() {
-        const total = this.calc();
-        document.getElementById('quoFreight').value = total;
-        QuotesModule.recalc();
-        AppUI.navigate('presupuestos');
-        AppUI.toast(`Flete de $${total.toLocaleString('es-AR')} cargado en el presupuesto.`, 'ok');
-      }
-    };
-
-    const BackupModule = {
-      exportJSON() {
-        const payload = JSON.stringify(OfflineStore.state, null, 2);
-        const blob = new Blob([payload], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `carpinteria_jl_backup_${new Date().toISOString().slice(0, 10)}.json`;
-        a.click();
-      },
-
-      exportCSVReport() {
-        const rows = [['Fecha', 'Tipo', 'Concepto', 'Metodo', 'Importe', 'Usuario']];
-        (OfflineStore.state.cashLedger || []).forEach(c => {
-          rows.push([c.date, c.type, `"${c.concept}"`, c.method, c.amount, c.user]);
-        });
-        const csv = rows.map(r => r.join(',')).join('\n');
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'informe_caja_jl.csv';
-        a.click();
-      },
-
-      previewImport(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          try {
-            const parsed = JSON.parse(e.target.result);
-            if (!parsed.schemaVersion || !Array.isArray(parsed.stock) || !Array.isArray(parsed.boards)) {
-              return AppUI.toast('Archivo JSON inválido.', 'err');
-            }
-            const box = document.getElementById('backupPreviewBox');
-            box.style.display = 'block';
-            box.innerHTML = `
-              <strong style="color:var(--status-ok);">✓ Respaldo Verificado (${parsed.schemaVersion})</strong>
-              <div style="font-size:12px; margin:6px 0;">
-                Placas: ${parsed.boards.length} | Items Stock: ${parsed.stock.length} | Recetas: ${(parsed.recipes || []).length}
-              </div>
-              <button class="btn btn-primary btn-block" id="btnConfirmRestoreNow">Confirmar Restauración</button>
-            `;
-            document.getElementById('btnConfirmRestoreNow').onclick = () => {
-              if (!SecurityRBAC.canWrite('BACKUP_RESTORE')) return;
-              OfflineStore.state = parsed;
-              OfflineStore.commit('Restauración completa de respaldo JSON');
-              box.style.display = 'none';
-              AppUI.toast('Base de datos restaurada.', 'ok');
-            };
-          } catch (err) {
-            AppUI.toast('Error al procesar el archivo JSON.', 'err');
-          }
-        };
-        reader.readAsText(file);
-      }
-    };
-
-    /* ========================================================================
-       CAPA 10: MENÚ HAMBURGUESA CATEGORIZADO (CALCULADORA Y MESITA SEPARADAS)
-       ======================================================================== */
-    const MENU_STRUCTURE = [
-      {
-        category: 'INICIO',
-        items: [
-          { id: 'panel', label: 'Panel principal', view: 'dashboard', module: 'dashboard' }
-        ]
-      },
-      {
-        category: 'FABRICACIÓN',
-        items: [
-          { id: 'calc', label: 'Calculadora de muebles', view: 'calculadora', module: 'calculadora' },
-          { id: 'mesita', label: 'Mesita con techo variable', view: 'mesita-variable', module: 'mesita-variable' },
-          { id: 'filo_nav', label: 'Cálculo de Filo (Doble Tramo)', view: 'filo', module: 'filo' },
-          { id: 'opt', label: 'Optimizador de cortes y retazos', view: 'optimizador', module: 'optimizador' },
-          { id: 'cat', label: 'Catálogo de muebles', view: 'catalogo3d', module: 'catalogo3d' },
-          { id: 'v3d', label: 'Visor 3D', view: 'catalogo3d', module: 'catalogo3d' },
-          { id: 'rec', label: 'Recetas de fabricación', view: 'recetas', module: 'recetas' },
-          { id: 'ord_prod', label: 'Órdenes de producción', view: 'pedidos', module: 'pedidos' }
-        ]
-      },
-      {
-        category: 'INVENTARIO',
-        items: [
-          { id: 'stk_mat', label: 'Stock y Punto de Reposición', view: 'stock', module: 'stock', filter: 'all' },
-          { id: 'stk_cor', label: 'Laterales, Techos y Frentes', view: 'stock', module: 'stock', filter: 'cortes' },
-          { id: 'stk_her', label: 'Herrajes y tornillería', view: 'stock', module: 'stock', filter: 'herrajes' },
-          { id: 'stk_can', label: 'Filos y tapacantos', view: 'stock', module: 'stock', filter: 'cantos' },
-          { id: 'stk_low', label: '🚨 Alertas Punto de Reposición', view: 'stock', module: 'stock', filter: 'low' },
-          { id: 'prov', label: 'Proveedores y compras', view: 'proveedores', module: 'proveedores' }
-        ]
-      },
-      {
-        category: 'COMERCIAL',
-        items: [
-          { id: 'presup', label: 'Presupuestos', view: 'presupuestos', module: 'presupuestos' },
-          { id: 'ped', label: 'Pedidos', view: 'pedidos', module: 'pedidos' },
-          { id: 'ven', label: 'Ventas', view: 'caja', module: 'caja' },
-          { id: 'fle', label: 'Fletes y Google Maps', view: 'fletes', module: 'fletes' }
-        ]
-      },
-      {
-        category: 'ADMINISTRACIÓN',
-        items: [
-          { id: 'caj', label: 'Caja', view: 'caja', module: 'caja' },
-          { id: 'mov_fin', label: 'Movimientos financieros', view: 'caja', module: 'caja' },
-          { id: 'bak', label: 'Respaldos y restauración', view: 'sistema', module: 'sistema' }
-        ]
-      },
-      {
-        category: 'SISTEMA',
-        items: [
-          { id: 'not', label: '🔔 Centro de Notificaciones', view: 'notificaciones', module: 'notificaciones' },
-          { id: 'aju', label: '🔊 Sonido Personalizado y Ajustes', view: 'sistema', module: 'sistema' }
-        ]
-      }
-    ];
-
-    const AppUI = {
-      activeMenuId: 'panel',
-
-      toggleDrawer(open) {
-        document.getElementById('appDrawer').classList.toggle('open', open);
-        document.getElementById('drawerBackdrop').classList.toggle('open', open);
-      },
-
-      renderDrawerMenu() {
-        const nav = document.getElementById('drawerNavList');
-        if (!nav) return;
-        let html = '';
-
-        MENU_STRUCTURE.forEach(group => {
-          const visibleItems = group.items.filter(item => SecurityRBAC.canViewModule(item.module));
-          if (visibleItems.length === 0) return;
-
-          html += `<div class="nav-cat-label">${group.category}</div>`;
-          visibleItems.forEach(item => {
-            const isActive = this.activeMenuId === item.id;
-            html += `
-              <button class="drawer-nav-btn ${isActive ? 'active' : ''}"
-                onclick="AppUI.selectMenuItem('${item.id}', '${item.view}', '${item.label}', '${item.filter || ''}')">
-                <span>${item.label}</span>
-                <span style="opacity:0.6;">›</span>
-              </button>
-            `;
-          });
-        });
-
-        nav.innerHTML = html;
-      },
-
-      selectMenuItem(menuId, viewName, titleLabel, stockFilter) {
-        this.activeMenuId = menuId;
-        this.toggleDrawer(false);
-        this.showView(viewName, titleLabel);
-
-        if (stockFilter && document.getElementById('stkFilterCat')) {
-          document.getElementById('stkFilterCat').value = stockFilter;
-          InventoryModule.render();
-        }
-        this.renderDrawerMenu();
-      },
-
-      navigate(shortcutTarget) {
-        const map = {
-          dashboard: { id: 'panel', view: 'dashboard', title: 'Carpintería JL' },
-          calculadora: { id: 'calc', view: 'calculadora', title: 'Calculadora de Muebles' },
-          'mesita-variable': { id: 'mesita', view: 'mesita-variable', title: 'Mesita con Techo Variable' },
-          filo: { id: 'filo_nav', view: 'filo', title: 'Calculadora de Filo' },
-          optimizador: { id: 'opt', view: 'optimizador', title: 'Optimizador y Retazos' },
-          catalogo3d: { id: 'v3d', view: 'catalogo3d', title: 'Catálogo y Visor 3D' },
-          recetas: { id: 'rec', view: 'recetas', title: 'Recetas de Fabricación' },
-          stock: { id: 'stk_mat', view: 'stock', title: 'Stock y Punto de Reposición', filter: 'all' },
-          'alertas-stock': { id: 'stk_low', view: 'stock', title: 'Alertas Punto de Reposición', filter: 'low' },
-          proveedores: { id: 'prov', view: 'proveedores', title: 'Proveedores y Compras' },
-          presupuestos: { id: 'presup', view: 'presupuestos', title: 'Presupuestos y WhatsApp' },
-          pedidos: { id: 'ped', view: 'pedidos', title: 'Pedidos y Producción' },
-          ventas: { id: 'ven', view: 'caja', title: 'Ventas y Caja' },
-          caja: { id: 'caj', view: 'caja', title: 'Caja y Finanzas' },
-          fletes: { id: 'fle', view: 'fletes', title: 'Fletes y Google Maps' },
-          notificaciones: { id: 'not', view: 'notificaciones', title: 'Centro de Notificaciones' },
-          sistema: { id: 'aju', view: 'sistema', title: 'Sonido y Ajustes' }
-        };
-        const target = map[shortcutTarget] || map.dashboard;
-        this.selectMenuItem(target.id, target.view, target.title, target.filter);
-      },
-
-      showView(viewName, titleLabel) {
-        document.querySelectorAll('.module-view').forEach(s => s.classList.remove('active'));
-        const targetEl = document.getElementById('view-' + viewName);
-        if (targetEl) targetEl.classList.add('active');
-        document.getElementById('headerSectionTitle').textContent = titleLabel;
-
-        if (viewName === 'catalogo3d') {
-          setTimeout(() => {
-            Viewer3DEngine.init();
-            Viewer3DEngine.syncColorButtonsUI();
-          }, 50);
-        }
-        if (viewName === 'optimizador') {
-          setTimeout(() => OptimizerEngine.render(), 40);
-        }
-        if (viewName === 'filo') {
-          EdgeBandingModule.recalc();
-          EdgeBandingModule.renderHistory();
-        }
-        if (viewName === 'notificaciones') {
-          NotificationCenter.render();
-        }
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      },
-
-      refreshAllViews() {
-        const st = OfflineStore.state;
-        const lowItems = (st.stock || []).filter(s => s.qty <= (s.min !== undefined ? s.min : 5));
-        const unreadNotifs = (st.notifications || []).filter(n => !n.read).length;
-
-        document.getElementById('headerAlertBadge').textContent = lowItems.length + unreadNotifs;
-        document.getElementById('bannerLowStockCount').textContent = lowItems.length;
-        document.getElementById('kpiNotifUnread').textContent = unreadNotifs;
-
-        const bannerEl = document.getElementById('dashLowStockBanner');
-        const bannerSub = document.getElementById('bannerLowStockSub');
-        if (bannerEl && bannerSub) {
-          if (lowItems.length > 0) {
-            bannerEl.classList.add('critical');
-            bannerSub.textContent = `¡Atención! ${lowItems.map(i => `${i.name} (${i.qty})`).join(', ')}`;
-            bannerSub.style.color = 'var(--status-err)';
-          } else {
-            bannerEl.classList.remove('critical');
-            bannerSub.textContent = 'Todos los materiales superan el punto de reposición';
-            bannerSub.style.color = 'var(--text-secondary)';
-          }
-        }
-
-        let ingresosMes = 0;
-        let egresosMes = 0;
-        (st.cashLedger || []).forEach(c => {
-          if (c.type === 'egreso') egresosMes += c.amount;
-          else ingresosMes += c.amount;
-        });
-
-        const activeOrdersCount = (st.orders || []).filter(o => o.status !== 'Entregado').length;
-
-        document.getElementById('heroVentasMes').textContent = '$' + ingresosMes.toLocaleString('es-AR');
-        document.getElementById('heroPedidosActivos').textContent = activeOrdersCount;
-        document.getElementById('kpiVentasDia').textContent = '$' + ingresosMes.toLocaleString('es-AR');
-        document.getElementById('kpiSaldoCaja').textContent = '$' + (ingresosMes - egresosMes).toLocaleString('es-AR');
-        document.getElementById('kpiPresupPend').textContent = (st.quotes || []).length;
-        document.getElementById('kpiCatalogCount').textContent = (st.catalogModels || []).length;
-
-        const actEl = document.getElementById('dashRecentActivityList');
-        if (actEl) {
-          actEl.innerHTML = (st.auditLog || []).slice(0, 6).map(a => `
-            <div style="font-size:12px; padding:6px 0; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between;">
-              <span><strong>${a.action}</strong> (${a.user})</span>
-              <span style="color:var(--text-secondary);">${a.date}</span>
-            </div>
-          `).join('') || '<div style="font-size:12px; color:var(--text-secondary);">Sistema listo para operar.</div>';
-        }
-
-        StandardFurnitureCalc.recalculateUI();
-        VariableTopCalc.recalculateUI();
-        EdgeBandingModule.recalc();
-        EdgeBandingModule.renderHistory();
-        OptimizerEngine.render();
-        InventoryModule.render();
-        RecipesModule.render();
-        PurchasesModule.render();
-        QuotesModule.render();
-        OrdersModule.render();
-        FinanceModule.render();
-        NotificationCenter.render();
-        Viewer3DEngine.renderCatalogAndRecipeInfo();
-      },
-
-      toast(msg, level = 'ok') {
-        const cont = document.getElementById('toastContainer');
-        if (!cont) return;
-        const div = document.createElement('div');
-        div.className = 'toast-msg';
-        if (level === 'err') div.style.borderLeftColor = 'var(--status-err)';
-        if (level === 'warn') div.style.borderLeftColor = 'var(--status-warn)';
-        div.innerHTML = `<span>${msg}</span>`;
-        cont.appendChild(div);
-        setTimeout(() => div.remove(), 3500);
-      },
-
-      openConfirm(title, htmlBody, onConfirmCallback) {
-        document.getElementById('confirmDialogTitle').textContent = title;
-        document.getElementById('confirmDialogBody').innerHTML = htmlBody;
-        const btn = document.getElementById('confirmDialogActionBtn');
-        btn.onclick = () => {
-          this.closeConfirm();
-          onConfirmCallback();
-        };
-        document.getElementById('confirmDialog').classList.add('open');
-      },
-
-      closeConfirm() {
-        document.getElementById('confirmDialog').classList.remove('open');
-      }
-    };
-
-    /* ========================================================================
-       CAPA 11: SUITE DE PRUEBAS AUTOMATIZADAS DE DOMINIO
-       ======================================================================== */
-    const TestSuiteRunner = {
-      runAll() {
-        const logs = [];
-        const assert = (name, cond) => {
-          logs.push(`${cond ? '✅ PASS' : '❌ FAIL'}: ${name}`);
-        };
-
-        const b = OfflineStore.state.boards[0];
-
-        // Test 1: Separación de Calculadora Estándar y Mesita Variable
-        const stdRes = StandardFurnitureCalc.calculateStandard({
-          ancho: 500, prof: 400, alto: 600, espesor: 18, cantCajones: 2, altoFrente: 160,
-          board: b, correderaTipo: 'telescopica', desperdicioPct: 10, tipoRentabilidad: 'recargo', porcentajeGanancia: 45, cantidadLote: 1
-        });
-        assert('Calculadora de Muebles independiente calcula 2 cajones y medidas a escala', stdRes.pieces.length === 6 && stdRes.ancho === 500);
-
-        const varRes = VariableTopCalc.calculateVariable({
-          modoEnsanche: 'modo1_tapa_volada', techoAncho: 560, techoProf: 335,
-          cuerpoAnchoBase: 400, cuerpoProfBase: 335, altoTotal: 450,
-          board: b, porcentajeGanancia: 45, cantidadLote: 1
-        });
-        assert('Mesita Variable Modo 1 conserva cuerpo de 400mm con techo de 560mm', varRes.effCuerpoAncho === 400 && varRes.techoAncho === 560);
-
-        // Test 2: Punto de reposición personalizado (ej. 100 normal -> 20 crítico)
-        const testItem = { id: 'stk_test', name: 'Laterales', qty: 20, normalQty: 100, min: 20, unit: 'UNID' };
-        assert('Punto de reposición detecta estado crítico al llegar a 20 unidades', testItem.qty <= testItem.min);
-
-        // Test 3: Cálculo de Filo Doble Tramo
-        const mod = OfflineStore.state.catalogModels[0];
-        const edgeRes = EdgeBandingModule.computeEdgeBanding({
-          model: mod, qty: 2, baseColor: 'Blanco', baseRollMeters: 25, baseRollPrice: 10000,
-          mode: 'combinado', frontColor: 'Helsinki', frontRollMeters: 25, frontRollPrice: 12500
-        });
-        assert('Cálculo de Filo Combinado suma costo Base + Frente', edgeRes.grandTotal === (edgeRes.baseCost + edgeRes.frontCost));
-
-        document.getElementById('selfTestResultsBox').innerHTML = logs.join('<br>');
-      }
-    };
-
-    window.addEventListener('DOMContentLoaded', async () => {
-      window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          AppUI.toggleDrawer(false);
-          AppUI.closeConfirm();
-        }
-      });
-
-      await OfflineStore.init();
-      AppUI.renderDrawerMenu();
-      OptimizerEngine.initCanvasEvents();
-      AppUI.refreshAllViews();
-    });
-  </script>
-</body>
-</html>
