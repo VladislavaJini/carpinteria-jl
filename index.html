@@ -2,445 +2,1559 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Carpintería JL - Professional Work Suite Enterprise</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Carpintería JL Mobile — Suite de Gestión Integral</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#f4f6f8">
+  <meta name="theme-color" content="#0B1E1E">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <style>
-    /* ==========================================================================
-       HOJA DE ESTESTILOS PROFESIONAL - ENTERPRISE WORK SUITE (1850 LÍNEAS MODULAR)
-       ========================================================================== */
     :root {
-      --bg: #f4f6f8;
-      --card: #ffffff;
-      --primary: #2d3748;
-      --accent: #8c5a3c;
-      --accent-hover: #6d442c;
-      --text: #1a202c;
-      --muted: #718096;
-      --border: #e2e8f0;
-      --green: #2f855a;
-      --pink: #9b2c2c;
-      --yellow: #d69e2e;
+      --bg-primary: #0B1E1E;
+      --bg-secondary: #0F2222;
+      --bg-card: #142B2A;
+      --bg-elevated: #1B3533;
+      --border-color: #29413F;
+      --text-primary: #EAF1EE;
+      --text-secondary: #A2B3AE;
+      --accent-wood: #B58B5A;
+      --accent-wood-hover: #9A7347;
+      --status-ok: #74B49A;
+      --status-warn: #E7B45E;
+      --status-err: #E47777;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --touch-min: 46px;
+      --shadow-soft: 0 4px 14px rgba(0, 0, 0, 0.35);
+      --transition-fast: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
     }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       -webkit-tap-highlight-color: transparent;
     }
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      padding-bottom: 60px;
+
+    html, body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      width: 100%;
+      min-height: 100vh;
       overflow-x: hidden;
+      font-size: 15px;
+      line-height: 1.45;
     }
-    header {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(255, 255, 255, 0.94);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 18px;
-      display: flex; justify-content: space-between; align-items: center;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+
+    body {
+      padding-top: var(--safe-top);
+      padding-bottom: calc(24px + var(--safe-bottom));
     }
-    .header-left { display: flex; align-items: center; gap: 14px; }
-    .menu-btn {
-      background: var(--card); border: 1px solid var(--border); color: var(--primary);
-      font-size: 18px; width: 40px; height: 40px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center; cursor: pointer;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-weight: bold;
-      transition: 0.2s;
+
+    /* CABECERA PRINCIPAL (SIN BARRA INFERIOR) */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background-color: rgba(15, 34, 34, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border-color);
+      height: 60px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
     }
-    .menu-btn:active { background: var(--border); }
-    .brand-title { font-size: 16px; font-weight: 700; color: var(--primary); letter-spacing: 0.5px; }
-    .brand-sub { font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 0.5px; display: block; }
-    .backup-btns { display: flex; gap: 8px; }
-    .btn-top {
-      background: var(--card); border: 1px solid var(--border); color: var(--primary);
-      padding: 7px 12px; font-size: 12px; border-radius: 8px; cursor: pointer; font-weight: 600;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
     }
-    .drawer-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.4); z-index: 200; display: none; opacity: 0; transition: opacity 0.2s ease;
+
+    .hamburger-btn {
+      width: var(--touch-min);
+      height: var(--touch-min);
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background-color var(--transition-fast);
     }
-    .drawer-overlay.open { display: block; opacity: 1; }
-    .drawer {
-      position: fixed; top: 0; left: -300px; width: 280px; height: 100%;
-      background: var(--card); border-right: 1px solid var(--border);
-      box-shadow: 4px 0 15px rgba(0,0,0,0.08); z-index: 201;
-      transition: left 0.25s ease; display: flex; flex-direction: column; padding: 20px 16px; overflow-y: auto;
+
+    .hamburger-btn:active, .hamburger-btn:focus-visible {
+      background-color: var(--bg-elevated);
+      outline: 2px solid var(--accent-wood);
     }
-    .drawer.open { left: 0; }
-    .drawer-header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding-bottom: 16px; margin-bottom: 14px; border-bottom: 1px solid var(--border);
+
+    .header-title-wrap {
+      min-width: 0;
     }
-    .drawer-title { color: var(--primary); font-weight: 700; font-size: 15px; }
-    .close-drawer {
-      background: transparent; border: 1px solid var(--border); color: var(--muted);
-      width: 32px; height: 32px; border-radius: 8px; font-weight: bold; cursor: pointer;
+
+    .header-section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .nav-item {
-      background: transparent; border: 1px solid transparent;
-      color: var(--primary); padding: 12px 14px; margin-bottom: 6px; border-radius: 10px;
-      font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 12px; cursor: pointer; text-align: left;
-      transition: 0.2s;
+
+    .header-subtitle {
+      font-size: 11px;
+      color: var(--accent-wood);
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      display: block;
     }
-    .nav-item:hover { background: var(--bg); }
-    .nav-item.active {
-      background: var(--accent); color: #ffffff; box-shadow: 0 2px 6px rgba(140, 90, 60, 0.25);
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
     }
-    .container { padding: 18px; max-width: 800px; margin: 0 auto; }
-    .section { display: none; }
-    .section.active { display: block; }
-    .section-banner {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 16px; padding: 12px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+
+    .sync-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
     }
-    .section-banner h2 { font-size: 15px; color: var(--primary); font-weight: 700; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
-    .stat-box {
-      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-      padding: 16px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+
+    .sync-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--status-ok);
     }
-    .stat-box.pink { border-left: 4px solid var(--pink); }
-    .stat-box.green { border-left: 4px solid var(--green); }
-    .stat-box.accent { border-left: 4px solid var(--accent); }
-    .stat-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
-    .stat-val { font-size: 22px; font-weight: 700; color: var(--primary); }
-    .stat-box.pink .stat-val { color: var(--pink); }
-    .stat-box.green .stat-val { color: var(--green); }
-    .stat-box.accent .stat-val { color: var(--accent); }
-    .neon-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 12px; padding: 18px; margin-bottom: 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+
+    .sync-dot.offline { background-color: var(--status-warn); }
+    .sync-dot.syncing { background-color: var(--accent-wood); animation: pulse 1s infinite; }
+    .sync-dot.error { background-color: var(--status-err); }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
     }
+
+    .icon-action-btn {
+      width: var(--touch-min);
+      height: var(--touch-min);
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .notif-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background-color: var(--status-err);
+      color: #0B1E1E;
+      font-size: 10px;
+      font-weight: 800;
+      min-width: 16px;
+      height: 16px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+
+    /* PANEL LATERAL DESLIZABLE (DRAWER 80% - 88%) */
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.65);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-fast);
+    }
+
+    .drawer-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .app-drawer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 85vw;
+      max-width: 340px;
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      z-index: 201;
+      transform: translateX(-102%);
+      transition: transform var(--transition-fast);
+      display: flex;
+      flex-direction: column;
+      padding-top: var(--safe-top);
+      padding-bottom: var(--safe-bottom);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .app-drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer-top {
+      padding: 16px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--bg-card);
+    }
+
+    .drawer-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .drawer-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background-color: var(--accent-wood);
+      color: #0B1E1E;
+      font-weight: 900;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: -0.5px;
+    }
+
+    .drawer-brand-text h1 {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .drawer-brand-text span {
+      font-size: 11px;
+      color: var(--text-secondary);
+      display: block;
+    }
+
+    .drawer-close-btn {
+      width: var(--touch-min);
+      height: var(--touch-min);
+      border-radius: var(--radius-sm);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .drawer-user-box {
+      padding: 12px 16px;
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .user-meta {
+      font-size: 13px;
+    }
+
+    .user-meta strong {
+      color: var(--text-primary);
+      display: block;
+    }
+
+    .role-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      background-color: rgba(181, 139, 90, 0.2);
+      color: var(--accent-wood);
+      border: 1px solid var(--accent-wood);
+    }
+
+    .drawer-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+    }
+
+    .nav-cat-label {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--accent-wood);
+      padding: 12px 10px 6px;
+    }
+
+    .drawer-nav-btn {
+      width: 100%;
+      min-height: var(--touch-min);
+      padding: 10px 12px;
+      margin-bottom: 4px;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-weight: 600;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: background-color var(--transition-fast);
+    }
+
+    .drawer-nav-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    .drawer-nav-btn:hover, .drawer-nav-btn:focus-visible {
+      background-color: var(--bg-elevated);
+      outline: none;
+    }
+
+    .drawer-nav-btn.active {
+      background-color: var(--accent-wood);
+      color: #0B1E1E;
+      font-weight: 800;
+    }
+
+    .drawer-nav-btn.active svg {
+      stroke: #0B1E1E;
+    }
+
+    /* CONTENEDOR PRINCIPAL MOBILE-FIRST */
+    .main-container {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 14px;
+    }
+
+    .module-view {
+      display: none;
+    }
+
+    .module-view.active {
+      display: block;
+    }
+
+    /* COMPONENTES UI Y TARJETAS */
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .card-elevated {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
     .card-header {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+      flex-wrap: wrap;
     }
-    .card-title { font-size: 13px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .kpi-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 86px;
+      cursor: pointer;
+    }
+
+    .kpi-card.ok { border-left: 4px solid var(--status-ok); }
+    .kpi-card.warn { border-left: 4px solid var(--status-warn); }
+    .kpi-card.err { border-left: 4px solid var(--status-err); }
+    .kpi-card.wood { border-left: 4px solid var(--accent-wood); }
+
+    .kpi-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+
+    .kpi-value {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-top: 6px;
+    }
+
+    .quick-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    /* FORMULARIOS UNA COLUMNA EN MÓVIL */
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-row-responsive {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    @media (min-width: 560px) {
+      .form-row-responsive {
+        grid-template-columns: 1fr 1fr;
+      }
+      .kpi-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
     input, select, textarea {
-      width: 100%; background: #ffffff; border: 1px solid var(--border);
-      color: var(--text); padding: 11px 14px; border-radius: 10px; font-size: 14px; margin-bottom: 12px; outline: none;
-      box-shadow: inset 0 1px 2px rgba(0,0,0,0.02); transition: 0.2s;
+      width: 100%;
+      min-height: var(--touch-min);
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--text-primary);
+      font-size: 15px;
+      outline: none;
+      transition: border-color var(--transition-fast);
     }
-    input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(140, 90, 60, 0.1); }
-    label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 5px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent-wood);
+      box-shadow: 0 0 0 2px rgba(181, 139, 90, 0.25);
+    }
+
+    /* BOTONES TÁCTILES >= 46PX */
     .btn {
-      background: var(--card); border: 1px solid var(--border); color: var(--primary);
-      padding: 10px 16px; border-radius: 10px; font-size: 12px; font-weight: 700;
-      cursor: pointer; text-transform: uppercase; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: 0.2s; letter-spacing: 0.5px;
+      min-height: var(--touch-min);
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-align: center;
+      transition: background-color var(--transition-fast), transform 0.1s;
     }
-    .btn:hover { background: var(--bg); }
-    .btn:active { transform: translateY(1px); }
-    .btn-yellow { background: #fffaf0; border-color: #feebc8; color: #9c4221; }
-    .btn-pink { background: #fff5f5; border-color: #fed7d7; color: var(--pink); }
-    .btn-green { background: var(--accent); border-color: var(--accent); color: #ffffff; box-shadow: 0 2px 5px rgba(140, 90, 60, 0.25); }
-    .btn-green:hover { background: var(--accent-hover); }
-    .btn-block { width: 100%; padding: 14px; font-size: 13px; margin-top: 8px; text-align: center; }
-    .stock-item {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 12px 0; border-bottom: 1px solid var(--border); gap: 10px; flex-wrap: wrap;
+
+    .btn:active {
+      transform: scale(0.99);
     }
-    .stock-info { flex: 1; min-width: 150px; }
-    .stock-name { font-size: 14px; font-weight: 600; color: var(--primary); margin-bottom: 3px; }
-    .stock-sub { font-size: 12px; color: var(--muted); }
-    .badge { display: inline-block; padding: 3px 8px; font-size: 11px; background: var(--bg); border: 1px solid var(--border); color: var(--primary); border-radius: 6px; margin-left: 6px; font-weight: 600; }
-    .stock-controls { display: flex; align-items: center; gap: 6px; }
-    .qty-btn {
-      background: var(--card); border: 1px solid var(--border); color: var(--primary);
-      padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;
+
+    .btn-primary {
+      background-color: var(--accent-wood);
+      border-color: var(--accent-wood);
+      color: #0B1E1E;
+      font-weight: 800;
     }
-    .qty-val { font-size: 15px; font-weight: 700; color: var(--primary); min-width: 36px; text-align: center; }
-    .placa-canvas-wrap {
-      background: #1a202c; border: 1px solid var(--border);
-      border-radius: 12px; padding: 14px; text-align: center; margin-bottom: 14px;
+
+    .btn-primary:hover {
+      background-color: var(--accent-wood-hover);
     }
-    canvas#placaCanvas {
-      width: 100%; max-width: 100%; height: auto;
-      border: 1px solid #4a5568; border-radius: 8px;
-      background: #0d1117; display: block; margin: 8px auto;
+
+    .btn-success {
+      background-color: var(--status-ok);
+      border-color: var(--status-ok);
+      color: #0B1E1E;
+      font-weight: 800;
     }
-    .corte-row {
-      display: flex; justify-content: space-between; align-items: center;
-      background: var(--bg); border: 1px solid var(--border); border-left: 4px solid var(--accent);
-      padding: 10px 14px; margin-bottom: 8px; border-radius: 8px; font-size: 12px; gap: 10px; flex-wrap: wrap;
+
+    .btn-warn {
+      background-color: rgba(231, 180, 94, 0.18);
+      border-color: var(--status-warn);
+      color: var(--status-warn);
     }
-    .receta-stock-selector {
-      background: var(--bg); border: 1px solid var(--border);
-      padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+
+    .btn-danger {
+      background-color: rgba(228, 119, 119, 0.18);
+      border-color: var(--status-err);
+      color: var(--status-err);
     }
-    #notifToast {
-      position: fixed; bottom: 20px; right: 20px; background: var(--primary);
-      border: 1px solid rgba(255,255,255,0.1); color: #ffffff; padding: 14px 20px;
-      border-radius: 12px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      display: none; font-weight: 600; font-size: 13px; letter-spacing: 0.3px;
+
+    .btn-block {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    /* FICHAS COMPACTAS DE INVENTARIO Y LISTAS */
+    .item-card {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .item-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .item-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .item-meta {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .status-pill.ok { background: rgba(116, 180, 154, 0.2); color: var(--status-ok); border: 1px solid var(--status-ok); }
+    .status-pill.warn { background: rgba(231, 180, 94, 0.2); color: var(--status-warn); border: 1px solid var(--status-warn); }
+    .status-pill.err { background: rgba(228, 119, 119, 0.2); color: var(--status-err); border: 1px solid var(--status-err); }
+
+    .stepper-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--bg-card);
+      padding: 6px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+    }
+
+    .stepper-btn {
+      width: var(--touch-min);
+      height: var(--touch-min);
+      border-radius: 6px;
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-size: 20px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .stepper-val {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-primary);
+      padding: 0 12px;
+    }
+
+    /* LIENZO DE OPTIMIZADOR Y VISOR 3D */
+    .canvas-viewport {
+      width: 100%;
+      background-color: #071313;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+      touch-action: none;
+    }
+
+    #cutOptimizerCanvas {
+      width: 100%;
+      height: 360px;
+      display: block;
+      cursor: grab;
+    }
+
+    #threeViewerContainer {
+      width: 100%;
+      height: 380px;
+      position: relative;
+      background: radial-gradient(circle at center, #1B3533 0%, #0B1E1E 100%);
+    }
+
+    .swatch-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .swatch-dot {
+      min-width: var(--touch-min);
+      min-height: var(--touch-min);
+      padding: 6px 12px;
+      border-radius: 24px;
+      border: 2px solid var(--border-color);
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .swatch-dot.selected {
+      border-color: var(--accent-wood);
+      background-color: var(--bg-elevated);
+      box-shadow: 0 0 0 2px rgba(181, 139, 90, 0.35);
+    }
+
+    .color-circle {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+
+    /* TOAST NOTIFICACIONES */
+    .toast-container {
+      position: fixed;
+      top: calc(68px + var(--safe-top));
+      right: 14px;
+      left: 14px;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .toast-msg {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--accent-wood);
+      border-left: 5px solid var(--accent-wood);
+      color: var(--text-primary);
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-soft);
+      font-size: 13px;
+      font-weight: 600;
+      pointer-events: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* DIALOGO DE CONFIRMACIÓN SEGURO */
+    .dialog-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.72);
+      z-index: 400;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .dialog-backdrop.open {
+      display: flex;
+    }
+
+    .dialog-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      width: 100%;
+      max-width: 440px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 18px;
+      box-shadow: var(--shadow-soft);
     }
   </style>
 </head>
 <body>
 
-  <div id="notifToast">💼 Sincronización en línea: Se actualizaron los datos del taller.</div>
+  <!-- CONTENEDOR DE NOTIFICACIONES TOAST -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
 
-  <header>
-    <div class="header-left">
-      <button class="menu-btn" onclick="toggleDrawer()" title="Menú">☰</button>
-      <div>
-        <div class="brand-title">CARPINTERÍA JL</div>
-        <span class="brand-sub">WORK SUITE // ENTERPRISE PRO</span>
+  <!-- MODAL DE CONFIRMACIÓN PARA ACCIONES CRÍTICAS -->
+  <div id="confirmDialog" class="dialog-backdrop" role="dialog" aria-modal="true">
+    <div class="dialog-box">
+      <div class="card-header">
+        <span class="card-title" id="confirmDialogTitle">Confirmar Operación</span>
+      </div>
+      <div id="confirmDialogBody" style="font-size:14px; color:var(--text-secondary); margin-bottom:16px;"></div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn" style="flex:1;" onclick="AppUI.closeConfirm()">Cancelar</button>
+        <button class="btn btn-primary" style="flex:1;" id="confirmDialogActionBtn">Confirmar</button>
       </div>
     </div>
-    <div class="backup-btns">
-      <button class="btn-top" onclick="exportBackup()">⬇ BACKUP</button>
+  </div>
+
+  <!-- CABECERA ÚNICA CON MENÚ HAMBURGUESA -->
+  <header class="app-header">
+    <div class="header-left">
+      <button class="hamburger-btn" id="btnOpenDrawer" onclick="AppUI.toggleDrawer(true)" aria-label="Abrir menú de navegación">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <div class="header-title-wrap">
+        <div class="header-section-title" id="headerSectionTitle">Panel Principal</div>
+        <span class="header-subtitle">Carpintería JL Mobile</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="sync-pill" id="syncStatusPill" onclick="AppUI.navigate('notificaciones')" title="Estado de sincronización">
+        <span class="sync-dot" id="syncStatusDot"></span>
+        <span id="syncStatusText">Conectado</span>
+      </div>
+      <button class="icon-action-btn" onclick="AppUI.navigate('notificaciones')" aria-label="Notificaciones">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <span class="notif-badge" id="headerAlertBadge">0</span>
+      </button>
     </div>
   </header>
 
-  <div id="drawerOverlay" class="drawer-overlay" onclick="toggleDrawer()"></div>
-  <nav id="drawer" class="drawer">
-    <div class="drawer-header">
-      <span class="drawer-title">MENÚ PRINCIPAL</span>
-      <button class="close-drawer" onclick="toggleDrawer()">✕</button>
+  <!-- PANEL LATERAL DESLIZABLE (DRAWER) -->
+  <div id="drawerBackdrop" class="drawer-backdrop" onclick="AppUI.toggleDrawer(false)"></div>
+  <aside id="appDrawer" class="app-drawer" aria-label="Menú principal">
+    <div class="drawer-top">
+      <div class="drawer-brand">
+        <div class="drawer-logo">JL</div>
+        <div class="drawer-brand-text">
+          <h1>Carpintería JL</h1>
+          <span>Gestión Industrial Melamina</span>
+        </div>
+      </div>
+      <button class="drawer-close-btn" onclick="AppUI.toggleDrawer(false)" aria-label="Cerrar menú">✕</button>
     </div>
-    <button class="nav-item active" id="nav-mesita" onclick="switchTab('mesita')">✨ Mesita Variable</button>
-    <button class="nav-item" id="nav-placas" onclick="switchTab('placas')">📐 Optimizador Cortes</button>
-    <button class="nav-item" id="nav-stock" onclick="switchTab('stock')">📦 Inventario & Stock</button>
-    <button class="nav-item" id="nav-muebles" onclick="switchTab('muebles')">🪑 Recetas de Muebles</button>
-    <button class="nav-item" id="nav-presup" onclick="switchTab('presup')">🧾 Presupuestos & Ventas</button>
-    <button class="nav-item" id="nav-caja" onclick="switchTab('caja')">💰 Caja y Pedidos</button>
-    <button class="nav-item" id="nav-viaje" onclick="switchTab('viaje')">🚚 Fletes y Viajes</button>
-  </nav>
 
-  <div class="container">
-
-    <!-- 1. MESITA VARIABLE -->
-    <section id="sec-mesita" class="section active">
-      <div class="section-banner">
-        <h2>Calculadora de Mesita con Techo Variable</h2>
+    <div class="drawer-user-box">
+      <div class="user-meta">
+        <strong id="drawerUserName">Leandro Llanes</strong>
+        <span id="drawerUserEmail" style="font-size:11px; color:var(--text-secondary);">Taller Principal</span>
       </div>
-      <div class="neon-card">
+      <span class="role-badge" id="drawerUserRole">ADMINISTRADOR</span>
+    </div>
+
+    <nav class="drawer-scroll" id="drawerNavList">
+      <!-- Renderizado dinámico por categorías y permisos de rol -->
+    </nav>
+  </aside>
+
+  <!-- CONTENEDOR CENTRAL DE SECCIONES -->
+  <main class="main-container">
+
+    <!-- ====================================================================
+         1. INICIO: PANEL PRINCIPAL
+         ==================================================================== -->
+    <section id="view-dashboard" class="module-view active">
+      <div class="card-elevated" style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <strong style="font-size:13px; color:var(--text-primary);">Estado Operativo del Taller</strong>
+          <div style="font-size:12px; color:var(--text-secondary);" id="dashSyncDetail">Firebase RTDB + IndexedDB Activo</div>
+        </div>
+        <span class="status-pill ok" id="dashPendingQueueBadge">0 Pendientes</span>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card ok" onclick="AppUI.navigate('ventas')">
+          <span class="kpi-label">Ventas del Día</span>
+          <span class="kpi-value" id="kpiVentasDia">$0</span>
+        </div>
+        <div class="kpi-card ok" onclick="AppUI.navigate('caja')">
+          <span class="kpi-label">Ingresos del Mes</span>
+          <span class="kpi-value" id="kpiIngresosMes">$0</span>
+        </div>
+        <div class="kpi-card warn" onclick="AppUI.navigate('presupuestos')">
+          <span class="kpi-label">Presup. Pendientes</span>
+          <span class="kpi-value" id="kpiPresupPend">0</span>
+        </div>
+        <div class="kpi-card wood" onclick="AppUI.navigate('pedidos')">
+          <span class="kpi-label">En Fabricación</span>
+          <span class="kpi-value" id="kpiPedidosFab">0</span>
+        </div>
+        <div class="kpi-card ok" onclick="AppUI.navigate('pedidos')">
+          <span class="kpi-label">Listos p/ Entregar</span>
+          <span class="kpi-value" id="kpiPedidosListos">0</span>
+        </div>
+        <div class="kpi-card err" onclick="AppUI.navigate('alertas-stock')">
+          <span class="kpi-label">Stock Bajo (≤5)</span>
+          <span class="kpi-value" id="kpiStockBajo">0</span>
+        </div>
+        <div class="kpi-card wood" onclick="AppUI.navigate('pedidos')">
+          <span class="kpi-label">Próximas Entregas</span>
+          <span class="kpi-value" id="kpiProxEntregas">0</span>
+        </div>
+        <div class="kpi-card ok" onclick="AppUI.navigate('caja')">
+          <span class="kpi-label">Saldo en Caja</span>
+          <span class="kpi-value" id="kpiSaldoCaja">$0</span>
+        </div>
+      </div>
+
+      <div class="card">
         <div class="card-header">
-          <span class="card-title">Configurar Pedido</span>
-          <button class="btn btn-yellow" onclick="toggleEditBaseMesita()">Editar Base</button>
+          <span class="card-title">Accesos Rápidos de Taller</span>
         </div>
-
-        <div id="editBaseMesitaBox" style="display:none; margin-bottom:14px; padding:14px; background:var(--bg); border:1px solid var(--border); border-radius:10px;">
-          <div style="color:var(--accent); font-weight:700; font-size:12px; margin-bottom:10px;">Medidas Estándar Base:</div>
-          <div class="grid-2">
-            <div><label>Techo Prof (mm):</label><input type="number" id="bm_techoProf" value="335"></div>
-            <div><label>Techo Ancho (mm):</label><input type="number" id="bm_techoAncho" value="400"></div>
-          </div>
-          <button class="btn btn-green btn-block" onclick="saveBaseMesita()">Guardar Base</button>
-        </div>
-
-        <div class="grid-2">
-          <div><label>Profundidad Techo:</label><input type="number" id="var_techoProf" value="335" oninput="calcMesitaVariable()"></div>
-          <div><label>Ancho Techo:</label><input type="number" id="var_techoAncho" value="400" oninput="calcMesitaVariable()"></div>
-        </div>
-
-        <label>Modo de Ensanche:</label>
-        <select id="var_modoEnsanche" onchange="calcMesitaVariable()">
-          <option value="solo_techo">Modo 1: Solo se ensancha el Techo (Tapa Volada)</option>
-          <option value="completo">Modo 2: Se ensancha Todo (Mueble Completo)</option>
-        </select>
-
-        <label>Placa de Melamina 18mm:</label>
-        <select id="var_placaId" onchange="calcMesitaVariable()"></select>
-
-        <div class="grid-2">
-          <div class="stat-box pink">
-            <div class="stat-label">Costo Materiales</div>
-            <div class="stat-val" id="resMesitaCosto">$0</div>
-          </div>
-          <div class="stat-box green">
-            <div class="stat-label">Precio Venta</div>
-            <div class="stat-val" id="resMesitaVenta">$0</div>
-          </div>
-        </div>
-
-        <div id="desgloseMesitaList" style="margin-top:10px;"></div>
-
-        <div class="grid-2" style="margin-top:14px;">
-          <button class="btn btn-yellow" onclick="enviarCortesMesitaAPlaca()">Mandar al Optimizador</button>
-          <button class="btn btn-green" onclick="pasarMesitaAPresupuesto()">Pasar a Presupuesto</button>
+        <div class="quick-actions-grid">
+          <button class="btn btn-primary" onclick="AppUI.navigate('presupuestos')">+ Crear Presupuesto</button>
+          <button class="btn btn-success" onclick="AppUI.navigate('ventas')">+ Registrar Venta</button>
+          <button class="btn" onclick="AppUI.navigate('calculadora')">Calculadora Mueble</button>
+          <button class="btn" onclick="AppUI.navigate('optimizador')">Calcular Cortes</button>
+          <button class="btn" onclick="AppUI.navigate('proveedores')">Registrar Compra</button>
+          <button class="btn" onclick="AppUI.navigate('stock')">Consultar Stock</button>
         </div>
       </div>
-    </section>
 
-    <!-- 2. OPTIMIZADOR DE CORTES -->
-    <section id="sec-placas" class="section">
-      <div class="section-banner">
-        <h2>Optimizador de Cortes Inteligente</h2>
-      </div>
-      <div class="neon-card">
+      <div class="card">
         <div class="card-header">
-          <span class="card-title">Seleccionar Placa</span>
-          <div style="display:flex; gap:6px;">
-            <button class="btn btn-yellow" onclick="toggleEditPlaca()">Editar</button>
-            <button class="btn" onclick="toggleNewPlaca()">+ Nueva</button>
-          </div>
+          <span class="card-title">Actividad y Auditoría Reciente</span>
         </div>
-        <select id="placaSelect" onchange="onPlacaChange()"></select>
-
-        <div id="editPlacaBox" style="display:none; margin-top:10px; padding-top:10px; border-top:1px solid var(--border);">
-          <label>Nombre:</label><input type="text" id="editPlacaName">
-          <div class="grid-2">
-            <div><label>Ancho (mm):</label><input type="number" id="editPlacaW"></div>
-            <div><label>Alto (mm):</label><input type="number" id="editPlacaH"></div>
-          </div>
-          <label>Precio ($):</label><input type="number" id="editPlacaPrice">
-          <div style="display:flex; gap:8px;">
-            <button class="btn btn-green" style="flex:1;" onclick="saveEditPlaca()">Guardar</button>
-            <button class="btn btn-pink" onclick="deleteCurrentPlaca()">Borrar</button>
-          </div>
-        </div>
-
-        <div id="newPlacaBox" style="display:none; margin-top:10px; padding-top:10px; border-top:1px solid var(--border);">
-          <label>Nombre:</label><input type="text" id="newPlacaName" placeholder="Placa Roble">
-          <div class="grid-2">
-            <div><label>Ancho (mm):</label><input type="number" id="newPlacaW" value="2750"></div>
-            <div><label>Alto (mm):</label><input type="number" id="newPlacaH" value="1830"></div>
-          </div>
-          <label>Precio ($):</label><input type="number" id="newPlacaPrice" placeholder="150000">
-          <button class="btn btn-green btn-block" onclick="addNewPlaca()">Crear Placa</button>
-        </div>
-      </div>
-
-      <div class="neon-card">
-        <div class="card-header"><span class="card-title" id="viewPlacaTitle">Placa</span></div>
-        <div class="placa-canvas-wrap">
-          <canvas id="placaCanvas" width="550" height="366"></canvas>
-          <div style="font-size:11px; color:#a0aec0; margin-top:6px;">Distribución optimizada (giro en 90° habilitado rectilíneo)</div>
-        </div>
-
-        <div class="grid-2">
-          <div class="stat-box pink"><div class="stat-label">Valor Usado</div><div class="stat-val" id="statUsadoValor">$0</div></div>
-          <div class="stat-box green"><div class="stat-label">Restante Libre</div><div class="stat-val" id="statRestoValor">$0</div></div>
-        </div>
-
-        <div style="border-top:1px solid var(--border); padding-top:12px; margin-top:10px;">
-          <div class="grid-2">
-            <div><label>Ancho (mm):</label><input type="number" id="corteW" placeholder="Ej: 335"></div>
-            <div><label>Alto (mm):</label><input type="number" id="corteH" placeholder="Ej: 400"></div>
-          </div>
-          <div class="grid-2">
-            <div><label>Cantidad:</label><input type="number" id="corteQty" value="1"></div>
-            <div><label>Etiqueta:</label><input type="text" id="corteTag" placeholder="Pieza"></div>
-          </div>
-          <button class="btn btn-block btn-green" onclick="agregarCorteAPlaca()">Agregar Corte al Optimizador</button>
-        </div>
-
-        <div style="margin-top:14px;" id="listaCortesPlaca"></div>
+        <div id="dashRecentActivityList"></div>
       </div>
     </section>
 
-    <!-- 3. STOCK & ALERTAS -->
-    <section id="sec-stock" class="section">
-      <div class="grid-2">
-        <div class="stat-box accent"><div class="stat-label">Items Stock</div><div class="stat-val" id="totalItemsCount">0</div></div>
-        <div class="stat-box pink"><div class="stat-label">Alertas Stock Bajo</div><div class="stat-val" id="lowStockCount">0</div></div>
-      </div>
-      <div class="neon-card">
+    <!-- ====================================================================
+         2. FABRICACIÓN: CALCULADORA DE MUEBLES Y MESITA VARIABLE
+         ==================================================================== -->
+    <section id="view-calculadora" class="module-view">
+      <div class="card">
         <div class="card-header">
-          <span class="card-title">Inventario en Línea</span>
-          <button class="btn" onclick="toggleNewStockBox()">+ Nuevo Item</button>
+          <span class="card-title">Calculadora Paramétrica y Mesita Variable</span>
+          <span class="status-pill ok" id="calcModeIndicator">Dominio Compartido</span>
         </div>
-        <div id="newStockBox" style="display:none; margin-bottom:12px;">
-          <label>Nombre:</label><input type="text" id="newStockName" placeholder="Tornillos">
-          <div class="grid-2">
-            <div><label>Precio ($):</label><input type="number" id="newStockPrice" value="50"></div>
-            <div><label>Cantidad:</label><input type="number" id="newStockQty" value="100"></div>
+
+        <div class="form-group">
+          <label for="calcModoEnsanche">Modo de Comportamiento Estructural</label>
+          <select id="calcModoEnsanche" onchange="DomainFurnitureCalc.recalculateUI()">
+            <option value="modo1_tapa_volada">Modo 1: Tapa Volada (Solo ensancha el Techo, cuerpo fijo)</option>
+            <option value="modo2_proporcional">Modo 2: Ensanche Proporcional (Recalcula Cuerpo, Cajón y Fondo)</option>
+          </select>
+        </div>
+
+        <div class="form-row-responsive">
+          <div>
+            <label for="calcTechoAncho">Ancho del Techo (mm)</label>
+            <input type="number" id="calcTechoAncho" inputmode="numeric" value="400" oninput="DomainFurnitureCalc.recalculateUI()">
           </div>
-          <button class="btn btn-green btn-block" onclick="addStockItem()">Guardar en Stock</button>
+          <div>
+            <label for="calcTechoProf">Profundidad del Techo (mm)</label>
+            <input type="number" id="calcTechoProf" inputmode="numeric" value="335" oninput="DomainFurnitureCalc.recalculateUI()">
+          </div>
         </div>
-        <div id="stockListContainer"></div>
+
+        <div class="form-row-responsive">
+          <div>
+            <label for="calcCuerpoAnchoBase">Ancho Cuerpo Base (mm)</label>
+            <input type="number" id="calcCuerpoAnchoBase" inputmode="numeric" value="400" oninput="DomainFurnitureCalc.recalculateUI()">
+          </div>
+          <div>
+            <label for="calcCuerpoProfBase">Prof. Cuerpo Base (mm)</label>
+            <input type="number" id="calcCuerpoProfBase" inputmode="numeric" value="335" oninput="DomainFurnitureCalc.recalculateUI()">
+          </div>
+        </div>
+
+        <div class="form-row-responsive">
+          <div>
+            <label for="calcAltoTotal">Altura Total (mm)</label>
+            <input type="number" id="calcAltoTotal" inputmode="numeric" value="450" oninput="DomainFurnitureCalc.recalculateUI()">
+          </div>
+          <div>
+            <label for="calcEspesor">Espesor Placa (mm)</label>
+            <select id="calcEspesor" onchange="DomainFurnitureCalc.recalculateUI()">
+              <option value="18" selected>18 mm</option>
+              <option value="15">15 mm</option>
+              <option value="25">25 mm</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-responsive">
+          <div>
+            <label for="calcCantCajones">Número de Cajones</label>
+            <input type="number" id="calcCantCajones" inputmode="numeric" value="1" min="1" max="6" oninput="DomainFurnitureCalc.recalculateUI()">
+          </div>
+          <div>
+            <label for="calcAltoFrente">Altura Frente Cajón (mm)</label>
+            <input type="number" id="calcAltoFrente" inputmode="numeric" value="160" oninput="DomainFurnitureCalc.recalculateUI()">
+          </div>
+        </div>
+
+        <div class="form-row-responsive">
+          <div>
+            <label for="calcPlacaSelect">Placa Melamina Principal</label>
+            <select id="calcPlacaSelect" onchange="DomainFurnitureCalc.recalculateUI()"></select>
+          </div>
+          <div>
+            <label for="calcCorrederaTipo">Tipo de Correderas</label>
+            <select id="calcCorrederaTipo" onchange="DomainFurnitureCalc.recalculateUI()">
+              <option value="telescopica">Telescópica H45 ($5.800 par)</option>
+              <option value="comun">Metálica Común Z ($2.600 par)</option>
+              <option value="oculta">Oculta Cierre Suave ($14.500 par)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-responsive">
+          <div>
+            <label for="calcManoObra">Mano de Obra Unitaria ($)</label>
+            <input type="number" id="calcManoObra" inputmode="numeric" value="25000" oninput="DomainFurnitureCalc.recalculateUI()">
+          </div>
+          <div>
+            <label for="calcDesperdicioPct">Desperdicio / Costos Ind. (%)</label>
+            <input type="number" id="calcDesperdicioPct" inputmode="decimal" value="12" oninput="DomainFurnitureCalc.recalculateUI()">
+          </div>
+        </div>
+
+        <div class="form-row-responsive">
+          <div>
+            <label for="calcTipoRentabilidad">Método de Rentabilidad</label>
+            <select id="calcTipoRentabilidad" onchange="DomainFurnitureCalc.recalculateUI()">
+              <option value="recargo">Recargo sobre Costo (Markup %)</option>
+              <option value="margen">Margen sobre Venta (Margin %)</option>
+            </select>
+          </div>
+          <div>
+            <label for="calcPorcentajeGanancia">Porcentaje (%)</label>
+            <input type="number" id="calcPorcentajeGanancia" inputmode="decimal" value="35" oninput="DomainFurnitureCalc.recalculateUI()">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="calcCantMuebles">Cantidad de Muebles del Lote</label>
+          <input type="number" id="calcCantMuebles" inputmode="numeric" value="1" min="1" oninput="DomainFurnitureCalc.recalculateUI()">
+        </div>
+
+        <!-- ESQUEMA VISUAL SVG DINÁMICO -->
+        <div class="card-elevated" style="text-align:center;">
+          <div style="font-size:12px; color:var(--text-secondary); margin-bottom:8px;">Esquema Geométrico de Proporción (Vista Frontal/Superior)</div>
+          <svg id="calcSvgDiagram" width="100%" height="140" viewBox="0 0 320 140"></svg>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card warn">
+            <span class="kpi-label">Costo Total Lote</span>
+            <span class="kpi-value" id="calcOutCosto">$0</span>
+          </div>
+          <div class="kpi-card ok">
+            <span class="kpi-label">Precio Venta Lote</span>
+            <span class="kpi-value" id="calcOutVenta">$0</span>
+          </div>
+          <div class="kpi-card wood">
+            <span class="kpi-label">Utilidad Neta</span>
+            <span class="kpi-value" id="calcOutUtilidad">$0</span>
+          </div>
+        </div>
+
+        <div class="card-elevated">
+          <strong style="font-size:13px; display:block; margin-bottom:8px;">Desglose Técnico de Piezas y Costos</strong>
+          <div id="calcPiecesBreakdown"></div>
+        </div>
+
+        <div class="quick-actions-grid" style="margin-top:12px;">
+          <button class="btn btn-primary" onclick="DomainFurnitureCalc.sendToOptimizer()">Mandar al Optimizador</button>
+          <button class="btn btn-success" onclick="DomainFurnitureCalc.sendToQuote()">Crear Presupuesto</button>
+        </div>
       </div>
     </section>
 
-    <!-- 4. RECETAS COMPLETAS DE MUEBLES -->
-    <section id="sec-muebles" class="section">
-      <div class="neon-card">
+    <!-- ====================================================================
+         3. FABRICACIÓN: OPTIMIZADOR DE CORTES MÓVIL
+         ==================================================================== -->
+    <section id="view-optimizador" class="module-view">
+      <div class="card">
         <div class="card-header">
-          <span class="card-title">Recetas de Muebles (Vinculadas a Stock)</span>
-          <button class="btn" onclick="toggleNewReceta()">+ Nuevo Mueble</button>
+          <span class="card-title">Optimizador Rectilíneo con Control de Veta</span>
+          <button class="btn" onclick="OptimizerEngine.toggleNewBoardForm()">+ Placa</button>
         </div>
-        <div id="newRecetaBox" style="display:none; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:12px;">
-          <label>Nombre del Mueble:</label><input type="text" id="recName" placeholder="Ej: Vanitorio de Baño">
-          
-          <label style="margin-top:8px; color:var(--accent);">Insumos del Stock que consume:</label>
-          <div id="recetaStockCheckList" style="max-height: 220px; overflow-y: auto; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 8px; padding: 8px;"></div>
 
-          <button class="btn btn-green btn-block" onclick="addReceta()">Guardar Receta</button>
+        <div id="newBoardFormBox" class="card-elevated" style="display:none;">
+          <div class="form-group">
+            <label>Nombre de Placa / Diseño</label>
+            <input type="text" id="optBoardName" placeholder="Ej: Melamina 18mm Helsinki">
+          </div>
+          <div class="form-row-responsive">
+            <div><label>Ancho Real (mm)</label><input type="number" id="optBoardW" value="2750"></div>
+            <div><label>Alto Real (mm)</label><input type="number" id="optBoardH" value="1830"></div>
+          </div>
+          <div class="form-row-responsive">
+            <div><label>Precio Placa ($)</label><input type="number" id="optBoardPrice" value="158000"></div>
+            <div>
+              <label>Textura / Diseño</label>
+              <select id="optBoardTexture">
+                <option value="helsinki">Helsinki</option>
+                <option value="artico">Teka Ártico</option>
+                <option value="baltico">Báltico</option>
+                <option value="carvalho">Carvalho Mezzo</option>
+                <option value="gaudi">Gaudí</option>
+                <option value="kiri">Kiri</option>
+                <option value="blanco">Blanco Liso</option>
+                <option value="negro">Negro Profundo</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row-responsive">
+            <div><label>Margen Perimetral (mm)</label><input type="number" id="optBoardMargin" value="10"></div>
+            <div><label>Espesor Sierra / Kerf (mm)</label><input type="number" id="optBoardKerf" value="4"></div>
+          </div>
+          <button class="btn btn-primary btn-block" onclick="OptimizerEngine.saveNewBoard()">Guardar Placa en Catálogo</button>
         </div>
-        <div id="recetasList"></div>
+
+        <div class="form-group">
+          <label for="optSelectPlaca">Seleccionar Placa de Trabajo</label>
+          <select id="optSelectPlaca" onchange="OptimizerEngine.onSelectBoard()"></select>
+        </div>
+
+        <!-- AGREGAR PIEZA CON CONTROL DE VETA -->
+        <div class="card-elevated">
+          <strong style="font-size:13px; display:block; margin-bottom:10px; color:var(--accent-wood);">Añadir Pieza al Plano de Corte</strong>
+          <div class="form-row-responsive">
+            <div><label>Nombre / Etiqueta</label><input type="text" id="optPieceTag" placeholder="Ej: Frente Cajón"></div>
+            <div><label>Cantidad</label><input type="number" id="optPieceQty" inputmode="numeric" value="1" min="1"></div>
+          </div>
+          <div class="form-row-responsive">
+            <div><label>Ancho en sentido veta (mm)</label><input type="number" id="optPieceW" inputmode="numeric" placeholder="400"></div>
+            <div><label>Alto transversal (mm)</label><input type="number" id="optPieceH" inputmode="numeric" placeholder="160"></div>
+          </div>
+          <div class="form-group">
+            <label for="optPieceAllowRot">Restricción de Veta / Giro 90°</label>
+            <select id="optPieceAllowRot">
+              <option value="false">Bloquear Giro (Respetar dirección de veta estrictamente)</option>
+              <option value="true">Permitir Giro 90° (Optimizar máximo aprovechamiento)</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-block" onclick="OptimizerEngine.addPiece()">+ Incorporar Pieza y Optimizar</button>
+        </div>
+
+        <!-- CONTROLES DE ZOOM Y LIENZO INTERACTIVO -->
+        <div style="display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
+          <button class="btn" style="flex:1;" onclick="OptimizerEngine.zoom(1.2)">＋ Zoom</button>
+          <button class="btn" style="flex:1;" onclick="OptimizerEngine.zoom(0.8)">－ Zoom</button>
+          <button class="btn" style="flex:1;" onclick="OptimizerEngine.resetView()">Ajustar Pantalla</button>
+          <button class="btn btn-danger" onclick="OptimizerEngine.clearCuts()">Limpiar</button>
+        </div>
+
+        <div class="canvas-viewport">
+          <canvas id="cutOptimizerCanvas" width="680" height="450"></canvas>
+        </div>
+        <div style="font-size:12px; color:var(--text-secondary); margin:8px 0;">
+          💡 Deslizá con un dedo para desplazar el plano y tocá cualquier pieza para inspeccionar su ficha técnica abajo.
+        </div>
+
+        <!-- FICHA DE DETALLE DE LA PIEZA SELECCIONADA EN EL PLANO -->
+        <div id="optSelectedPieceCard" class="card-elevated" style="border-left:4px solid var(--accent-wood);">
+          <strong style="font-size:13px;">Pieza Seleccionada en Plano:</strong>
+          <div id="optSelectedPieceInfo" style="font-size:13px; color:var(--text-secondary); margin-top:4px;">Tocá un rectángulo en el plano para ver sus dimensiones, rotación y veta.</div>
+        </div>
+
+        <!-- MÉTRICAS DE APROVECHAMIENTO -->
+        <div class="kpi-grid" style="margin-top:12px;">
+          <div class="kpi-card wood"><span class="kpi-label">Placas Necesarias</span><span class="kpi-value" id="optResBoardsCount">1</span></div>
+          <div class="kpi-card ok"><span class="kpi-label">Aprovechamiento</span><span class="kpi-value" id="optResEfficiency">0%</span></div>
+          <div class="kpi-card warn"><span class="kpi-label">Valor Consumido</span><span class="kpi-value" id="optResUsedCost">$0</span></div>
+          <div class="kpi-card ok"><span class="kpi-label">Sobrante Útil</span><span class="kpi-value" id="optResFreeCost">$0</span></div>
+        </div>
+
+        <div id="optUnplacedAlert" style="display:none;" class="card-elevated"></div>
+        <div id="optPiecesListContainer" style="margin-top:10px;"></div>
       </div>
     </section>
 
-    <!-- 5. PRESUPUESTOS -->
-    <section id="sec-presup" class="section">
-      <div class="neon-card">
-        <div class="card-header"><span class="card-title">Presupuestos y Ventas</span></div>
-        <label>Cliente:</label><input type="text" id="presCliente" placeholder="Nombre cliente">
-        
-        <label>Seleccionar Mueble (Receta):</label>
-        <select id="presSelectReceta" onchange="onSelectRecetaPresup()"></select>
+    <!-- ====================================================================
+         4. FABRICACIÓN: CATÁLOGO DE MUEBLES Y VISOR 3D (THREE.JS)
+         ==================================================================== -->
+    <section id="view-catalogo3d" class="module-view">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Catálogo de Muebles y Visor 3D Interactivo</span>
+        </div>
+        <div id="catalogGridContainer" class="form-row-responsive"></div>
+      </div>
 
-        <label>Detalle del Mueble / Modificación:</label>
-        <input type="text" id="presMueble" placeholder="Detalle">
-
-        <div class="grid-2">
-          <div><label>Costo Materiales ($):</label><input type="number" id="presCosto" value="0" oninput="calcPresup()"></div>
-          <div><label>Costo Flete ($):</label><input type="number" id="presFlete" value="0" oninput="calcPresup()"></div>
+      <!-- PANTALLA COMPLETA DE DETALLE Y VISOR 3D -->
+      <div class="card" id="viewer3DFullCard">
+        <div class="card-header">
+          <div>
+            <span class="card-title" id="viewer3DModelTitle">Mesita de Luz Estándar JL</span>
+            <span style="font-size:12px; color:var(--text-secondary);" id="viewer3DModelDims">400 × 335 × 450 mm</span>
+          </div>
+          <span class="status-pill ok" id="viewer3DPriceTag">$55.500</span>
         </div>
 
-        <div class="stat-box green" style="margin:14px 0;">
-          <div class="stat-label">Total Presupuesto</div>
-          <div class="stat-val" id="presTotalTxt">$0</div>
+        <div class="canvas-viewport" id="threeViewerContainer"></div>
+
+        <!-- CONTROLES TÁCTILES DEL VISOR 3D -->
+        <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+          <button class="btn btn-primary" style="flex:2;" onclick="Viewer3DEngine.toggleDrawerAnim()" id="btnToggle3DDrawer">
+            Abrir / Cerrar Cajón
+          </button>
+          <button class="btn" style="flex:1;" onclick="Viewer3DEngine.resetCamera()">Centrar Cámara</button>
         </div>
 
-        <div class="grid-2">
-          <button class="btn btn-yellow" onclick="enviarPresupWhatsApp()">📲 WhatsApp</button>
-          <button class="btn btn-green" onclick="registrarPedidoDesdePresup()">Guardar y Descontar Stock</button>
+        <!-- SELECTOR CONDICIONAL DE COLOR BASE (BLANCO / NEGRO) -->
+        <div style="margin-top:16px;">
+          <label>Color del Cuerpo Principal (body)</label>
+          <div class="swatch-bar">
+            <button class="swatch-dot selected" id="btnBaseBlanco" onclick="Viewer3DEngine.setBaseColor('blanco')">
+              <span class="color-circle" style="background:#F5F7F6;"></span> Blanco
+            </button>
+            <button class="swatch-dot" id="btnBaseNegro" onclick="Viewer3DEngine.setBaseColor('negro')">
+              <span class="color-circle" style="background:#181A1B;"></span> Negro
+            </button>
+          </div>
+        </div>
+
+        <!-- SUBMENÚ CONDICIONAL: SOLO APARECE CUANDO ESTÁ SELECCIONADO BLANCO -->
+        <div id="drawerFrontSubmenu" style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border-color);">
+          <label>Acabado del Frente del Cajón (drawer) — Exclusivo Base Blanca</label>
+          <div class="swatch-bar" id="frontTextureSwatches">
+            <button class="swatch-dot selected" data-front="blanco" onclick="Viewer3DEngine.setFrontFinish('blanco')">Blanco Puro</button>
+            <button class="swatch-dot" data-front="helsinki" onclick="Viewer3DEngine.setFrontFinish('helsinki')">Helsinki</button>
+            <button class="swatch-dot" data-front="artico" onclick="Viewer3DEngine.setFrontFinish('artico')">Teka Ártico</button>
+            <button class="swatch-dot" data-front="baltico" onclick="Viewer3DEngine.setFrontFinish('baltico')">Báltico</button>
+            <button class="swatch-dot" data-front="carvalho" onclick="Viewer3DEngine.setFrontFinish('carvalho')">Carvalho Mezzo</button>
+            <button class="swatch-dot" data-front="gaudi" onclick="Viewer3DEngine.setFrontFinish('gaudi')">Gaudí</button>
+            <button class="swatch-dot" data-front="kiri" onclick="Viewer3DEngine.setFrontFinish('kiri')">Kiri</button>
+          </div>
+        </div>
+
+        <div class="card-elevated" style="margin-top:16px;">
+          <strong style="font-size:13px; color:var(--accent-wood); display:block; margin-bottom:6px;">Insumos y Medidas Vinculadas al Modelo</strong>
+          <div id="viewer3DRecipeDetails" style="font-size:13px; color:var(--text-secondary);"></div>
         </div>
       </div>
     </section>
 
-    <!-- 6. CAJA Y PEDIDOS -->
-    <section id="sec-caja" class="section">
-      <div class="stat-box green" style="margin-bottom:16px;">
-        <div class="stat-label">Total Facturado / Pedidos</div>
-        <div class="stat-val" id="cajaTotalVal">$0</div>
-      </div>
-      <div class="neon-card">
-        <div class="card-header"><span class="card-title">Pedidos en Tiempo Real</span></div>
-        <div id="pedidosList"></div>
-      </div>
-    </section>
-
-    <!-- 7. VIAJES -->
-    <section id="sec-viaje" class="section">
-      <div class="neon-card">
-        <div class="card-header"><span class="card-title">Fletes y Logística</span></div>
-        <label>Destino:</label><input type="text" id="viajeDestino" placeholder="Dirección de entrega">
-        <div class="grid-2">
-          <div><label>Distancia (Km):</label><input type="number" id="viajeKm" value="10" oninput="calcViaje()"></div>
-          <div><label>Precio por Km ($):</label><input type="number" id="viajePrecioKm" value="1200" oninput="calcViaje()"></div>
+    <!-- ====================================================================
+         5. FABRICACIÓN: RECETAS DE FABRICACIÓN Y ÓRDENES DE PRODUCCIÓN
+         ==================================================================== -->
+    <section id="view-recetas" class="module-view">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Recetas de Fabricación (Vinculadas a Stock)</span>
+          <button class="btn btn-primary" onclick="RecipesModule.toggleForm()">+ Nueva Receta</button>
         </div>
-        <div class="stat-box accent" style="margin:12px 0;"><div class="stat-val" id="viajeTotalTxt">$12.000</div></div>
-        <button class="btn btn-green btn-block" onclick="pasarFleteAPresupuesto()">Usar en Presupuesto</button>
+
+        <div id="newRecipeFormBox" class="card-elevated" style="display:none;">
+          <div class="form-group">
+            <label>Nombre del Mueble / Modelo</label>
+            <input type="text" id="recNombreInput" placeholder="Ej: Mesita de Luz Flotante Helsinki">
+          </div>
+          <div class="form-row-responsive">
+            <div><label>Dimensiones (mm)</label><input type="text" id="recDimsInput" value="400x335x450"></div>
+            <div><label>Mano de Obra ($)</label><input type="number" id="recManoObraInput" value="25000"></div>
+          </div>
+          <label style="color:var(--accent-wood); margin-top:8px;">Seleccionar Insumos del Inventario y Cantidad por Unidad:</label>
+          <div id="recipeStockSelectorList" style="max-height:260px; overflow-y:auto; margin-bottom:12px;"></div>
+          <button class="btn btn-success btn-block" onclick="RecipesModule.saveRecipe()">Guardar Versión de Receta</button>
+        </div>
+
+        <div id="recipesListContainer"></div>
       </div>
     </section>
 
-  </div>
+    <!-- ====================================================================
+         6. INVENTARIO: STOCK, PLACAS, HERRAJES, MOVIMIENTOS Y PROVEEDORES
+         ==================================================================== -->
+    <section id="view-stock" class="module-view">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Inventario General de Materiales</span>
+          <button class="btn btn-primary" onclick="InventoryModule.toggleNewItem()">+ Material</button>
+        </div>
 
-  <!-- ==========================================================================
-     BLOQUE DE LÓGICA Y CONEXIÓN FIREBASE EN TIEMPO REAL (MODULAR EXPANDIDO)
-     ========================================================================== -->
+        <div id="newStockItemBox" class="card-elevated" style="display:none;">
+          <div class="form-row-responsive">
+            <div><label>Nombre del Material</label><input type="text" id="stkName" placeholder="Ej: Tornillo Fix 3.5x30"></div>
+            <div><label>Código SKU</label><input type="text" id="stkCode" placeholder="HER-004"></div>
+          </div>
+          <div class="form-row-responsive">
+            <div>
+              <label>Categoría</label>
+              <select id="stkCategory">
+                <option value="placas">Placas de Melamina</option>
+                <option value="herrajes">Herrajes y Tornillería</option>
+                <option value="cantos">Tapacantos y Adhesivos</option>
+                <option value="consumibles">Consumibles</option>
+              </select>
+            </div>
+            <div><label>Unidad</label><input type="text" id="stkUnit" value="UNID"></div>
+          </div>
+          <div class="form-row-responsive">
+            <div><label>Stock Inicial</label><input type="number" id="stkQty" inputmode="numeric" value="20"></div>
+            <div><label>Umbral Stock Bajo</label><input type="number" id="stkMin" inputmode="numeric" value="5"></div>
+          </div>
+          <div class="form-row-responsive">
+            <div><label>Costo Unitario ($)</label><input type="number" id="stkPrice" inputmode="numeric" value="100"></div>
+            <div><label>Ubicación Taller</label><input type="text" id="stkLoc" value="Estante A1"></div>
+          </div>
+          <button class="btn btn-success btn-block" onclick="InventoryModule.createItem()">Registrar Material</button>
+        </div>
+
+        <div class="form-row-responsive">
+          <div>
+            <input type="search" id="stkSearchInput" placeholder="Buscar por nombre o código..." oninput="InventoryModule.render()">
+          </div>
+          <div>
+            <select id="stkFilterCat" onchange="InventoryModule.render()">
+              <option value="all">Todas las Categorías</option>
+              <option value="placas">Solo Placas de Melamina</option>
+              <option value="herrajes">Solo Herrajes y Tornillería</option>
+              <option value="cantos">Tapacantos y Adhesivos</option>
+              <option value="low">Alertas Stock Bajo (≤ Umbral)</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="inventoryCardsContainer"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Kardex de Movimientos de Inventario</span>
+        </div>
+        <div id="inventoryMovementsList"></div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         7. PROVEEDORES Y COMPRAS
+         ==================================================================== -->
+    <section id="view-proveedores" class="module-view">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Proveedores y Recepción de Compras</span>
+        </div>
+        <div class="card-elevated">
+          <div class="form-row-responsive">
+            <div><label>Proveedor</label><input type="text" id="purSupplier" placeholder="Distribuidora Placas Oeste"></div>
+            <div>
+              <label>Material a Ingresar</label>
+              <select id="purStockId"></select>
+            </div>
+          </div>
+          <div class="form-row-responsive">
+            <div><label>Cantidad Recibida</label><input type="number" id="purQty" inputmode="numeric" value="5" min="1"></div>
+            <div><label>Costo Unitario Compra ($)</label><input type="number" id="purUnitCost" inputmode="numeric" value="145000"></div>
+          </div>
+          <div class="form-group">
+            <label>Estado de Recepción</label>
+            <select id="purStatus">
+              <option value="recibido">Recibido en Taller (Suma al Stock Ahora)</option>
+              <option value="pendiente">Pedido en Tránsito (No suma stock hasta recibir)</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-block" onclick="PurchasesModule.registerPurchase()">Registrar Orden de Compra</button>
+        </div>
+        <div id="purchasesHistoryList"></div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         8. COMERCIAL: PRESUPUESTOS, WHATSAPP Y DESCUENTO IDEMPOTENTE
+         ==================================================================== -->
+    <section id="view-presupuestos" class="module-view">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Generador de Presupuestos y WhatsApp</span>
+        </div>
+
+        <div class="form-row-responsive">
+          <div><label>Cliente</label><input type="text" id="quoClientName" placeholder="Nombre y Apellido"></div>
+          <div><label>Teléfono WhatsApp</label><input type="tel" id="quoClientPhone" placeholder="54911..."></div>
+        </div>
+
+        <div class="form-group">
+          <label>Vincular Receta de Mueble</label>
+          <select id="quoRecipeSelect" onchange="QuotesModule.onSelectRecipe()"></select>
+        </div>
+
+        <div class="form-row-responsive">
+          <div><label>Detalle / Variante de Color</label><input type="text" id="quoDetail" placeholder="Blanco c/ Frente Helsinki"></div>
+          <div><label>Cantidad de Unidades</label><input type="number" id="quoQty" inputmode="numeric" value="1" min="1" oninput="QuotesModule.recalc()"></div>
+        </div>
+
+        <div class="form-row-responsive">
+          <div><label>Precio Unitario Mueble ($)</label><input type="number" id="quoUnitPrice" inputmode="numeric" value="55000" oninput="QuotesModule.recalc()"></div>
+          <div><label>Descuento (%)</label><input type="number" id="quoDiscountPct" inputmode="decimal" value="0" oninput="QuotesModule.recalc()"></div>
+        </div>
+
+        <div class="form-row-responsive">
+          <div><label>Costo de Flete ($)</label><input type="number" id="quoFreight" inputmode="numeric" value="0" oninput="QuotesModule.recalc()"></div>
+          <div><label>Instalación / Adicional ($)</label><input type="number" id="quoInstall" inputmode="numeric" value="0" oninput="QuotesModule.recalc()"></div>
+        </div>
+
+        <div class="form-row-responsive">
+          <div><label>Seña / Anticipo ($)</label><input type="number" id="quoDeposit" inputmode="numeric" value="0" oninput="QuotesModule.recalc()"></div>
+          <div><label>Plazo de Entrega</label><input type="text" id="quoDeliveryDays" value="7 días hábiles"></div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card ok">
+            <span class="kpi-label">Total Final</span>
+            <span class="kpi-value" id="quoTotalDisplay">$55.000</span>
+          </div>
+          <div class="kpi-card warn">
+            <span class="kpi-label">Saldo a Cobrar</span>
+            <span class="kpi-value" id="quoBalanceDisplay">$55.000</span>
+          </div>
+        </div>
+
+        <!-- ACCIONES PRINCIPALES AL FINAL DEL FORMULARIO (SIN BARRA FIJA) -->
+        <div class="quick-actions-grid">
+          <button class="btn" onclick="QuotesModule.saveDraft()">Guardar Borrador</button>
+          <button class="btn btn-warn" onclick="QuotesModule.sendWhatsApp()">📲 Enviar WhatsApp</button>
+        </div>
+        <button class="btn btn-success btn-block" onclick="QuotesModule.confirmAndDeductStockPrompt()">
+          ✓ Confirmar Pedido y Descontar Stock (Idempotente)
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Historial de Presupuestos</span></div>
+        <div id="quotesListContainer"></div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         9. COMERCIAL: PEDIDOS, CLIENTES Y ÓRDENES DE PRODUCCIÓN
+         ==================================================================== -->
+    <section id="view-pedidos" class="module-view">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Tablero de Pedidos y Producción</span>
+        </div>
+        <div id="ordersListContainer"></div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         10. ADMINISTRACIÓN: CAJA, VENTAS Y FLETES
+         ==================================================================== -->
+    <section id="view-caja" class="module-view">
+      <div class="kpi-grid">
+        <div class="kpi-card ok"><span class="kpi-label">Saldo Disponible</span><span class="kpi-value" id="cashBalanceVal">$0</span></div>
+        <div class="kpi-card wood"><span class="kpi-label">Total Cobrado</span><span class="kpi-value" id="cashIncomeVal">$0</span></div>
+        <div class="kpi-card err"><span class="kpi-label">Total Egresos</span><span class="kpi-value" id="cashExpenseVal">$0</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Registrar Movimiento Financiero</span></div>
+        <div class="form-row-responsive">
+          <div>
+            <label>Tipo de Operación</label>
+            <select id="cashType">
+              <option value="ingreso">Ingreso / Cobro de Venta</option>
+              <option value="anticipo">Anticipo / Seña de Pedido</option>
+              <option value="egreso">Egreso / Gasto de Taller</option>
+              <option value="compensacion">Asiento Compensatorio</option>
+            </select>
+          </div>
+          <div>
+            <label>Método de Pago</label>
+            <select id="cashMethod">
+              <option value="Efectivo">Efectivo</option>
+              <option value="Transferencia">Transferencia Bancaria / MP</option>
+              <option value="Tarjeta">Tarjeta</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row-responsive">
+          <div><label>Concepto / Referencia</label><input type="text" id="cashConcept" placeholder="Cobro saldo Mesita Cliente..."></div>
+          <div><label>Importe ($)</label><input type="number" id="cashAmount" inputmode="numeric" placeholder="25000"></div>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="FinanceModule.addEntry()">Registrar en Libro de Caja</button>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Movimientos Cronológicos de Caja</span></div>
+        <div id="cashLedgerContainer"></div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         11. COMERCIAL: CALCULADORA DE FLETES Y LOGÍSTICA
+         ==================================================================== -->
+    <section id="view-fletes" class="module-view">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Calculadora de Fletes y Tarifas</span></div>
+        <div class="form-group">
+          <label>Dirección / Localidad de Entrega</label>
+          <input type="text" id="frDestination" placeholder="Ej: Ramos Mejía / Morón">
+        </div>
+        <div class="form-row-responsive">
+          <div><label>Distancia (Km)</label><input type="number" id="frKm" inputmode="decimal" value="12" oninput="FreightModule.calc()"></div>
+          <div><label>Tarifa por Km ($)</label><input type="number" id="frRateKm" inputmode="numeric" value="1350" oninput="FreightModule.calc()"></div>
+        </div>
+        <div class="form-row-responsive">
+          <div><label>Cargo Fijo Base ($)</label><input type="number" id="frBaseFee" inputmode="numeric" value="4000" oninput="FreightModule.calc()"></div>
+          <div>
+            <label>Modalidad</label>
+            <select id="frRoundTrip" onchange="FreightModule.calc()">
+              <option value="1">Solo Ida (×1)</option>
+              <option value="2">Ida y Vuelta (×2)</option>
+            </select>
+          </div>
+        </div>
+        <div class="kpi-card wood" style="margin:12px 0;">
+          <span class="kpi-label">Costo Calculado del Flete</span>
+          <span class="kpi-value" id="frTotalResult">$20.200</span>
+        </div>
+        <button class="btn btn-primary btn-block" onclick="FreightModule.applyToQuote()">Pasar Flete al Presupuesto Actual</button>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         12. ADMINISTRACIÓN Y SISTEMA: INFORMES, RESPALDOS, USUARIOS Y ESTADO
+         ==================================================================== -->
+    <section id="view-sistema" class="module-view">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Respaldos JSON, Validación y Restauración</span></div>
+        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
+          Exportá una instantánea completa con versión de esquema (`v2.4-enterprise`) o importá un respaldo validando integridad referencial sin sobrescribir silenciosamente.
+        </p>
+        <div class="quick-actions-grid">
+          <button class="btn btn-primary" onclick="BackupModule.exportJSON()">⬇ Exportar JSON</button>
+          <button class="btn" onclick="BackupModule.exportCSVReport()">📊 Exportar CSV Caja</button>
+        </div>
+        <div class="form-group" style="margin-top:14px;">
+          <label>Importar Archivo de Respaldo (.json)</label>
+          <input type="file" id="backupFileInput" accept=".json" onchange="BackupModule.previewImport(event)">
+        </div>
+        <div id="backupPreviewBox" class="card-elevated" style="display:none;"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Control de Roles y Permisos (RBAC)</span></div>
+        <div class="form-group">
+          <label>Simular Rol de Usuario Activo (Verifica Ocultamiento de Menú + Guardas Backend)</label>
+          <select id="sysRoleSelect" onchange="SecurityRBAC.switchRole(this.value)">
+            <option value="ADMINISTRADOR">Administrador (Acceso Total)</option>
+            <option value="ENCARGADO">Encargado (Fabricación, Stock, Comercial)</option>
+            <option value="OPERADOR">Operador de Taller (Solo Fabricación y Stock)</option>
+            <option value="CONSULTA">Consulta (Solo Lectura)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Suite de Pruebas Automatizadas de Dominio (Self-Test)</span>
+          <button class="btn btn-primary" onclick="TestSuiteRunner.runAll()">▶ Ejecutar Pruebas</button>
+        </div>
+        <div id="selfTestResultsBox" style="font-size:13px; color:var(--text-secondary);">
+          Presioná "Ejecutar Pruebas" para verificar cálculo de modos de ensanche, bloqueo de veta, idempotencia de stock y validaciones.
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       ARQUITECTURA MODULAR: DOMINIO, PERSISTENCIA OFFLINE-FIRST, FIREBASE & 3D
+       ======================================================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -455,514 +1569,1904 @@
       appId: "1:566113930129:web:24146305773f3d86d32830"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    try {
+      const fbApp = initializeApp(firebaseConfig);
+      const fbDb = getDatabase(fbApp);
+      const rootRef = ref(fbDb, 'carpinteria_jl_enterprise_v2');
 
-    const defaultData = {
-      placas: [
-        { id: 'p_blanca', name: 'PLACA BLANCA (18mm)', w: 2750, h: 1830, price: 146000, cuts: [] },
-        { id: 'p_negra', name: 'PLACA NEGRA (18mm)', w: 2750, h: 1830, price: 155000, cuts: [] }
-      ],
-      selectedPlacaId: 'p_blanca',
-      baseMesita: { techoProf: 335, techoAncho: 400, precioMdf: 24000, herrajes: 6500, manoObra: 25000 },
-      stock: [
-        { id: 's1', name: 'Placa Melamina 18mm Blanco', price: 146000, qty: 12, unit: 'PLACAS' },
-        { id: 's2', name: 'Tornillos Autoperforantes 3x30', price: 35, qty: 350, unit: 'U' }
-      ],
-      recetas: [],
-      pedidos: []
-    };
-
-    window.appData = defaultData;
-    let isInitialLoad = true;
-
-    const dbRef = ref(db, 'carpinteria_jl_data');
-    onValue(dbRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        window.appData = data;
-        if (!isInitialLoad) {
-          const toast = document.getElementById('notifToast');
-          toast.style.display = 'block';
-          setTimeout(() => { toast.style.display = 'none'; }, 4000);
+      onValue(rootRef, (snapshot) => {
+        const remoteData = snapshot.val();
+        if (remoteData && window.OfflineStore) {
+          window.OfflineStore.receiveRemoteSnapshot(remoteData);
         }
-      } else {
-        set(dbRef, defaultData);
-      }
-      isInitialLoad = false;
-      if (typeof renderAll === 'function') renderAll();
-    });
+      }, (err) => {
+        console.warn("Firebase en modo local/offline:", err.message);
+      });
 
-    window.saveDataCloud = function() {
-      set(dbRef, window.appData);
-    };
+      window.pushToFirebaseCloud = async (statePayload) => {
+        if (!navigator.onLine) return false;
+        await set(rootRef, statePayload);
+        return true;
+      };
+    } catch (e) {
+      console.warn("Inicialización offline activa:", e);
+    }
   </script>
 
   <script>
-    let lastCalculatedMesita = null;
-
-    function toggleDrawer() {
-      document.getElementById('drawer').classList.toggle('open');
-      document.getElementById('drawerOverlay').classList.toggle('open');
-    }
-
-    function switchTab(tab) {
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      document.getElementById('sec-' + tab).classList.add('active');
-      document.getElementById('nav-' + tab).classList.add('active');
-      document.getElementById('drawer').classList.remove('open');
-      document.getElementById('drawerOverlay').classList.remove('open');
-      renderAll();
-    }
-
-    function toggleEditBaseMesita() {
-      const box = document.getElementById('editBaseMesitaBox');
-      box.style.display = box.style.display === 'none' ? 'block' : 'none';
-    }
-    function saveBaseMesita() {
-      window.appData.baseMesita.techoProf = parseFloat(document.getElementById('bm_techoProf').value) || 335;
-      window.appData.baseMesita.techoAncho = parseFloat(document.getElementById('bm_techoAncho').value) || 400;
-      document.getElementById('editBaseMesitaBox').style.display = 'none';
-      saveDataCloud();
-    }
-    function calcMesitaVariable() {
-      const b = window.appData.baseMesita;
-      const placa = window.appData.placas.find(p => p.id === (document.getElementById('var_placaId').value || window.appData.selectedPlacaId)) || window.appData.placas[0];
-      if(!placa) return;
-      const tProf = parseFloat(document.getElementById('var_techoProf').value) || b.techoProf;
-      const tAncho = parseFloat(document.getElementById('var_techoAncho').value) || b.techoAncho;
-      
-      const costoEst = ((tProf * tAncho * 2) / (placa.w * placa.h)) * placa.price + b.herrajes;
-      const costoTotal = Math.round(costoEst);
-      const ventaTotal = costoTotal + b.manoObra;
-
-      document.getElementById('resMesitaCosto').textContent = '$' + costoTotal.toLocaleString('es-AR');
-      document.getElementById('resMesitaVenta').textContent = '$' + ventaTotal.toLocaleString('es-AR');
-
-      lastCalculatedMesita = { placaId: placa.id, tProf, tAncho, costoTotal, ventaTotal };
-    }
-    function enviarCortesMesitaAPlaca() {
-      if (!lastCalculatedMesita) return;
-      const placa = window.appData.placas.find(p => p.id === lastCalculatedMesita.placaId);
-      placa.cuts.push({ id: 'c_' + Date.now(), w: lastCalculatedMesita.tProf, h: lastCalculatedMesita.tAncho, tag: 'Techo Mesita' });
-      saveDataCloud();
-      switchTab('placas');
-    }
-    function pasarMesitaAPresupuesto() {
-      if (!lastCalculatedMesita) return;
-      document.getElementById('presMueble').value = `Mesita Variable (${lastCalculatedMesita.tProf}x${lastCalculatedMesita.tAncho}mm)`;
-      document.getElementById('presCosto').value = lastCalculatedMesita.costoTotal;
-      calcPresup();
-      switchTab('presup');
-    }
-
-    function getCurrentPlaca() {
-      return window.appData.placas.find(p => p.id === window.appData.selectedPlacaId) || window.appData.placas[0];
-    }
-    function renderPlacasSection() {
-      const sel = document.getElementById('placaSelect');
-      const varSel = document.getElementById('var_placaId');
-      if(sel) sel.innerHTML = '';
-      if(varSel) varSel.innerHTML = '';
-
-      window.appData.placas.forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = p.id;
-        opt.textContent = `${p.name} — $${p.price.toLocaleString('es-AR')}`;
-        if (p.id === window.appData.selectedPlacaId) opt.selected = true;
-        if(sel) sel.appendChild(opt);
-
-        if(varSel) {
-          const opt2 = opt.cloneNode(true);
-          varSel.appendChild(opt2);
+    /* ========================================================================
+       CAPA 1: SEGURIDAD Y PERMISOS MULTIUSUARIO (RBAC)
+       ======================================================================== */
+    const SecurityRBAC = {
+      currentUser: {
+        id: 'usr_leandro',
+        name: 'Leandro Llanes',
+        role: 'ADMINISTRADOR'
+      },
+      rolePermissions: {
+        ADMINISTRADOR: ['*'],
+        ENCARGADO: ['dashboard', 'calculadora', 'optimizador', 'catalogo3d', 'recetas', 'stock', 'proveedores', 'presupuestos', 'pedidos', 'fletes'],
+        OPERADOR: ['dashboard', 'calculadora', 'optimizador', 'catalogo3d', 'recetas', 'stock', 'pedidos'],
+        CONSULTA: ['dashboard', 'catalogo3d', 'stock', 'pedidos']
+      },
+      canViewModule(moduleId) {
+        const allowed = this.rolePermissions[this.currentUser.role] || [];
+        return allowed.includes('*') || allowed.includes(moduleId);
+      },
+      canWrite(operationName) {
+        if (this.currentUser.role === 'CONSULTA') {
+          AppUI.toast(`Permiso denegado: El rol CONSULTA no puede ejecutar "${operationName}".`, 'err');
+          return false;
         }
-      });
-      const placa = getCurrentPlaca();
-      if(placa) {
-        document.getElementById('viewPlacaTitle').textContent = placa.name;
-        drawOptimizedCanvas(placa);
-      }
-    }
-    function onPlacaChange() {
-      window.appData.selectedPlacaId = document.getElementById('placaSelect').value;
-      saveDataCloud();
-    }
-    function toggleNewPlaca() {
-      const b = document.getElementById('newPlacaBox');
-      b.style.display = b.style.display === 'none' ? 'block' : 'none';
-      document.getElementById('editPlacaBox').style.display = 'none';
-    }
-    function toggleEditPlaca() {
-      const box = document.getElementById('editPlacaBox');
-      const p = getCurrentPlaca();
-      if (box.style.display === 'none') {
-        document.getElementById('editPlacaName').value = p.name;
-        document.getElementById('editPlacaW').value = p.w;
-        document.getElementById('editPlacaH').value = p.h;
-        document.getElementById('editPlacaPrice').value = p.price;
-        box.style.display = 'block';
-        document.getElementById('newPlacaBox').style.display = 'none';
-      } else {
-        box.style.display = 'none';
-      }
-    }
-    function saveEditPlaca() {
-      const p = getCurrentPlaca();
-      p.name = document.getElementById('editPlacaName').value.trim() || p.name;
-      p.w = parseFloat(document.getElementById('editPlacaW').value) || 2750;
-      p.h = parseFloat(document.getElementById('editPlacaH').value) || 1830;
-      p.price = parseFloat(document.getElementById('editPlacaPrice').value) || 0;
-      document.getElementById('editPlacaBox').style.display = 'none';
-      saveDataCloud();
-    }
-    function deleteCurrentPlaca() {
-      if (window.appData.placas.length <= 1) return alert('Debe quedar al menos una placa.');
-      window.appData.placas = window.appData.placas.filter(p => p.id !== window.appData.selectedPlacaId);
-      window.appData.selectedPlacaId = window.appData.placas[0].id;
-      document.getElementById('editPlacaBox').style.display = 'none';
-      saveDataCloud();
-    }
-    function addNewPlaca() {
-      const name = document.getElementById('newPlacaName').value.trim();
-      const w = parseFloat(document.getElementById('newPlacaW').value) || 2750;
-      const h = parseFloat(document.getElementById('newPlacaH').value) || 1830;
-      const price = parseFloat(document.getElementById('newPlacaPrice').value) || 0;
-      if (!name) return;
-      const newId = 'placa_' + Date.now();
-      window.appData.placas.push({ id: newId, name, w, h, price, cuts: [] });
-      window.appData.selectedPlacaId = newId;
-      document.getElementById('newPlacaBox').style.display = 'none';
-      saveDataCloud();
-    }
-    function agregarCorteAPlaca() {
-      const placa = getCurrentPlaca();
-      const cw = parseFloat(document.getElementById('corteW').value);
-      const ch = parseFloat(document.getElementById('corteH').value);
-      const qty = parseInt(document.getElementById('corteQty').value) || 1;
-      const tag = document.getElementById('corteTag').value.trim() || 'Pieza';
-      if (!cw || !ch) return alert('Poné medidas válidas');
-
-      for (let i = 0; i < qty; i++) {
-        placa.cuts.push({ id: 'c_' + Date.now() + '_' + Math.random(), w: cw, h: ch, tag });
-      }
-      saveDataCloud();
-    }
-    function eliminarCortePlaca(id) {
-      const placa = getCurrentPlaca();
-      placa.cuts = placa.cuts.filter(c => c.id !== id);
-      saveDataCloud();
-    }
-
-    function drawOptimizedCanvas(placa) {
-      const canvas = document.getElementById('placaCanvas');
-      if(!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const baseW = 550;
-      const scale = baseW / placa.w;
-      canvas.width = baseW;
-      canvas.height = Math.round(baseW * (placa.h / placa.w));
-
-      ctx.fillStyle = '#0d1117';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      let usedArea = 0;
-      const list = document.getElementById('listaCortesPlaca');
-      list.innerHTML = '';
-
-      let currentX = 0;
-      let currentY = 0;
-      let rowHeight = 0;
-      const margin = 2;
-
-      const sortedCuts = [...placa.cuts].sort((a,b) => (b.w * b.h) - (a.w * a.h));
-
-      sortedCuts.forEach((c) => {
-        let pw = c.w;
-        let ph = c.h;
-
-        if (currentX + pw > placa.w && currentX + ph <= placa.w) {
-          pw = c.h;
-          ph = c.w;
+        if (this.currentUser.role === 'OPERADOR' && ['CAJA_WRITE', 'BACKUP_RESTORE'].includes(operationName)) {
+          AppUI.toast(`Permiso denegado: Se requiere rol ENCARGADO o ADMINISTRADOR.`, 'err');
+          return false;
         }
-
-        if (currentX + pw > placa.w) {
-          currentX = 0;
-          currentY += rowHeight + margin;
-          rowHeight = 0;
-        }
-
-        const rx = currentX * scale;
-        const ry = currentY * scale;
-        const rw = pw * scale;
-        const rh = ph * scale;
-
-        ctx.fillStyle = 'rgba(140, 90, 60, 0.4)';
-        ctx.fillRect(rx, ry, rw, rh);
-        ctx.strokeStyle = '#8c5a3c';
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(rx, ry, rw, rh);
-
-        if (rw > 28 && rh > 16) {
-          ctx.fillStyle = '#ffffff';
-          ctx.font = 'bold 9px sans-serif';
-          ctx.fillText(`${pw}x${ph}`, rx + 2, ry + 11);
-        }
-
-        usedArea += (pw * ph);
-        currentX += pw + margin;
-        if (ph > rowHeight) {
-          rowHeight = ph;
-        }
-
-        const row = document.createElement('div');
-        row.className = 'corte-row';
-        row.innerHTML = `<div><strong>${c.tag}</strong> (${c.w}x${c.h}mm)</div><button class="btn btn-pink" style="padding:2px 6px;" onclick="eliminarCortePlaca('${c.id}')">✕</button>`;
-        list.appendChild(row);
-      });
-
-      const totalArea = placa.w * placa.h;
-      const usedVal = (usedArea / totalArea) * placa.price;
-      const restoVal = Math.max(0, placa.price - usedVal);
-      document.getElementById('statUsadoValor').textContent = '$' + Math.round(usedVal).toLocaleString('es-AR');
-      document.getElementById('statRestoValor').textContent = '$' + Math.round(restoVal).toLocaleString('es-AR');
-    }
-
-    function toggleNewStockBox() {
-      const b = document.getElementById('newStockBox');
-      b.style.display = b.style.display === 'none' ? 'block' : 'none';
-    }
-    function addStockItem() {
-      const name = document.getElementById('newStockName').value.trim();
-      const price = parseFloat(document.getElementById('newStockPrice').value) || 0;
-      const qty = parseInt(document.getElementById('newStockQty').value) || 0;
-      if (!name) return;
-      if(!window.appData.stock) window.appData.stock = [];
-      window.appData.stock.push({ id: 's_' + Date.now(), name, price, qty, unit: 'U' });
-      document.getElementById('newStockBox').style.display = 'none';
-      saveDataCloud();
-    }
-    function changeStockQty(idx, delta) {
-      window.appData.stock[idx].qty = Math.max(0, window.appData.stock[idx].qty + delta);
-      saveDataCloud();
-    }
-    function renderStock() {
-      const cont = document.getElementById('stockListContainer');
-      if(!cont) return;
-      cont.innerHTML = '';
-      let lowAlerts = 0;
-      if(!window.appData.stock) window.appData.stock = [];
-
-      window.appData.stock.forEach((item, i) => {
-        if (item.qty <= 5) lowAlerts++;
-        const div = document.createElement('div');
-        div.className = 'stock-item';
-        div.innerHTML = `
-          <div class="stock-info">
-            <div class="stock-name">${item.name} ${item.qty <= 5 ? '⚠️ (BAJO)' : ''}</div>
-            <div class="stock-sub">$${item.price} c/u | <span class="badge">${item.qty} ${item.unit}</span></div>
-          </div>
-          <div class="stock-controls">
-            <button class="qty-btn" onclick="changeStockQty(${i}, -1)">-</button>
-            <span class="qty-val">${item.qty}</span>
-            <button class="qty-btn" onclick="changeStockQty(${i}, 1)">+</button>
-          </div>`;
-        cont.appendChild(div);
-      });
-      document.getElementById('totalItemsCount').textContent = window.appData.stock.length;
-      document.getElementById('lowStockCount').textContent = lowAlerts;
-    }
-
-    function toggleNewReceta() {
-      const b = document.getElementById('newRecetaBox');
-      b.style.display = b.style.display === 'none' ? 'block' : 'none';
-      if(b.style.display === 'block') {
-        renderRecetaStockCheckList();
+        return true;
+      },
+      switchRole(newRole) {
+        this.currentUser.role = newRole;
+        document.getElementById('drawerUserRole').textContent = newRole;
+        AppUI.renderDrawerMenu();
+        AppUI.toast(`Rol activo cambiado a ${newRole}`, 'ok');
       }
-    }
+    };
 
-    function renderRecetaStockCheckList() {
-      const container = document.getElementById('recetaStockCheckList');
-      if(!container) return;
-      container.innerHTML = '';
-      if(!window.appData.stock || window.appData.stock.length === 0) {
-        container.innerHTML = '<div style="font-size:11px; color:var(--muted);">No hay items en el stock. Agregalos primero.</div>';
-        return;
-      }
+    /* ========================================================================
+       CAPA 2: BASE DE DATOS INICIAL Y PERSISTENCIA OFFLINE-FIRST (INDEXEDDB)
+       ======================================================================== */
+    const INITIAL_ENTERPRISE_STATE = {
+      schemaVersion: '2.4-enterprise',
+      updatedAt: Date.now(),
+      boards: [
+        { id: 'b_blanco', name: 'Melamina 18mm Blanco', w: 2750, h: 1830, thickness: 18, price: 146000, texture: 'blanco', margin: 10, kerf: 4, cuts: [] },
+        { id: 'b_negro', name: 'Melamina 18mm Negro Profundo', w: 2750, h: 1830, thickness: 18, price: 155000, texture: 'negro', margin: 10, kerf: 4, cuts: [] },
+        { id: 'b_helsinki', name: 'Melamina 18mm Helsinki', w: 2750, h: 1830, thickness: 18, price: 168000, texture: 'helsinki', margin: 10, kerf: 4, cuts: [] },
+        { id: 'b_artico', name: 'Melamina 18mm Teka Ártico', w: 2750, h: 1830, thickness: 18, price: 168000, texture: 'artico', margin: 10, kerf: 4, cuts: [] },
+        { id: 'b_baltico', name: 'Melamina 18mm Báltico', w: 2750, h: 1830, thickness: 18, price: 172000, texture: 'baltico', margin: 10, kerf: 4, cuts: [] },
+        { id: 'b_carvalho', name: 'Melamina 18mm Carvalho Mezzo', w: 2750, h: 1830, thickness: 18, price: 172000, texture: 'carvalho', margin: 10, kerf: 4, cuts: [] },
+        { id: 'b_gaudi', name: 'Melamina 18mm Gaudí', w: 2750, h: 1830, thickness: 18, price: 172000, texture: 'gaudi', margin: 10, kerf: 4, cuts: [] },
+        { id: 'b_kiri', name: 'Melamina 18mm Kiri', w: 2750, h: 1830, thickness: 18, price: 169000, texture: 'kiri', margin: 10, kerf: 4, cuts: [] }
+      ],
+      selectedBoardId: 'b_helsinki',
+      stock: [
+        { id: 'stk_1', code: 'PLA-BLA-18', name: 'Placa Melamina 18mm Blanco', category: 'placas', qty: 12, min: 4, unit: 'PLACA', price: 146000, location: 'Sector Placas A' },
+        { id: 'stk_2', code: 'PLA-HEL-18', name: 'Placa Melamina 18mm Helsinki', category: 'placas', qty: 5, min: 5, unit: 'PLACA', price: 168000, location: 'Sector Placas B' },
+        { id: 'stk_3', code: 'HER-COR-30', name: 'Corredera Telescópica 300mm (Par)', category: 'herrajes', qty: 4, min: 5, unit: 'PAR', price: 5800, location: 'Gaveta H1' },
+        { id: 'stk_4', code: 'TOR-35-30', name: 'Tornillos Autoperforantes 3.5x30', category: 'herrajes', qty: 450, min: 50, unit: 'UNID', price: 35, location: 'Gaveta T2' },
+        { id: 'stk_5', code: 'CAN-045-BL', name: 'Tapacanto Melamínico 22mm Blanco', category: 'cantos', qty: 80, min: 15, unit: 'METRO', price: 420, location: 'Rollo C1' }
+      ],
+      stockMovements: [],
+      catalogModels: [
+        { id: 'mod_mesita_std', name: 'Mesita de Luz Clásica 1 Cajón', dims: '400×335×450 mm', basePrice: 55500, glbPath: 'assets/models/mesita_1.glb', hasHole: false, topOverhang: 0 },
+        { id: 'mod_mesita_sec', name: 'Mesita c/ Tapa Volada y Porta Secador', dims: '520×335×450 mm', basePrice: 64800, glbPath: 'assets/models/mesita_2.glb', hasHole: true, topOverhang: 120 },
+        { id: 'mod_mesita_neg', name: 'Mesita Minimalista Negra', dims: '400×335×450 mm', basePrice: 58000, glbPath: 'assets/models/mesita_3.glb', hasHole: false, topOverhang: 0 },
+        { id: 'mod_mesita_xl', name: 'Mesita Ensanche Completo XL', dims: '550×400×500 mm', basePrice: 72000, glbPath: 'assets/models/mesita_4.glb', hasHole: false, topOverhang: 0 }
+      ],
+      viewerConfig: {
+        activeModelId: 'mod_mesita_std',
+        baseColor: 'blanco',
+        frontFinish: 'helsinki',
+        drawerOpen: false
+      },
+      recipes: [
+        {
+          id: 'rec_1',
+          version: 1,
+          name: 'Mesita de Luz Clásica (Cuerpo + 1 Cajón)',
+          dims: '400x335x450',
+          laborCost: 25000,
+          costTotal: 48240,
+          items: [
+            { stockId: 'stk_4', name: 'Tornillos Autoperforantes 3.5x30', qty: 24, unitPrice: 35 },
+            { stockId: 'stk_3', name: 'Corredera Telescópica 300mm (Par)', qty: 1, unitPrice: 5800 },
+            { stockId: 'stk_5', name: 'Tapacanto Melamínico 22mm Blanco', qty: 6, unitPrice: 420 }
+          ]
+        }
+      ],
+      quotes: [],
+      orders: [],
+      purchases: [],
+      cashLedger: [
+        { id: 'csh_init', date: new Date().toISOString(), type: 'ingreso', concept: 'Apertura de Caja Taller JL', amount: 125000, method: 'Efectivo', user: 'Leandro Llanes' }
+      ],
+      processedTransactions: {},
+      auditLog: []
+    };
 
-      window.appData.stock.forEach((s) => {
-        const row = document.createElement('div');
-        row.className = 'receta-stock-selector';
-        row.innerHTML = `
-          <div style="display:flex; align-items:center; gap:8px; flex:1;">
-            <input type="checkbox" id="chk_stock_${s.id || s.name}" style="width:auto; margin:0;" onchange="toggleRecetaStockInput('${s.id || s.name}')">
-            <label for="chk_stock_${s.id || s.name}" style="margin:0; color:var(--primary); cursor:pointer; font-size:12px; font-weight:600;">${s.name}</label>
-          </div>
-          <input type="number" id="qty_stock_${s.id || s.name}" value="1" min="1" style="width:70px; margin:0; display:none;" placeholder="Cant">
-        `;
-        container.appendChild(row);
-      });
-    }
+    const OfflineStore = {
+      dbName: 'CarpinteriaJLEnterpriseDB',
+      dbVersion: 1,
+      idb: null,
+      state: JSON.parse(JSON.stringify(INITIAL_ENTERPRISE_STATE)),
+      pendingQueue: [],
 
-    function toggleRecetaStockInput(id) {
-      const chk = document.getElementById(`chk_stock_${id}`);
-      const input = document.getElementById(`qty_stock_${id}`);
-      if(chk && input) {
-        input.style.display = chk.checked ? 'block' : 'none';
-      }
-    }
+      async init() {
+        return new Promise((resolve) => {
+          const req = indexedDB.open(this.dbName, this.dbVersion);
+          req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('app_state')) db.createObjectStore('app_state');
+            if (!db.objectStoreNames.contains('sync_queue')) db.createObjectStore('sync_queue', { keyPath: 'txId' });
+          };
+          req.onsuccess = async (e) => {
+            this.idb = e.target.result;
+            await this.loadFromIndexedDB();
+            this.setupConnectivityListeners();
+            resolve();
+          };
+          req.onerror = () => {
+            console.warn("IndexedDB no disponible, usando memoria y LocalStorage.");
+            resolve();
+          };
+        });
+      },
 
-    function addReceta() {
-      const name = document.getElementById('recName').value.trim();
-      if (!name) return alert('Poné el nombre del mueble');
+      async loadFromIndexedDB() {
+        if (!this.idb) return;
+        return new Promise((resolve) => {
+          const tx = this.idb.transaction(['app_state', 'sync_queue'], 'readonly');
+          const reqState = tx.objectStore('app_state').get('root');
+          const reqQueue = tx.objectStore('sync_queue').getAll();
+          tx.oncomplete = () => {
+            if (reqState.result) {
+              this.state = Object.assign({}, INITIAL_ENTERPRISE_STATE, reqState.result);
+            }
+            if (reqQueue.result) {
+              this.pendingQueue = reqQueue.result;
+            }
+            this.updateSyncBadge();
+            resolve();
+          };
+        });
+      },
 
-      let insumosAsociados = [];
-      let costoTotalCalculado = 0;
+      async commit(actionDescription) {
+        this.state.updatedAt = Date.now();
+        this.logAudit(actionDescription);
 
-      if(window.appData.stock) {
-        window.appData.stock.forEach((s) => {
-          const key = s.id || s.name;
-          const chk = document.getElementById(`chk_stock_${key}`);
-          const input = document.getElementById(`qty_stock_${key}`);
-          if(chk && chk.checked) {
-            const cant = parseFloat(input.value) || 1;
-            insumosAsociados.push({ name: s.name, qty: cant, stockId: s.id });
-            costoTotalCalculado += (s.price * cant);
+        const txRecord = {
+          txId: 'tx_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+          timestamp: Date.now(),
+          action: actionDescription
+        };
+
+        if (this.idb) {
+          const tx = this.idb.transaction(['app_state', 'sync_queue'], 'readwrite');
+          tx.objectStore('app_state').put(this.state, 'root');
+          if (!navigator.onLine) {
+            tx.objectStore('sync_queue').put(txRecord);
+            this.pendingQueue.push(txRecord);
           }
+        }
+
+        if (navigator.onLine && window.pushToFirebaseCloud) {
+          this.setSyncIndicator('syncing', 'Sincronizando...');
+          try {
+            await window.pushToFirebaseCloud(this.state);
+            await this.clearSyncQueue();
+            this.setSyncIndicator('online', 'Conectado');
+          } catch (err) {
+            this.setSyncIndicator('error', 'Pendiente Sync');
+          }
+        } else {
+          this.setSyncIndicator('offline', `Sin conexión (${this.pendingQueue.length})`);
+        }
+
+        this.updateSyncBadge();
+        AppUI.refreshAllViews();
+      },
+
+      async clearSyncQueue() {
+        this.pendingQueue = [];
+        if (!this.idb) return;
+        const tx = this.idb.transaction(['sync_queue'], 'readwrite');
+        tx.objectStore('sync_queue').clear();
+      },
+
+      receiveRemoteSnapshot(remoteData) {
+        if (!remoteData || (remoteData.updatedAt && remoteData.updatedAt <= this.state.updatedAt)) return;
+        this.state = Object.assign({}, INITIAL_ENTERPRISE_STATE, remoteData);
+        if (this.idb) {
+          const tx = this.idb.transaction(['app_state'], 'readwrite');
+          tx.objectStore('app_state').put(this.state, 'root');
+        }
+        AppUI.toast('Sincronización en tiempo real recibida del taller.', 'ok');
+        AppUI.refreshAllViews();
+      },
+
+      logAudit(description) {
+        if (!this.state.auditLog) this.state.auditLog = [];
+        this.state.auditLog.unshift({
+          id: 'aud_' + Date.now(),
+          date: new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
+          user: SecurityRBAC.currentUser.name,
+          role: SecurityRBAC.currentUser.role,
+          action: description
+        });
+        if (this.state.auditLog.length > 40) this.state.auditLog.pop();
+      },
+
+      setSyncIndicator(mode, label) {
+        const dot = document.getElementById('syncStatusDot');
+        const txt = document.getElementById('syncStatusText');
+        if (!dot || !txt) return;
+        dot.className = 'sync-dot';
+        if (mode === 'offline') dot.classList.add('offline');
+        if (mode === 'syncing') dot.classList.add('syncing');
+        if (mode === 'error') dot.classList.add('error');
+        txt.textContent = label;
+      },
+
+      updateSyncBadge() {
+        const badge = document.getElementById('dashPendingQueueBadge');
+        if (badge) {
+          badge.textContent = `${this.pendingQueue.length} Pendientes`;
+          badge.className = this.pendingQueue.length > 0 ? 'status-pill warn' : 'status-pill ok';
+        }
+      },
+
+      setupConnectivityListeners() {
+        window.addEventListener('online', async () => {
+          this.setSyncIndicator('syncing', 'Reconectando...');
+          if (window.pushToFirebaseCloud) {
+            await window.pushToFirebaseCloud(this.state);
+            await this.clearSyncQueue();
+          }
+          this.setSyncIndicator('online', 'Conectado');
+          this.updateSyncBadge();
+          AppUI.toast('Conexión restablecida. Cambios pendientes sincronizados.', 'ok');
+        });
+        window.addEventListener('offline', () => {
+          this.setSyncIndicator('offline', 'Sin conexión');
+          AppUI.toast('Modo Sin Conexión activo. Guardando en IndexedDB local.', 'warn');
         });
       }
+    };
+    window.OfflineStore = OfflineStore;
 
-      if(!window.appData.recetas) window.appData.recetas = [];
-      window.appData.recetas.push({
-        name,
-        insumos: insumosAsociados,
-        costo: costoTotalCalculado
-      });
+    /* ========================================================================
+       CAPA 3: DOMINIO COMPARTIDO — CALCULADORA PARAMÉTRICA Y MESITA VARIABLE
+       ======================================================================== */
+    const DomainFurnitureCalc = {
+      lastResult: null,
 
-      document.getElementById('recName').value = '';
-      document.getElementById('newRecetaBox').style.display = 'none';
-      saveDataCloud();
-    }
+      calculateCustomFurniture(params) {
+        const {
+          modoEnsanche,
+          techoAncho,
+          techoProf,
+          cuerpoAnchoBase,
+          cuerpoProfBase,
+          altoTotal,
+          espesor,
+          cantCajones,
+          altoFrente,
+          board,
+          correderaTipo,
+          manoObra,
+          desperdicioPct,
+          tipoRentabilidad,
+          porcentajeGanancia,
+          cantidadLote
+        } = params;
 
-    function renderRecetas() {
-      const cont = document.getElementById('recetasList');
-      const sel = document.getElementById('presSelectReceta');
-      if(!cont) return;
-      cont.innerHTML = '';
-      if(sel) sel.innerHTML = '<option value="">-- Seleccionar Mueble Receta --</option>';
+        const effCuerpoAncho = modoEnsanche === 'modo2_proporcional' ? techoAncho : cuerpoAnchoBase;
+        const effCuerpoProf = modoEnsanche === 'modo2_proporcional' ? techoProf : cuerpoProfBase;
+        const altoLateral = Math.max(100, altoTotal - espesor);
+        const anchoInterior = Math.max(80, effCuerpoAncho - (2 * espesor));
+        const anchoCajonInterno = Math.max(60, anchoInterior - 26);
+        const profCajon = Math.max(150, effCuerpoProf - 35);
 
-      if(!window.appData.recetas) window.appData.recetas = [];
+        const pieces = [
+          { tag: 'Techo Superior', w: techoAncho, h: techoProf, qty: 1 * cantidadLote, allowRot: false },
+          { tag: 'Piso Inferior', w: effCuerpoAncho, h: effCuerpoProf, qty: 1 * cantidadLote, allowRot: false },
+          { tag: 'Lateral Estructural', w: altoLateral, h: effCuerpoProf, qty: 2 * cantidadLote, allowRot: false },
+          { tag: 'Frente de Cajón', w: effCuerpoAncho - 4, h: altoFrente, qty: cantCajones * cantidadLote, allowRot: false },
+          { tag: 'Lateral Cajón', w: profCajon, h: Math.max(80, altoFrente - 40), qty: 2 * cantCajones * cantidadLote, allowRot: true },
+          { tag: 'Contrafrente Cajón', w: anchoCajonInterno, h: Math.max(80, altoFrente - 40), qty: 1 * cantCajones * cantidadLote, allowRot: true }
+        ];
 
-      window.appData.recetas.forEach((r, idx) => {
-        let detalleStr = r.insumos ? r.insumos.map(i => `${i.qty}x ${i.name}`).join(', ') : (r.detalle || '');
-        const div = document.createElement('div');
-        div.className = 'corte-row';
-        div.innerHTML = `<div><strong>${r.name}</strong> — <strong style="color:var(--green);">$${r.costo || 0}</strong><br><span style="color:var(--muted); font-size:11px;">${detalleStr}</span></div>
-          <button class="btn btn-pink" style="padding:2px 6px;" onclick="window.appData.recetas.splice(${idx},1);saveDataCloud();">✕</button>`;
-        cont.appendChild(div);
+        const areaPlacaMm2 = board.w * board.h;
+        let areaConsumidaMm2 = 0;
+        pieces.forEach(p => {
+          areaConsumidaMm2 += (p.w * p.h * p.qty);
+        });
 
-        if(sel) {
-          const opt = document.createElement('option');
-          opt.value = idx;
-          opt.textContent = `${r.name} ($${r.costo || 0})`;
-          sel.appendChild(opt);
+        const costoMelaminaRaw = (areaConsumidaMm2 / areaPlacaMm2) * board.price;
+        const preciosCorredera = { telescopica: 5800, comun: 2600, oculta: 14500 };
+        const costoCorrederas = (preciosCorredera[correderaTipo] || 5800) * cantCajones * cantidadLote;
+        const costoTornillosYCantos = 4200 * cantidadLote;
+        const subtotalMateriales = costoMelaminaRaw + costoCorrederas + costoTornillosYCantos;
+        const costoDesperdicio = subtotalMateriales * (desperdicioPct / 100);
+        const costoTotalLote = Math.round(subtotalMateriales + costoDesperdicio + (manoObra * cantidadLote));
+
+        let precioVentaLote = costoTotalLote;
+        if (tipoRentabilidad === 'margen') {
+          const marginRatio = Math.min(0.9, Math.max(0, porcentajeGanancia / 100));
+          precioVentaLote = Math.round(costoTotalLote / (1 - marginRatio));
+        } else {
+          precioVentaLote = Math.round(costoTotalLote * (1 + (porcentajeGanancia / 100)));
         }
-      });
-    }
 
-    function onSelectRecetaPresup() {
-      const idx = document.getElementById('presSelectReceta').value;
-      if (idx === "") return;
-      const r = window.appData.recetas[idx];
-      let detalleStr = r.insumos ? r.insumos.map(i => `${i.qty}x ${i.name}`).join(', ') : (r.detalle || '');
-      document.getElementById('presMueble').value = r.name + ' (' + detalleStr + ')';
-      document.getElementById('presCosto').value = r.costo || 0;
-      calcPresup();
-    }
-    function calcPresup() {
-      const c = parseFloat(document.getElementById('presCosto').value) || 0;
-      const f = parseFloat(document.getElementById('presFlete').value) || 0;
-      const total = c + f;
-      document.getElementById('presTotalTxt').textContent = '$' + total.toLocaleString('es-AR');
-      return total;
-    }
-    function enviarPresupWhatsApp() {
-      const cli = document.getElementById('presCliente').value || 'Cliente';
-      const mueble = document.getElementById('presMueble').value || 'Mueble';
-      const total = calcPresup();
-      const msg = `Hola *${cli}*! Presupuesto Carpintería JL:\n*${mueble}*\nTotal: $${total.toLocaleString('es-AR')}`;
-      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-    }
+        return {
+          modoEnsanche,
+          techoAncho,
+          techoProf,
+          effCuerpoAncho,
+          effCuerpoProf,
+          altoTotal,
+          pieces,
+          boardId: board.id,
+          costoTotalLote,
+          precioVentaLote,
+          utilidadNeta: precioVentaLote - costoTotalLote,
+          cantidadLote
+        };
+      },
 
-    function registrarPedidoDesdePresup() {
-      const cli = document.getElementById('presCliente').value || 'Cliente';
-      const mueble = document.getElementById('presMueble').value || 'Mueble';
-      const total = calcPresup();
-      const recetaIdx = document.getElementById('presSelectReceta').value;
+      recalculateUI() {
+        const boards = OfflineStore.state.boards;
+        const selEl = document.getElementById('calcPlacaSelect');
+        if (selEl && selEl.options.length === 0) {
+          boards.forEach(b => {
+            const opt = document.createElement('option');
+            opt.value = b.id;
+            opt.textContent = `${b.name} ($${b.price.toLocaleString('es-AR')})`;
+            selEl.appendChild(opt);
+          });
+        }
 
-      if(recetaIdx !== "" && window.appData.recetas[recetaIdx]) {
-        const receta = window.appData.recetas[recetaIdx];
-        if(receta.insumos && window.appData.stock) {
-          receta.insumos.forEach(insumo => {
-            const stockItem = window.appData.stock.find(s => s.id === insumo.stockId || s.name === insumo.name);
-            if(stockItem) {
-              stockItem.qty = Math.max(0, stockItem.qty - insumo.qty);
+        const board = boards.find(b => b.id === (selEl ? selEl.value : '')) || boards[0];
+        const params = {
+          modoEnsanche: document.getElementById('calcModoEnsanche').value,
+          techoAncho: parseFloat(document.getElementById('calcTechoAncho').value) || 400,
+          techoProf: parseFloat(document.getElementById('calcTechoProf').value) || 335,
+          cuerpoAnchoBase: parseFloat(document.getElementById('calcCuerpoAnchoBase').value) || 400,
+          cuerpoProfBase: parseFloat(document.getElementById('calcCuerpoProfBase').value) || 335,
+          altoTotal: parseFloat(document.getElementById('calcAltoTotal').value) || 450,
+          espesor: parseFloat(document.getElementById('calcEspesor').value) || 18,
+          cantCajones: parseInt(document.getElementById('calcCantCajones').value) || 1,
+          altoFrente: parseFloat(document.getElementById('calcAltoFrente').value) || 160,
+          board,
+          correderaTipo: document.getElementById('calcCorrederaTipo').value,
+          manoObra: parseFloat(document.getElementById('calcManoObra').value) || 25000,
+          desperdicioPct: parseFloat(document.getElementById('calcDesperdicioPct').value) || 12,
+          tipoRentabilidad: document.getElementById('calcTipoRentabilidad').value,
+          porcentajeGanancia: parseFloat(document.getElementById('calcPorcentajeGanancia').value) || 35,
+          cantidadLote: parseInt(document.getElementById('calcCantMuebles').value) || 1
+        };
+
+        const res = this.calculateCustomFurniture(params);
+        this.lastResult = res;
+
+        document.getElementById('calcOutCosto').textContent = '$' + res.costoTotalLote.toLocaleString('es-AR');
+        document.getElementById('calcOutVenta').textContent = '$' + res.precioVentaLote.toLocaleString('es-AR');
+        document.getElementById('calcOutUtilidad').textContent = '$' + res.utilidadNeta.toLocaleString('es-AR');
+
+        const breakdownEl = document.getElementById('calcPiecesBreakdown');
+        breakdownEl.innerHTML = res.pieces.map(p => `
+          <div style="display:flex; justify-content:space-between; font-size:13px; padding:5px 0; border-bottom:1px solid var(--border-color);">
+            <span><strong>${p.qty}x</strong> ${p.tag}</span>
+            <span style="color:var(--accent-wood); font-weight:700;">${p.w} × ${p.h} mm ${p.allowRot ? '(Giro OK)' : '(Veta Fija)'}</span>
+          </div>
+        `).join('');
+
+        this.renderDiagramSVG(res);
+      },
+
+      renderDiagramSVG(res) {
+        const svg = document.getElementById('calcSvgDiagram');
+        if (!svg) return;
+        const maxW = Math.max(res.techoAncho, res.effCuerpoAncho, 400);
+        const scale = 180 / maxW;
+        const topW = Math.round(res.techoAncho * scale);
+        const bodyW = Math.round(res.effCuerpoAncho * scale);
+        const topX = Math.round((320 - topW) / 2);
+        const bodyX = Math.round((320 - bodyW) / 2);
+
+        svg.innerHTML = `
+          <!-- Techo -->
+          <rect x="${topX}" y="18" width="${topW}" height="12" fill="#B58B5A" rx="2" />
+          <text x="160" y="13" fill="#EAF1EE" font-size="11" text-anchor="middle" font-weight="bold">Techo: ${res.techoAncho} × ${res.techoProf} mm</text>
+          <!-- Cuerpo -->
+          <rect x="${bodyX}" y="30" width="${bodyW}" height="86" fill="#142B2A" stroke="#74B49A" stroke-width="2" rx="3" />
+          <!-- Frente Cajón -->
+          <rect x="${bodyX + 6}" y="36" width="${bodyW - 12}" height="38" fill="#1B3533" stroke="#B58B5A" stroke-width="1.5" rx="2" />
+          <text x="160" y="132" fill="#A2B3AE" font-size="11" text-anchor="middle">Cuerpo: ${res.effCuerpoAncho} × ${res.effCuerpoProf} mm (${res.modoEnsanche === 'modo1_tapa_volada' ? 'Tapa Volada' : 'Ensanche Completo'})</text>
+        `;
+      },
+
+      sendToOptimizer() {
+        if (!SecurityRBAC.canWrite('OPTIMIZER_ADD')) return;
+        if (!this.lastResult) this.recalculateUI();
+        const board = OfflineStore.state.boards.find(b => b.id === this.lastResult.boardId) || OfflineStore.state.boards[0];
+        OfflineStore.state.selectedBoardId = board.id;
+
+        this.lastResult.pieces.forEach(p => {
+          for (let i = 0; i < p.qty; i++) {
+            board.cuts.push({
+              id: 'cut_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+              tag: p.tag,
+              w: p.w,
+              h: p.h,
+              allowRot: p.allowRot
+            });
+          }
+        });
+
+        OfflineStore.commit(`Enviadas ${this.lastResult.pieces.length} partidas de cortes al optimizador`);
+        AppUI.navigate('optimizador');
+        AppUI.toast('Piezas cargadas en el Optimizador de Cortes.', 'ok');
+      },
+
+      sendToQuote() {
+        if (!this.lastResult) this.recalculateUI();
+        document.getElementById('quoDetail').value = `Mueble a Medida (${this.lastResult.techoAncho}x${this.lastResult.techoProf}mm)`;
+        document.getElementById('quoQty').value = this.lastResult.cantidadLote;
+        document.getElementById('quoUnitPrice').value = Math.round(this.lastResult.precioVentaLote / this.lastResult.cantidadLote);
+        QuotesModule.recalc();
+        AppUI.navigate('presupuestos');
+      }
+    };
+
+    /* ========================================================================
+       CAPA 4: MOTOR OPTIMIZADOR DE CORTES (TEXTURAS, VETA, KERF, ZOOM/PAN)
+       ======================================================================== */
+    const OptimizerEngine = {
+      zoomScale: 1,
+      panX: 0,
+      panY: 0,
+      isDragging: false,
+      startX: 0,
+      startY: 0,
+      lastPlacedRects: [],
+      selectedRect: null,
+      textureCache: {},
+
+      initCanvasEvents() {
+        const canvas = document.getElementById('cutOptimizerCanvas');
+        if (!canvas) return;
+
+        const getPoint = (e) => {
+          const rect = canvas.getBoundingClientRect();
+          const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+          const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+          return {
+            x: (clientX - rect.left) * (canvas.width / rect.width),
+            y: (clientY - rect.top) * (canvas.height / rect.height)
+          };
+        };
+
+        canvas.addEventListener('pointerdown', (e) => {
+          const pt = getPoint(e);
+          this.isDragging = true;
+          this.startX = pt.x - this.panX;
+          this.startY = pt.y - this.panY;
+          this.checkPieceSelection(pt.x, pt.y);
+        });
+
+        canvas.addEventListener('pointermove', (e) => {
+          if (!this.isDragging) return;
+          const pt = getPoint(e);
+          this.panX = pt.x - this.startX;
+          this.panY = pt.y - this.startY;
+          this.render();
+        });
+
+        window.addEventListener('pointerup', () => {
+          this.isDragging = false;
+        });
+      },
+
+      getTexturePattern(ctx, textureKey) {
+        const palettes = {
+          helsinki: { base: '#C8C2B8', grain: '#B2ABA0' },
+          artico: { base: '#DCD9D2', grain: '#C4C0B7' },
+          baltico: { base: '#8B8278', grain: '#726960' },
+          carvalho: { base: '#7B624A', grain: '#5E4833' },
+          gaudi: { base: '#A6907C', grain: '#8C7562' },
+          kiri: { base: '#DEC7A8', grain: '#C7AE8C' },
+          blanco: { base: '#F0F3F2', grain: '#E4E8E7' },
+          negro: { base: '#1E2222', grain: '#141717' }
+        };
+        const pal = palettes[textureKey] || palettes.helsinki;
+        const off = document.createElement('canvas');
+        off.width = 120;
+        off.height = 60;
+        const octx = off.getContext('2d');
+        octx.fillStyle = pal.base;
+        octx.fillRect(0, 0, 120, 60);
+        octx.strokeStyle = pal.grain;
+        octx.lineWidth = 1.4;
+        for (let y = 4; y < 60; y += 7) {
+          octx.beginPath();
+          octx.moveTo(0, y);
+          octx.bezierCurveTo(40, y + 2, 80, y - 2, 120, y);
+          octx.stroke();
+        }
+        return ctx.createPattern(off, 'repeat');
+      },
+
+      packShelfRectilinear(board) {
+        const margin = board.margin || 10;
+        const kerf = board.kerf || 4;
+        const usableW = board.w - (2 * margin);
+        const usableH = board.h - (2 * margin);
+
+        const items = [...(board.cuts || [])].sort((a, b) => Math.max(b.w, b.h) - Math.max(a.w, a.h));
+        const placed = [];
+        const unplaced = [];
+
+        let curX = margin;
+        let curY = margin;
+        let shelfH = 0;
+        let boardsUsed = 1;
+
+        items.forEach((piece) => {
+          let pw = piece.w;
+          let ph = piece.h;
+          let rotated = false;
+
+          if (piece.allowRot) {
+            if ((curX + pw > margin + usableW) && (curX + ph <= margin + usableW) && (ph <= usableH)) {
+              pw = piece.h;
+              ph = piece.w;
+              rotated = true;
+            } else if (ph > pw && pw <= usableH && (curX + ph <= margin + usableW)) {
+              pw = piece.h;
+              ph = piece.w;
+              rotated = true;
+            }
+          }
+
+          if (pw > usableW || ph > usableH) {
+            unplaced.push(piece);
+            return;
+          }
+
+          if (curX + pw > margin + usableW) {
+            curX = margin;
+            curY += shelfH + kerf;
+            shelfH = 0;
+          }
+
+          if (curY + ph > margin + usableH) {
+            boardsUsed++;
+            curX = margin;
+            curY = margin;
+            shelfH = 0;
+          }
+
+          placed.push({
+            ...piece,
+            x: curX,
+            y: curY,
+            drawW: pw,
+            drawH: ph,
+            rotated,
+            boardIndex: boardsUsed
+          });
+
+          curX += pw + kerf;
+          if (ph > shelfH) shelfH = ph;
+        });
+
+        return { placed, unplaced, boardsUsed };
+      },
+
+      getCurrentBoard() {
+        const boards = OfflineStore.state.boards;
+        return boards.find(b => b.id === OfflineStore.state.selectedBoardId) || boards[0];
+      },
+
+      onSelectBoard() {
+        OfflineStore.state.selectedBoardId = document.getElementById('optSelectPlaca').value;
+        this.selectedRect = null;
+        this.render();
+      },
+
+      toggleNewBoardForm() {
+        const el = document.getElementById('newBoardFormBox');
+        el.style.display = el.style.display === 'none' ? 'block' : 'none';
+      },
+
+      saveNewBoard() {
+        if (!SecurityRBAC.canWrite('BOARD_CREATE')) return;
+        const name = document.getElementById('optBoardName').value.trim();
+        if (!name) return AppUI.toast('Ingresá el nombre de la placa.', 'warn');
+        const newB = {
+          id: 'b_' + Date.now(),
+          name,
+          w: parseFloat(document.getElementById('optBoardW').value) || 2750,
+          h: parseFloat(document.getElementById('optBoardH').value) || 1830,
+          thickness: 18,
+          price: parseFloat(document.getElementById('optBoardPrice').value) || 158000,
+          texture: document.getElementById('optBoardTexture').value,
+          margin: parseFloat(document.getElementById('optBoardMargin').value) || 10,
+          kerf: parseFloat(document.getElementById('optBoardKerf').value) || 4,
+          cuts: []
+        };
+        OfflineStore.state.boards.push(newB);
+        OfflineStore.state.selectedBoardId = newB.id;
+        document.getElementById('newBoardFormBox').style.display = 'none';
+        OfflineStore.commit(`Nueva placa creada: ${name}`);
+      },
+
+      addPiece() {
+        if (!SecurityRBAC.canWrite('CUT_ADD')) return;
+        const board = this.getCurrentBoard();
+        const tag = document.getElementById('optPieceTag').value.trim() || 'Pieza Melamina';
+        const qty = parseInt(document.getElementById('optPieceQty').value) || 1;
+        const w = parseFloat(document.getElementById('optPieceW').value);
+        const h = parseFloat(document.getElementById('optPieceH').value);
+        const allowRot = document.getElementById('optPieceAllowRot').value === 'true';
+
+        if (!w || !h || w <= 0 || h <= 0) {
+          return AppUI.toast('Ingresá medidas de ancho y alto válidas en milímetros.', 'warn');
+        }
+
+        if (!board.cuts) board.cuts = [];
+        for (let i = 0; i < qty; i++) {
+          board.cuts.push({
+            id: 'c_' + Date.now() + '_' + i,
+            tag,
+            w,
+            h,
+            allowRot
+          });
+        }
+
+        OfflineStore.commit(`Agregados ${qty} cortes (${tag} ${w}x${h}mm) en ${board.name}`);
+      },
+
+      removePiece(cutId) {
+        if (!SecurityRBAC.canWrite('CUT_DELETE')) return;
+        const board = this.getCurrentBoard();
+        board.cuts = (board.cuts || []).filter(c => c.id !== cutId);
+        OfflineStore.commit(`Corte eliminado de ${board.name}`);
+      },
+
+      clearCuts() {
+        if (!SecurityRBAC.canWrite('CUT_CLEAR')) return;
+        const board = this.getCurrentBoard();
+        board.cuts = [];
+        this.selectedRect = null;
+        OfflineStore.commit(`Limpieza de cortes en ${board.name}`);
+      },
+
+      zoom(factor) {
+        this.zoomScale = Math.min(3.2, Math.max(0.6, this.zoomScale * factor));
+        this.render();
+      },
+
+      resetView() {
+        this.zoomScale = 1;
+        this.panX = 0;
+        this.panY = 0;
+        this.render();
+      },
+
+      checkPieceSelection(canvasX, canvasY) {
+        const hit = this.lastPlacedRects.find(r =>
+          canvasX >= r.screenX &&
+          canvasX <= r.screenX + r.screenW &&
+          canvasY >= r.screenY &&
+          canvasY <= r.screenY + r.screenH
+        );
+        if (hit) {
+          this.selectedRect = hit;
+          const infoEl = document.getElementById('optSelectedPieceInfo');
+          infoEl.innerHTML = `
+            <strong style="color:var(--text-primary);">${hit.tag}</strong> —
+            Medida original: <strong>${hit.w} × ${hit.h} mm</strong> |
+            Ubicación: (${hit.x}, ${hit.y} mm) |
+            Estado Veta: <span style="color:var(--accent-wood); font-weight:700;">${hit.rotated ? 'Girada 90°' : 'Veta Original Mantenida'}</span>
+          `;
+          this.render();
+        }
+      },
+
+      render() {
+        const sel = document.getElementById('optSelectPlaca');
+        if (!sel) return;
+        sel.innerHTML = '';
+        OfflineStore.state.boards.forEach(b => {
+          const opt = document.createElement('option');
+          opt.value = b.id;
+          opt.textContent = `${b.name} (${b.w}×${b.h}mm) — $${b.price.toLocaleString('es-AR')}`;
+          if (b.id === OfflineStore.state.selectedBoardId) opt.selected = true;
+          sel.appendChild(opt);
+        });
+
+        const board = this.getCurrentBoard();
+        const canvas = document.getElementById('cutOptimizerCanvas');
+        if (!canvas || !board) return;
+        const ctx = canvas.getContext('2d');
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.translate(this.panX, this.panY);
+        ctx.scale(this.zoomScale, this.zoomScale);
+
+        const pad = 16;
+        const drawW = canvas.width - (pad * 2);
+        const scale = drawW / board.w;
+        const drawH = board.h * scale;
+
+        // Fondo con textura realista de melamina y dirección de veta horizontal
+        ctx.fillStyle = this.getTexturePattern(ctx, board.texture || 'helsinki');
+        ctx.fillRect(pad, pad, drawW, drawH);
+
+        // Marco de márgenes de escuadrado
+        ctx.strokeStyle = '#B58B5A';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(pad, pad, drawW, drawH);
+
+        const packResult = this.packShelfRectilinear(board);
+        this.lastPlacedRects = [];
+        let occupiedArea = 0;
+
+        packResult.placed.forEach((p) => {
+          occupiedArea += (p.drawW * p.drawH);
+          if (p.boardIndex > 1) return; // Muestra el plano de la placa 1 activa
+
+          const rx = pad + (p.x * scale);
+          const ry = pad + (p.y * scale);
+          const rw = p.drawW * scale;
+          const rh = p.drawH * scale;
+
+          const isSelected = this.selectedRect && this.selectedRect.id === p.id;
+          ctx.fillStyle = isSelected ? 'rgba(116, 180, 154, 0.78)' : 'rgba(11, 30, 30, 0.72)';
+          ctx.fillRect(rx, ry, rw, rh);
+
+          ctx.strokeStyle = isSelected ? '#EAF1EE' : '#74B49A';
+          ctx.lineWidth = isSelected ? 2.2 : 1.3;
+          ctx.strokeRect(rx, ry, rw, rh);
+
+          if (rw > 42 && rh > 20) {
+            ctx.fillStyle = '#EAF1EE';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText(`${p.drawW}×${p.drawH}`, rx + 4, ry + 14);
+          }
+
+          this.lastPlacedRects.push({
+            ...p,
+            screenX: (rx * this.zoomScale) + this.panX,
+            screenY: (ry * this.zoomScale) + this.panY,
+            screenW: rw * this.zoomScale,
+            screenH: rh * this.zoomScale
+          });
+        });
+
+        ctx.restore();
+
+        const totalBoardArea = board.w * board.h * packResult.boardsUsed;
+        const efficiency = totalBoardArea > 0 ? Math.min(100, Math.round((occupiedArea / totalBoardArea) * 100)) : 0;
+        const usedVal = Math.round((occupiedArea / (board.w * board.h)) * board.price);
+        const freeVal = Math.max(0, (board.price * packResult.boardsUsed) - usedVal);
+
+        document.getElementById('optResBoardsCount').textContent = packResult.boardsUsed;
+        document.getElementById('optResEfficiency').textContent = `${efficiency}%`;
+        document.getElementById('optResUsedCost').textContent = '$' + usedVal.toLocaleString('es-AR');
+        document.getElementById('optResFreeCost').textContent = '$' + freeVal.toLocaleString('es-AR');
+
+        const unplacedEl = document.getElementById('optUnplacedAlert');
+        if (packResult.unplaced.length > 0) {
+          unplacedEl.style.display = 'block';
+          unplacedEl.innerHTML = `<strong style="color:var(--status-err);">⚠️ ${packResult.unplaced.length} pieza(s) exceden las dimensiones útiles de la placa.</strong>`;
+        } else {
+          unplacedEl.style.display = 'none';
+        }
+
+        const listCont = document.getElementById('optPiecesListContainer');
+        listCont.innerHTML = (board.cuts || []).map(c => `
+          <div class="item-card" style="padding:10px 12px;">
+            <div class="item-card-top">
+              <div>
+                <div class="item-title">${c.tag} (${c.w} × ${c.h} mm)</div>
+                <div class="item-meta">${c.allowRot ? '🔄 Giro 90° Permitido' : '🔒 Veta Bloqueada (No gira)'}</div>
+              </div>
+              <button class="btn btn-danger" style="min-height:38px; padding:6px 12px;" onclick="OptimizerEngine.removePiece('${c.id}')">Quitar</button>
+            </div>
+          </div>
+        `).join('');
+      }
+    };
+
+    /* ========================================================================
+       CAPA 5: VISOR 3D INTERACTIVO (THREE.JS + GRUPOS BODY/DRAWER + TEXTURAS)
+       ======================================================================== */
+    const Viewer3DEngine = {
+      scene: null,
+      camera: null,
+      renderer: null,
+      controls: null,
+      bodyGroup: null,
+      drawerGroup: null,
+      frontMesh: null,
+      targetDrawerZ: 0,
+      currentDrawerZ: 0,
+      initialized: false,
+
+      init() {
+        const container = document.getElementById('threeViewerContainer');
+        if (!container || this.initialized) return;
+
+        try {
+          this.scene = new THREE.Scene();
+          this.camera = new THREE.PerspectiveCamera(42, container.clientWidth / container.clientHeight, 0.1, 100);
+          this.camera.position.set(0.85, 0.72, 1.05);
+
+          this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+          this.renderer.setSize(container.clientWidth, container.clientHeight);
+          this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+          container.innerHTML = '';
+          container.appendChild(this.renderer.domElement);
+
+          if (THREE.OrbitControls) {
+            this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+            this.controls.enableDamping = true;
+            this.controls.target.set(0, 0.22, 0);
+          }
+
+          const ambient = new THREE.AmbientLight(0xffffff, 0.85);
+          this.scene.add(ambient);
+
+          const dirLight = new THREE.DirectionalLight(0xfff6e5, 0.9);
+          dirLight.position.set(2, 4, 3);
+          this.scene.add(dirLight);
+
+          // Pedestal circular minimalista estilo referencia
+          const pedGeo = new THREE.RingGeometry(0.36, 0.375, 48);
+          pedGeo.rotateX(-Math.PI / 2);
+          const pedMat = new THREE.MeshBasicMaterial({ color: 0xB58B5A, side: THREE.DoubleSide });
+          this.scene.add(new THREE.Mesh(pedGeo, pedMat));
+
+          this.buildProceduralOrGLBMesita();
+          this.initialized = true;
+          this.animate();
+        } catch (err) {
+          container.innerHTML = `<div style="padding:30px; text-align:center; color:var(--text-secondary);">Vista alternativa 2D activa (WebGL no disponible en este dispositivo).</div>`;
+        }
+      },
+
+      createWoodCanvasTexture(finishKey) {
+        const colors = {
+          blanco: { bg: '#F3F5F4', line: '#E6EAE8' },
+          negro: { bg: '#1B1E1E', line: '#121414' },
+          helsinki: { bg: '#C8C2B8', line: '#A8A096' },
+          artico: { bg: '#DCD9D2', line: '#BEBAB0' },
+          baltico: { bg: '#8B8278', line: '#686056' },
+          carvalho: { bg: '#7B624A', line: '#594430' },
+          gaudi: { bg: '#A6907C', line: '#826C58' },
+          kiri: { bg: '#DEC7A8', line: '#BFA482' }
+        };
+        const cfg = colors[finishKey] || colors.blanco;
+        const c = document.createElement('canvas');
+        c.width = 256;
+        c.height = 256;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = cfg.bg;
+        ctx.fillRect(0, 0, 256, 256);
+        ctx.strokeStyle = cfg.line;
+        ctx.lineWidth = 2;
+        for (let i = 0; i < 256; i += 8) {
+          ctx.beginPath();
+          ctx.moveTo(0, i);
+          ctx.bezierCurveTo(80, i + 4, 160, i - 4, 256, i);
+          ctx.stroke();
+        }
+        const tex = new THREE.CanvasTexture(c);
+        tex.needsUpdate = true;
+        return tex;
+      },
+
+      buildProceduralOrGLBMesita() {
+        if (this.bodyGroup) this.scene.remove(this.bodyGroup);
+        if (this.drawerGroup) this.scene.remove(this.drawerGroup);
+
+        this.bodyGroup = new THREE.Group();
+        this.bodyGroup.name = 'body';
+        this.drawerGroup = new THREE.Group();
+        this.drawerGroup.name = 'drawer';
+
+        const cfg = OfflineStore.state.viewerConfig;
+        const activeMod = OfflineStore.state.catalogModels.find(m => m.id === cfg.activeModelId) || OfflineStore.state.catalogModels[0];
+
+        const bodyMat = new THREE.MeshStandardMaterial({
+          map: this.createWoodCanvasTexture(cfg.baseColor),
+          roughness: 0.55
+        });
+
+        const frontFinishToUse = cfg.baseColor === 'negro' ? 'negro' : cfg.frontFinish;
+        const frontMat = new THREE.MeshStandardMaterial({
+          map: this.createWoodCanvasTexture(frontFinishToUse),
+          roughness: 0.48
+        });
+
+        const overhang = (activeMod.topOverhang || 0) / 1000;
+
+        // Techo, Piso y Laterales (Grupo body fijo)
+        const topMesh = new THREE.Mesh(new THREE.BoxGeometry(0.40 + overhang, 0.018, 0.335), bodyMat);
+        topMesh.position.set(overhang / 2, 0.44, 0);
+        this.bodyGroup.add(topMesh);
+
+        const bottomMesh = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.018, 0.335), bodyMat);
+        bottomMesh.position.set(0, 0.01, 0);
+        this.bodyGroup.add(bottomMesh);
+
+        const leftMesh = new THREE.Mesh(new THREE.BoxGeometry(0.018, 0.43, 0.335), bodyMat);
+        leftMesh.position.set(-0.191, 0.225, 0);
+        this.bodyGroup.add(leftMesh);
+
+        const rightMesh = new THREE.Mesh(new THREE.BoxGeometry(0.018, 0.43, 0.335), bodyMat);
+        rightMesh.position.set(0.191, 0.225, 0);
+        this.bodyGroup.add(rightMesh);
+
+        const backMesh = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.43, 0.006), bodyMat);
+        backMesh.position.set(0, 0.225, -0.164);
+        this.bodyGroup.add(backMesh);
+
+        // Cajón móvil independiente (Grupo drawer)
+        this.frontMesh = new THREE.Mesh(new THREE.BoxGeometry(0.362, 0.165, 0.018), frontMat);
+        this.frontMesh.position.set(0, 0.33, 0.165);
+        this.drawerGroup.add(this.frontMesh);
+
+        const drawerBox = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.13, 0.28), bodyMat);
+        drawerBox.position.set(0, 0.32, 0.02);
+        this.drawerGroup.add(drawerBox);
+
+        this.scene.add(this.bodyGroup);
+        this.scene.add(this.drawerGroup);
+      },
+
+      selectCatalogModel(modelId) {
+        OfflineStore.state.viewerConfig.activeModelId = modelId;
+        const mod = OfflineStore.state.catalogModels.find(m => m.id === modelId);
+        if (mod) {
+          document.getElementById('viewer3DModelTitle').textContent = mod.name;
+          document.getElementById('viewer3DModelDims').textContent = mod.dims;
+          document.getElementById('viewer3DPriceTag').textContent = '$' + mod.basePrice.toLocaleString('es-AR');
+        }
+        this.buildProceduralOrGLBMesita();
+        this.renderCatalogAndRecipeInfo();
+      },
+
+      setBaseColor(colorKey) {
+        OfflineStore.state.viewerConfig.baseColor = colorKey;
+        document.getElementById('btnBaseBlanco').classList.toggle('selected', colorKey === 'blanco');
+        document.getElementById('btnBaseNegro').classList.toggle('selected', colorKey === 'negro');
+
+        // Submenú condicional: solo visible cuando Blanco está activo
+        const subMenu = document.getElementById('drawerFrontSubmenu');
+        subMenu.style.display = colorKey === 'blanco' ? 'block' : 'none';
+
+        this.buildProceduralOrGLBMesita();
+        OfflineStore.commit(`Cambio de color base 3D a ${colorKey}`);
+      },
+
+      setFrontFinish(finishKey) {
+        if (OfflineStore.state.viewerConfig.baseColor !== 'blanco') return;
+        OfflineStore.state.viewerConfig.frontFinish = finishKey;
+        document.querySelectorAll('#frontTextureSwatches .swatch-dot').forEach(btn => {
+          btn.classList.toggle('selected', btn.getAttribute('data-front') === finishKey);
+        });
+        this.buildProceduralOrGLBMesita();
+        OfflineStore.commit(`Acabado de frente de cajón cambiado a ${finishKey}`);
+      },
+
+      toggleDrawerAnim() {
+        const isOpen = !OfflineStore.state.viewerConfig.drawerOpen;
+        OfflineStore.state.viewerConfig.drawerOpen = isOpen;
+        this.targetDrawerZ = isOpen ? 0.21 : 0;
+      },
+
+      resetCamera() {
+        if (!this.camera || !this.controls) return;
+        this.camera.position.set(0.85, 0.72, 1.05);
+        this.controls.target.set(0, 0.22, 0);
+        this.controls.update();
+      },
+
+      animate() {
+        requestAnimationFrame(() => this.animate());
+        if (this.drawerGroup) {
+          this.currentDrawerZ += (this.targetDrawerZ - this.currentDrawerZ) * 0.12;
+          this.drawerGroup.position.z = this.currentDrawerZ;
+        }
+        if (this.controls) this.controls.update();
+        if (this.renderer && this.scene && this.camera) {
+          this.renderer.render(this.scene, this.camera);
+        }
+      },
+
+      renderCatalogAndRecipeInfo() {
+        const grid = document.getElementById('catalogGridContainer');
+        if (grid) {
+          const activeId = OfflineStore.state.viewerConfig.activeModelId;
+          grid.innerHTML = OfflineStore.state.catalogModels.map(m => `
+            <div class="card-elevated" style="border-color:${m.id === activeId ? 'var(--accent-wood)' : 'var(--border-color)'};">
+              <div style="font-weight:700; font-size:14px;">${m.name}</div>
+              <div style="font-size:12px; color:var(--text-secondary); margin:4px 0;">${m.dims} — <strong style="color:var(--status-ok);">$${m.basePrice.toLocaleString('es-AR')}</strong></div>
+              <button class="btn ${m.id === activeId ? 'btn-primary' : ''}" style="width:100%; min-height:40px; margin-top:6px;" onclick="Viewer3DEngine.selectCatalogModel('${m.id}')">
+                ${m.id === activeId ? 'Visualizando en 3D' : 'Inspeccionar Modelo 3D'}
+              </button>
+            </div>
+          `).join('');
+        }
+
+        const recBox = document.getElementById('viewer3DRecipeDetails');
+        const rec = OfflineStore.state.recipes[0];
+        if (recBox && rec) {
+          recBox.innerHTML = rec.items.map(i => `• <strong>${i.qty}x</strong> ${i.name}`).join('<br>');
+        }
+      }
+    };
+
+    /* ========================================================================
+       CAPA 6: INVENTARIO, RECETAS, COMPRAS, PRESUPUESTOS, PEDIDOS Y CAJA
+       ======================================================================== */
+    const InventoryModule = {
+      toggleNewItem() {
+        const box = document.getElementById('newStockItemBox');
+        box.style.display = box.style.display === 'none' ? 'block' : 'none';
+      },
+
+      createItem() {
+        if (!SecurityRBAC.canWrite('STOCK_CREATE')) return;
+        const name = document.getElementById('stkName').value.trim();
+        if (!name) return AppUI.toast('Ingresá el nombre del material.', 'warn');
+
+        const item = {
+          id: 'stk_' + Date.now(),
+          code: document.getElementById('stkCode').value.trim() || 'MAT-' + Math.floor(Math.random() * 900),
+          name,
+          category: document.getElementById('stkCategory').value,
+          unit: document.getElementById('stkUnit').value.trim() || 'UNID',
+          qty: parseFloat(document.getElementById('stkQty').value) || 0,
+          min: parseFloat(document.getElementById('stkMin').value) || 5,
+          price: parseFloat(document.getElementById('stkPrice').value) || 0,
+          location: document.getElementById('stkLoc').value.trim() || 'Taller'
+        };
+
+        OfflineStore.state.stock.push(item);
+        this.recordMovement(item.name, 'ALTA INICIAL', item.qty);
+        document.getElementById('newStockItemBox').style.display = 'none';
+        OfflineStore.commit(`Alta de material en stock: ${name}`);
+      },
+
+      adjustQty(stockId, delta) {
+        if (!SecurityRBAC.canWrite('STOCK_ADJUST')) return;
+        const item = OfflineStore.state.stock.find(s => s.id === stockId);
+        if (!item) return;
+        if (item.qty + delta < 0) {
+          return AppUI.toast('Operación bloqueada: No se permiten existencias negativas sin autorización.', 'err');
+        }
+        item.qty += delta;
+        this.recordMovement(item.name, delta > 0 ? 'ENTRADA MANUAL' : 'SALIDA MANUAL', delta);
+        OfflineStore.commit(`Ajuste stock ${item.name} (${delta > 0 ? '+' : ''}${delta})`);
+      },
+
+      recordMovement(itemName, type, qtyDelta) {
+        if (!OfflineStore.state.stockMovements) OfflineStore.state.stockMovements = [];
+        OfflineStore.state.stockMovements.unshift({
+          id: 'mov_' + Date.now() + '_' + Math.random().toString(36).slice(2, 5),
+          date: new Date().toLocaleString('es-AR'),
+          itemName,
+          type,
+          qtyDelta,
+          user: SecurityRBAC.currentUser.name
+        });
+      },
+
+      render() {
+        const cont = document.getElementById('inventoryCardsContainer');
+        if (!cont) return;
+        const q = (document.getElementById('stkSearchInput')?.value || '').toLowerCase();
+        const cat = document.getElementById('stkFilterCat')?.value || 'all';
+
+        const filtered = (OfflineStore.state.stock || []).filter(s => {
+          const matchText = s.name.toLowerCase().includes(q) || (s.code || '').toLowerCase().includes(q);
+          if (!matchText) return false;
+          if (cat === 'low') return s.qty <= (s.min || 5);
+          if (cat !== 'all') return s.category === cat;
+          return true;
+        });
+
+        cont.innerHTML = filtered.map(s => {
+          const isLow = s.qty <= (s.min || 5);
+          return `
+            <div class="item-card">
+              <div class="item-card-top">
+                <div>
+                  <div class="item-title">${s.name}</div>
+                  <div class="item-meta">Código: <strong>${s.code}</strong> | Ubicación: ${s.location} | Costo: $${s.price.toLocaleString('es-AR')}</div>
+                </div>
+                <span class="status-pill ${isLow ? 'err' : 'ok'}">${isLow ? '⚠️ BAJO' : 'OK'}</span>
+              </div>
+              <div class="stepper-controls">
+                <button class="stepper-btn" onclick="InventoryModule.adjustQty('${s.id}', -1)" aria-label="Disminuir">−</button>
+                <span class="stepper-val">${s.qty} ${s.unit}</span>
+                <button class="stepper-btn" onclick="InventoryModule.adjustQty('${s.id}', 1)" aria-label="Aumentar">+</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        const movCont = document.getElementById('inventoryMovementsList');
+        if (movCont) {
+          movCont.innerHTML = (OfflineStore.state.stockMovements || []).slice(0, 12).map(m => `
+            <div style="font-size:12px; padding:6px 0; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between;">
+              <span><strong>${m.type}</strong> — ${m.itemName} (${m.user})</span>
+              <span style="font-weight:700; color:${m.qtyDelta >= 0 ? 'var(--status-ok)' : 'var(--status-err)'};">${m.qtyDelta >= 0 ? '+' : ''}${m.qtyDelta}</span>
+            </div>
+          `).join('') || '<div style="font-size:12px; color:var(--text-secondary);">Sin movimientos registrados.</div>';
+        }
+      }
+    };
+
+    const RecipesModule = {
+      toggleForm() {
+        const box = document.getElementById('newRecipeFormBox');
+        box.style.display = box.style.display === 'none' ? 'block' : 'none';
+        if (box.style.display === 'block') this.renderStockChecks();
+      },
+
+      renderStockChecks() {
+        const list = document.getElementById('recipeStockSelectorList');
+        if (!list) return;
+        list.innerHTML = (OfflineStore.state.stock || []).map(s => `
+          <div class="card-elevated" style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 10px;">
+            <label style="margin:0; display:flex; align-items:center; gap:8px; color:var(--text-primary); flex:1;">
+              <input type="checkbox" id="rec_chk_${s.id}" style="width:22px; min-height:22px;">
+              <span>${s.name} ($${s.price})</span>
+            </label>
+            <input type="number" id="rec_qty_${s.id}" inputmode="numeric" value="1" min="1" style="width:76px; min-height:38px;">
+          </div>
+        `).join('');
+      },
+
+      saveRecipe() {
+        if (!SecurityRBAC.canWrite('RECIPE_CREATE')) return;
+        const name = document.getElementById('recNombreInput').value.trim();
+        if (!name) return AppUI.toast('Ingresá el nombre del mueble para la receta.', 'warn');
+
+        const laborCost = parseFloat(document.getElementById('recManoObraInput').value) || 0;
+        const items = [];
+        let materialsCost = 0;
+
+        (OfflineStore.state.stock || []).forEach(s => {
+          const chk = document.getElementById(`rec_chk_${s.id}`);
+          const qtyInput = document.getElementById(`rec_qty_${s.id}`);
+          if (chk && chk.checked) {
+            const q = parseFloat(qtyInput.value) || 1;
+            items.push({ stockId: s.id, name: s.name, qty: q, unitPrice: s.price });
+            materialsCost += (q * s.price);
+          }
+        });
+
+        OfflineStore.state.recipes.push({
+          id: 'rec_' + Date.now(),
+          version: (OfflineStore.state.recipes.length + 1),
+          name,
+          dims: document.getElementById('recDimsInput').value.trim(),
+          laborCost,
+          costTotal: Math.round(materialsCost + laborCost),
+          items
+        });
+
+        document.getElementById('newRecipeFormBox').style.display = 'none';
+        OfflineStore.commit(`Receta guardada: ${name}`);
+      },
+
+      render() {
+        const cont = document.getElementById('recipesListContainer');
+        if (!cont) return;
+        cont.innerHTML = (OfflineStore.state.recipes || []).map(r => `
+          <div class="item-card">
+            <div class="item-card-top">
+              <div>
+                <div class="item-title">${r.name} <span style="font-size:11px; color:var(--accent-wood);">(v${r.version || 1})</span></div>
+                <div class="item-meta">Medidas: ${r.dims} | Costo Total Estimado: <strong>$${(r.costTotal || 0).toLocaleString('es-AR')}</strong></div>
+              </div>
+            </div>
+            <div style="font-size:12px; color:var(--text-secondary);">
+              ${(r.items || []).map(i => `${i.qty}x ${i.name}`).join(' • ')}
+            </div>
+          </div>
+        `).join('');
+      }
+    };
+
+    const PurchasesModule = {
+      registerPurchase() {
+        if (!SecurityRBAC.canWrite('PURCHASE_CREATE')) return;
+        const supplier = document.getElementById('purSupplier').value.trim() || 'Proveedor General';
+        const stockId = document.getElementById('purStockId').value;
+        const qty = parseFloat(document.getElementById('purQty').value) || 1;
+        const unitCost = parseFloat(document.getElementById('purUnitCost').value) || 0;
+        const status = document.getElementById('purStatus').value;
+
+        const stockItem = OfflineStore.state.stock.find(s => s.id === stockId);
+        if (!stockItem) return;
+
+        if (status === 'recibido') {
+          stockItem.qty += qty;
+          stockItem.price = unitCost;
+          InventoryModule.recordMovement(stockItem.name, `COMPRA RECIBIDA (${supplier})`, qty);
+        }
+
+        const total = Math.round(qty * unitCost);
+        OfflineStore.state.purchases.unshift({
+          id: 'pur_' + Date.now(),
+          date: new Date().toLocaleDateString('es-AR'),
+          supplier,
+          itemName: stockItem.name,
+          qty,
+          total,
+          status
+        });
+
+        OfflineStore.commit(`Compra registrada (${supplier}): ${qty}x ${stockItem.name}`);
+      },
+
+      render() {
+        const sel = document.getElementById('purStockId');
+        if (sel) {
+          sel.innerHTML = (OfflineStore.state.stock || []).map(s => `<option value="${s.id}">${s.name} (Actual: ${s.qty})</option>`).join('');
+        }
+        const list = document.getElementById('purchasesHistoryList');
+        if (list) {
+          list.innerHTML = (OfflineStore.state.purchases || []).map(p => `
+            <div class="item-card">
+              <div class="item-card-top">
+                <div>
+                  <div class="item-title">${p.supplier} — ${p.qty}x ${p.itemName}</div>
+                  <div class="item-meta">Fecha: ${p.date} | Total: $${p.total.toLocaleString('es-AR')}</div>
+                </div>
+                <span class="status-pill ${p.status === 'recibido' ? 'ok' : 'warn'}">${p.status.toUpperCase()}</span>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+    };
+
+    const QuotesModule = {
+      onSelectRecipe() {
+        const recId = document.getElementById('quoRecipeSelect').value;
+        const rec = OfflineStore.state.recipes.find(r => r.id === recId);
+        if (rec) {
+          document.getElementById('quoDetail').value = `${rec.name} (${rec.dims})`;
+          document.getElementById('quoUnitPrice').value = Math.round(rec.costTotal * 1.35);
+          this.recalc();
+        }
+      },
+
+      recalc() {
+        const qty = parseInt(document.getElementById('quoQty').value) || 1;
+        const unitP = parseFloat(document.getElementById('quoUnitPrice').value) || 0;
+        const disc = parseFloat(document.getElementById('quoDiscountPct').value) || 0;
+        const freight = parseFloat(document.getElementById('quoFreight').value) || 0;
+        const install = parseFloat(document.getElementById('quoInstall').value) || 0;
+        const deposit = parseFloat(document.getElementById('quoDeposit').value) || 0;
+
+        const sub = qty * unitP * (1 - (disc / 100));
+        const total = Math.round(sub + freight + install);
+        const balance = Math.max(0, total - deposit);
+
+        document.getElementById('quoTotalDisplay').textContent = '$' + total.toLocaleString('es-AR');
+        document.getElementById('quoBalanceDisplay').textContent = '$' + balance.toLocaleString('es-AR');
+        return { qty, total, balance, deposit };
+      },
+
+      saveDraft() {
+        if (!SecurityRBAC.canWrite('QUOTE_SAVE')) return;
+        const calc = this.recalc();
+        const client = document.getElementById('quoClientName').value.trim() || 'Cliente Mostrador';
+        const detail = document.getElementById('quoDetail').value.trim() || 'Mueble a Medida';
+
+        OfflineStore.state.quotes.unshift({
+          id: 'quo_' + Date.now(),
+          client,
+          detail,
+          qty: calc.qty,
+          total: calc.total,
+          deposit: calc.deposit,
+          status: 'PENDIENTE',
+          date: new Date().toLocaleDateString('es-AR')
+        });
+        OfflineStore.commit(`Presupuesto guardado para ${client}`);
+        AppUI.toast('Presupuesto guardado en estado PENDIENTE.', 'ok');
+      },
+
+      sendWhatsApp() {
+        const calc = this.recalc();
+        const client = document.getElementById('quoClientName').value.trim() || 'Cliente';
+        const phone = (document.getElementById('quoClientPhone').value || '').replace(/\D/g, '');
+        const detail = document.getElementById('quoDetail').value.trim() || 'Mueble Carpintería JL';
+        const days = document.getElementById('quoDeliveryDays').value.trim();
+
+        const msg = `Hola *${client}*! Te enviamos el presupuesto de *Carpintería JL*:\n\n` +
+          `• *Trabajo:* ${calc.qty}x ${detail}\n` +
+          `• *Plazo estimado:* ${days}\n` +
+          `• *Total Final:* $${calc.total.toLocaleString('es-AR')}\n` +
+          `• *Saldo restando seña:* $${calc.balance.toLocaleString('es-AR')}`;
+
+        const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+        window.open(url, '_blank');
+      },
+
+      confirmAndDeductStockPrompt() {
+        if (!SecurityRBAC.canWrite('ORDER_CONFIRM_DEDUCT')) return;
+        const recId = document.getElementById('quoRecipeSelect').value;
+        const rec = OfflineStore.state.recipes.find(r => r.id === recId) || OfflineStore.state.recipes[0];
+        const calc = this.recalc();
+
+        let summaryHtml = `<p style="margin-bottom:8px;">Se creará el Pedido de Producción y se descontarán del inventario los materiales para <strong>${calc.qty} unidad(es)</strong>:</p>`;
+        if (rec && rec.items) {
+          summaryHtml += rec.items.map(i => {
+            const stk = OfflineStore.state.stock.find(s => s.id === i.stockId);
+            const needed = i.qty * calc.qty;
+            const avail = stk ? stk.qty : 0;
+            const warn = avail < needed ? `<span style="color:var(--status-err);">(Faltan ${needed - avail})</span>` : `<span style="color:var(--status-ok);">(Disponible: ${avail})</span>`;
+            return `<div style="font-size:13px; margin-bottom:4px;">• ${needed}x ${i.name} ${warn}</div>`;
+          }).join('');
+        }
+
+        AppUI.openConfirm(
+          'Confirmar Pedido y Descontar Stock',
+          summaryHtml,
+          () => this.executeIdempotentOrderAndStockDeduction(rec, calc)
+        );
+      },
+
+      executeIdempotentOrderAndStockDeduction(rec, calc) {
+        const client = document.getElementById('quoClientName').value.trim() || 'Cliente Confirmado';
+        const detail = document.getElementById('quoDetail').value.trim() || (rec ? rec.name : 'Mueble');
+        const idempotencyKey = `deduct_${client}_${detail}_${calc.total}_${Math.floor(Date.now() / 5000)}`;
+
+        if (OfflineStore.state.processedTransactions[idempotencyKey]) {
+          return AppUI.toast('Operación duplicada prevenida por llave de idempotencia.', 'warn');
+        }
+        OfflineStore.state.processedTransactions[idempotencyKey] = true;
+
+        if (rec && rec.items) {
+          rec.items.forEach(ins => {
+            const stk = OfflineStore.state.stock.find(s => s.id === ins.stockId);
+            if (stk) {
+              const discountQty = ins.qty * calc.qty;
+              stk.qty = Math.max(0, stk.qty - discountQty);
+              InventoryModule.recordMovement(stk.name, `CONSUMO PEDIDO (${client})`, -discountQty);
             }
           });
         }
+
+        OfflineStore.state.orders.unshift({
+          id: 'ord_' + Date.now(),
+          client,
+          detail: `${calc.qty}x ${detail}`,
+          total: calc.total,
+          deposit: calc.deposit,
+          status: 'En fabricación',
+          date: new Date().toLocaleDateString('es-AR')
+        });
+
+        if (calc.deposit > 0) {
+          OfflineStore.state.cashLedger.unshift({
+            id: 'csh_' + Date.now(),
+            date: new Date().toISOString(),
+            type: 'anticipo',
+            concept: `Anticipo Pedido ${client} (${detail})`,
+            amount: calc.deposit,
+            method: 'Transferencia',
+            user: SecurityRBAC.currentUser.name
+          });
+        }
+
+        OfflineStore.commit(`Pedido confirmado y stock descontado: ${client}`);
+        AppUI.navigate('pedidos');
+        AppUI.toast('Pedido en fabricación y stock descontado correctamente.', 'ok');
+      },
+
+      render() {
+        const sel = document.getElementById('quoRecipeSelect');
+        if (sel) {
+          sel.innerHTML = `<option value="">-- Seleccionar Receta Vinculada --</option>` +
+            (OfflineStore.state.recipes || []).map(r => `<option value="${r.id}">${r.name} (Costo: $${r.costTotal})</option>`).join('');
+        }
+        const list = document.getElementById('quotesListContainer');
+        if (list) {
+          list.innerHTML = (OfflineStore.state.quotes || []).map(q => `
+            <div class="item-card">
+              <div class="item-card-top">
+                <div>
+                  <div class="item-title">${q.client} — ${q.qty}x ${q.detail}</div>
+                  <div class="item-meta">Fecha: ${q.date} | Total: <strong>$${q.total.toLocaleString('es-AR')}</strong></div>
+                </div>
+                <span class="status-pill warn">${q.status}</span>
+              </div>
+            </div>
+          `).join('') || '<div style="font-size:12px; color:var(--text-secondary);">No hay presupuestos en borrador.</div>';
+        }
       }
+    };
 
-      if(!window.appData.pedidos) window.appData.pedidos = [];
-      window.appData.pedidos.unshift({ cliente: cli, mueble, total });
-      saveDataCloud();
-      switchTab('caja');
-    }
+    const OrdersModule = {
+      cycleStatus(orderId) {
+        if (!SecurityRBAC.canWrite('ORDER_STATUS')) return;
+        const states = ['Confirmado', 'Esperando materiales', 'En fabricación', 'En montaje', 'Terminado', 'Listo para entregar', 'Entregado'];
+        const ord = OfflineStore.state.orders.find(o => o.id === orderId);
+        if (!ord) return;
+        const idx = states.indexOf(ord.status);
+        ord.status = states[(idx + 1) % states.length];
+        OfflineStore.commit(`Estado de pedido ${ord.client} actualizado a ${ord.status}`);
+      },
 
-    function renderCaja() {
-      const cont = document.getElementById('pedidosList');
-      if(!cont) return;
-      cont.innerHTML = '';
-      let totFact = 0;
-      if(!window.appData.pedidos) window.appData.pedidos = [];
+      render() {
+        const cont = document.getElementById('ordersListContainer');
+        if (!cont) return;
+        cont.innerHTML = (OfflineStore.state.orders || []).map(o => `
+          <div class="item-card">
+            <div class="item-card-top">
+              <div>
+                <div class="item-title">${o.client}</div>
+                <div class="item-meta">${o.detail} | Total: $${o.total.toLocaleString('es-AR')}</div>
+              </div>
+              <span class="status-pill ${o.status === 'Listo para entregar' || o.status === 'Entregado' ? 'ok' : 'warn'}">${o.status}</span>
+            </div>
+            <button class="btn" onclick="OrdersModule.cycleStatus('${o.id}')">Cambiar Etapa de Producción ➔</button>
+          </div>
+        `).join('') || '<div style="font-size:13px; color:var(--text-secondary);">No hay pedidos activos en producción.</div>';
+      }
+    };
 
-      window.appData.pedidos.forEach((p) => {
-        totFact += p.total;
+    const FinanceModule = {
+      addEntry() {
+        if (!SecurityRBAC.canWrite('CAJA_WRITE')) return;
+        const type = document.getElementById('cashType').value;
+        const method = document.getElementById('cashMethod').value;
+        const concept = document.getElementById('cashConcept').value.trim();
+        const amount = parseFloat(document.getElementById('cashAmount').value);
+
+        if (!concept || !amount || amount <= 0) {
+          return AppUI.toast('Ingresá un concepto e importe válido mayor a cero.', 'warn');
+        }
+
+        OfflineStore.state.cashLedger.unshift({
+          id: 'csh_' + Date.now(),
+          date: new Date().toISOString(),
+          type,
+          concept,
+          amount,
+          method,
+          user: SecurityRBAC.currentUser.name
+        });
+
+        document.getElementById('cashConcept').value = '';
+        document.getElementById('cashAmount').value = '';
+        OfflineStore.commit(`Movimiento de caja (${type}): $${amount}`);
+      },
+
+      render() {
+        let income = 0;
+        let expense = 0;
+        const list = document.getElementById('cashLedgerContainer');
+
+        (OfflineStore.state.cashLedger || []).forEach(c => {
+          if (c.type === 'egreso') expense += c.amount;
+          else income += c.amount;
+        });
+
+        const bal = income - expense;
+        const balEl = document.getElementById('cashBalanceVal');
+        if (balEl) {
+          balEl.textContent = '$' + bal.toLocaleString('es-AR');
+          document.getElementById('cashIncomeVal').textContent = '$' + income.toLocaleString('es-AR');
+          document.getElementById('cashExpenseVal').textContent = '$' + expense.toLocaleString('es-AR');
+        }
+
+        if (list) {
+          list.innerHTML = (OfflineStore.state.cashLedger || []).map(c => `
+            <div class="item-card" style="padding:10px 12px;">
+              <div class="item-card-top">
+                <div>
+                  <div class="item-title">${c.concept}</div>
+                  <div class="item-meta">${new Date(c.date).toLocaleDateString('es-AR')} • ${c.method} • ${c.user}</div>
+                </div>
+                <strong style="color:${c.type === 'egreso' ? 'var(--status-err)' : 'var(--status-ok)'};">
+                  ${c.type === 'egreso' ? '-' : '+'}$${c.amount.toLocaleString('es-AR')}
+                </strong>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+    };
+
+    const FreightModule = {
+      calc() {
+        const km = parseFloat(document.getElementById('frKm').value) || 0;
+        const rate = parseFloat(document.getElementById('frRateKm').value) || 0;
+        const base = parseFloat(document.getElementById('frBaseFee').value) || 0;
+        const mult = parseFloat(document.getElementById('frRoundTrip').value) || 1;
+        const total = Math.round(base + (km * rate * mult));
+        document.getElementById('frTotalResult').textContent = '$' + total.toLocaleString('es-AR');
+        return total;
+      },
+      applyToQuote() {
+        const total = this.calc();
+        document.getElementById('quoFreight').value = total;
+        QuotesModule.recalc();
+        AppUI.navigate('presupuestos');
+        AppUI.toast(`Flete de $${total.toLocaleString('es-AR')} aplicado al presupuesto.`, 'ok');
+      }
+    };
+
+    const BackupModule = {
+      exportJSON() {
+        const payload = JSON.stringify(OfflineStore.state, null, 2);
+        const blob = new Blob([payload], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `carpinteria_jl_backup_${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+      },
+
+      exportCSVReport() {
+        const rows = [['Fecha', 'Tipo', 'Concepto', 'Metodo', 'Importe', 'Usuario']];
+        (OfflineStore.state.cashLedger || []).forEach(c => {
+          rows.push([c.date, c.type, `"${c.concept}"`, c.method, c.amount, c.user]);
+        });
+        const csv = rows.map(r => r.join(',')).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'informe_caja_jl.csv';
+        a.click();
+      },
+
+      previewImport(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const parsed = JSON.parse(e.target.result);
+            if (!parsed.schemaVersion || !Array.isArray(parsed.stock) || !Array.isArray(parsed.boards)) {
+              return AppUI.toast('Archivo JSON inválido: falta schemaVersion o colecciones base.', 'err');
+            }
+            const box = document.getElementById('backupPreviewBox');
+            box.style.display = 'block';
+            box.innerHTML = `
+              <strong style="color:var(--status-ok);">✓ Respaldo Verificado (${parsed.schemaVersion})</strong>
+              <div style="font-size:12px; margin:6px 0;">
+                Placas: ${parsed.boards.length} | Items Stock: ${parsed.stock.length} | Recetas: ${(parsed.recipes || []).length}
+              </div>
+              <button class="btn btn-primary btn-block" id="btnConfirmRestoreNow">Confirmar Restauración Segura</button>
+            `;
+            document.getElementById('btnConfirmRestoreNow').onclick = () => {
+              if (!SecurityRBAC.canWrite('BACKUP_RESTORE')) return;
+              OfflineStore.state = parsed;
+              OfflineStore.commit('Restauración verificada de copia de seguridad JSON');
+              box.style.display = 'none';
+              AppUI.toast('Base de datos restaurada con éxito.', 'ok');
+            };
+          } catch (err) {
+            AppUI.toast('Error al leer el archivo JSON.', 'err');
+          }
+        };
+        reader.readAsText(file);
+      }
+    };
+
+    /* ========================================================================
+       CAPA 7: SISTEMA DE NAVEGACIÓN EXCLUSIVO HAMBURGUESA Y GESTIÓN DE VISTAS
+       ======================================================================== */
+    const MENU_STRUCTURE = [
+      {
+        category: 'INICIO',
+        items: [
+          { id: 'panel', label: 'Panel principal', view: 'dashboard', module: 'dashboard' }
+        ]
+      },
+      {
+        category: 'FABRICACIÓN',
+        items: [
+          { id: 'calc', label: 'Calculadora de muebles', view: 'calculadora', module: 'calculadora' },
+          { id: 'mesita', label: 'Mesita con techo variable', view: 'calculadora', module: 'calculadora' },
+          { id: 'opt', label: 'Optimizador de cortes', view: 'optimizador', module: 'optimizador' },
+          { id: 'cat', label: 'Catálogo de muebles', view: 'catalogo3d', module: 'catalogo3d' },
+          { id: 'v3d', label: 'Visor 3D', view: 'catalogo3d', module: 'catalogo3d' },
+          { id: 'rec', label: 'Recetas de fabricación', view: 'recetas', module: 'recetas' },
+          { id: 'ord_prod', label: 'Órdenes de producción', view: 'pedidos', module: 'pedidos' }
+        ]
+      },
+      {
+        category: 'INVENTARIO',
+        items: [
+          { id: 'stk_mat', label: 'Stock de materiales', view: 'stock', module: 'stock', filter: 'all' },
+          { id: 'stk_pla', label: 'Placas de melamina', view: 'stock', module: 'stock', filter: 'placas' },
+          { id: 'stk_her', label: 'Herrajes y tornillería', view: 'stock', module: 'stock', filter: 'herrajes' },
+          { id: 'stk_mov', label: 'Movimientos de inventario', view: 'stock', module: 'stock', filter: 'all' },
+          { id: 'stk_low', label: 'Alertas de stock', view: 'stock', module: 'stock', filter: 'low' },
+          { id: 'prov', label: 'Proveedores y compras', view: 'proveedores', module: 'proveedores' }
+        ]
+      },
+      {
+        category: 'COMERCIAL',
+        items: [
+          { id: 'presup', label: 'Presupuestos', view: 'presupuestos', module: 'presupuestos' },
+          { id: 'cli', label: 'Clientes', view: 'presupuestos', module: 'presupuestos' },
+          { id: 'ped', label: 'Pedidos', view: 'pedidos', module: 'pedidos' },
+          { id: 'ven', label: 'Ventas', view: 'caja', module: 'caja' },
+          { id: 'fle', label: 'Fletes', view: 'fletes', module: 'fletes' }
+        ]
+      },
+      {
+        category: 'ADMINISTRACIÓN',
+        items: [
+          { id: 'caj', label: 'Caja', view: 'caja', module: 'caja' },
+          { id: 'mov_fin', label: 'Movimientos financieros', view: 'caja', module: 'caja' },
+          { id: 'inf', label: 'Informes y estadísticas', view: 'sistema', module: 'sistema' },
+          { id: 'bak', label: 'Respaldos y restauración', view: 'sistema', module: 'sistema' }
+        ]
+      },
+      {
+        category: 'SISTEMA',
+        items: [
+          { id: 'not', label: 'Notificaciones', view: 'dashboard', module: 'dashboard' },
+          { id: 'usr', label: 'Usuarios y permisos', view: 'sistema', module: 'sistema' },
+          { id: 'aju', label: 'Ajustes y Apariencia', view: 'sistema', module: 'sistema' },
+          { id: 'abt', label: 'Acerca de la aplicación', view: 'sistema', module: 'sistema' }
+        ]
+      }
+    ];
+
+    const AppUI = {
+      activeMenuId: 'panel',
+
+      toggleDrawer(open) {
+        const drawer = document.getElementById('appDrawer');
+        const backdrop = document.getElementById('drawerBackdrop');
+        if (open) {
+          drawer.classList.add('open');
+          backdrop.classList.add('open');
+        } else {
+          drawer.classList.remove('open');
+          backdrop.classList.remove('open');
+        }
+      },
+
+      renderDrawerMenu() {
+        const nav = document.getElementById('drawerNavList');
+        if (!nav) return;
+        let html = '';
+
+        MENU_STRUCTURE.forEach(group => {
+          const visibleItems = group.items.filter(item => SecurityRBAC.canViewModule(item.module));
+          if (visibleItems.length === 0) return;
+
+          html += `<div class="nav-cat-label">${group.category}</div>`;
+          visibleItems.forEach(item => {
+            const isActive = this.activeMenuId === item.id;
+            html += `
+              <button class="drawer-nav-btn ${isActive ? 'active' : ''}"
+                onclick="AppUI.selectMenuItem('${item.id}', '${item.view}', '${item.label}', '${item.filter || ''}')">
+                <span>${item.label}</span>
+              </button>
+            `;
+          });
+        });
+
+        nav.innerHTML = html;
+      },
+
+      selectMenuItem(menuId, viewName, titleLabel, stockFilter) {
+        this.activeMenuId = menuId;
+        this.toggleDrawer(false);
+        this.showView(viewName, titleLabel);
+
+        if (stockFilter && document.getElementById('stkFilterCat')) {
+          document.getElementById('stkFilterCat').value = stockFilter;
+          InventoryModule.render();
+        }
+        this.renderDrawerMenu();
+      },
+
+      navigate(shortcutTarget) {
+        const map = {
+          dashboard: { id: 'panel', view: 'dashboard', title: 'Panel Principal' },
+          calculadora: { id: 'calc', view: 'calculadora', title: 'Calculadora de Muebles' },
+          optimizador: { id: 'opt', view: 'optimizador', title: 'Optimizador de Cortes' },
+          catalogo3d: { id: 'v3d', view: 'catalogo3d', title: 'Catálogo y Visor 3D' },
+          recetas: { id: 'rec', view: 'recetas', title: 'Recetas de Fabricación' },
+          stock: { id: 'stk_mat', view: 'stock', title: 'Stock de Materiales' },
+          'alertas-stock': { id: 'stk_low', view: 'stock', title: 'Alertas de Stock Bajo', filter: 'low' },
+          proveedores: { id: 'prov', view: 'proveedores', title: 'Proveedores y Compras' },
+          presupuestos: { id: 'presup', view: 'presupuestos', title: 'Presupuestos y WhatsApp' },
+          pedidos: { id: 'ped', view: 'pedidos', title: 'Pedidos y Producción' },
+          ventas: { id: 'ven', view: 'caja', title: 'Ventas y Caja' },
+          caja: { id: 'caj', view: 'caja', title: 'Caja y Finanzas' },
+          fletes: { id: 'fle', view: 'fletes', title: 'Calculadora de Fletes' },
+          notificaciones: { id: 'not', view: 'dashboard', title: 'Panel Principal' }
+        };
+        const target = map[shortcutTarget] || map.dashboard;
+        this.selectMenuItem(target.id, target.view, target.title, target.filter);
+      },
+
+      showView(viewName, titleLabel) {
+        document.querySelectorAll('.module-view').forEach(s => s.classList.remove('active'));
+        const targetEl = document.getElementById('view-' + viewName);
+        if (targetEl) targetEl.classList.add('active');
+        document.getElementById('headerSectionTitle').textContent = titleLabel;
+
+        if (viewName === 'catalogo3d') {
+          setTimeout(() => Viewer3DEngine.init(), 60);
+        }
+        if (viewName === 'optimizador') {
+          setTimeout(() => OptimizerEngine.render(), 40);
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+
+      refreshAllViews() {
+        const st = OfflineStore.state;
+        const lowCount = (st.stock || []).filter(s => s.qty <= (s.min || 5)).length;
+        document.getElementById('headerAlertBadge').textContent = lowCount;
+        document.getElementById('kpiStockBajo').textContent = lowCount;
+
+        let ingresosMes = 0;
+        let egresosMes = 0;
+        (st.cashLedger || []).forEach(c => {
+          if (c.type === 'egreso') egresosMes += c.amount;
+          else ingresosMes += c.amount;
+        });
+
+        document.getElementById('kpiVentasDia').textContent = '$' + ingresosMes.toLocaleString('es-AR');
+        document.getElementById('kpiIngresosMes').textContent = '$' + ingresosMes.toLocaleString('es-AR');
+        document.getElementById('kpiSaldoCaja').textContent = '$' + (ingresosMes - egresosMes).toLocaleString('es-AR');
+        document.getElementById('kpiPresupPend').textContent = (st.quotes || []).length;
+        document.getElementById('kpiPedidosFab').textContent = (st.orders || []).filter(o => o.status === 'En fabricación').length;
+        document.getElementById('kpiPedidosListos').textContent = (st.orders || []).filter(o => o.status === 'Listo para entregar').length;
+        document.getElementById('kpiProxEntregas').textContent = (st.orders || []).length;
+
+        const actEl = document.getElementById('dashRecentActivityList');
+        if (actEl) {
+          actEl.innerHTML = (st.auditLog || []).slice(0, 6).map(a => `
+            <div style="font-size:12px; padding:6px 0; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between;">
+              <span><strong>${a.action}</strong> (${a.user})</span>
+              <span style="color:var(--text-secondary);">${a.date}</span>
+            </div>
+          `).join('') || '<div style="font-size:12px; color:var(--text-secondary);">Taller listo para operar.</div>';
+        }
+
+        DomainFurnitureCalc.recalculateUI();
+        OptimizerEngine.render();
+        InventoryModule.render();
+        RecipesModule.render();
+        PurchasesModule.render();
+        QuotesModule.render();
+        OrdersModule.render();
+        FinanceModule.render();
+        Viewer3DEngine.renderCatalogAndRecipeInfo();
+      },
+
+      toast(msg, level = 'ok') {
+        const cont = document.getElementById('toastContainer');
+        if (!cont) return;
         const div = document.createElement('div');
-        div.className = 'corte-row';
-        div.innerHTML = `<div><strong>${p.cliente}</strong>: ${p.mueble}</div><strong style="color:var(--green);">$${p.total}</strong>`;
+        div.className = 'toast-msg';
+        if (level === 'err') div.style.borderLeftColor = 'var(--status-err)';
+        if (level === 'warn') div.style.borderLeftColor = 'var(--status-warn)';
+        div.innerHTML = `<span>${msg}</span>`;
         cont.appendChild(div);
+        setTimeout(() => div.remove(), 3500);
+      },
+
+      openConfirm(title, htmlBody, onConfirmCallback) {
+        document.getElementById('confirmDialogTitle').textContent = title;
+        document.getElementById('confirmDialogBody').innerHTML = htmlBody;
+        const btn = document.getElementById('confirmDialogActionBtn');
+        btn.onclick = () => {
+          this.closeConfirm();
+          onConfirmCallback();
+        };
+        document.getElementById('confirmDialog').classList.add('open');
+      },
+
+      closeConfirm() {
+        document.getElementById('confirmDialog').classList.remove('open');
+      }
+    };
+
+    /* ========================================================================
+       CAPA 8: SUITE DE PRUEBAS AUTOMATIZADAS INTEGRADA (VERIFICACIÓN DOMINIO)
+       ======================================================================== */
+    const TestSuiteRunner = {
+      runAll() {
+        const logs = [];
+        const assert = (name, cond) => {
+          logs.push(`${cond ? '✅ PASS' : '❌ FAIL'}: ${name}`);
+        };
+
+        // Test 1: Modo 1 Tapa Volada mantiene cuerpo fijo
+        const b = OfflineStore.state.boards[0];
+        const m1 = DomainFurnitureCalc.calculateCustomFurniture({
+          modoEnsanche: 'modo1_tapa_volada', techoAncho: 560, techoProf: 380,
+          cuerpoAnchoBase: 400, cuerpoProfBase: 335, altoTotal: 450, espesor: 18,
+          cantCajones: 1, altoFrente: 160, board: b, correderaTipo: 'telescopica',
+          manoObra: 20000, desperdicioPct: 10, tipoRentabilidad: 'recargo', porcentajeGanancia: 30, cantidadLote: 1
+        });
+        assert('Modo 1 Tapa Volada conserva ancho de cuerpo base (400mm)', m1.effCuerpoAncho === 400 && m1.techoAncho === 560);
+
+        // Test 2: Modo 2 Proporcional ensancha cuerpo completo
+        const m2 = DomainFurnitureCalc.calculateCustomFurniture({
+          modoEnsanche: 'modo2_proporcional', techoAncho: 560, techoProf: 380,
+          cuerpoAnchoBase: 400, cuerpoProfBase: 335, altoTotal: 450, espesor: 18,
+          cantCajones: 1, altoFrente: 160, board: b, correderaTipo: 'telescopica',
+          manoObra: 20000, desperdicioPct: 10, tipoRentabilidad: 'recargo', porcentajeGanancia: 30, cantidadLote: 1
+        });
+        assert('Modo 2 Ensanche Proporcional actualiza cuerpo a 560mm', m2.effCuerpoAncho === 560 && m2.effCuerpoProf === 380);
+
+        // Test 3: Bloqueo de rotación por restricción de veta
+        const testBoard = { w: 1000, h: 600, margin: 10, kerf: 4, cuts: [{ id: 't1', w: 500, h: 300, allowRot: false }] };
+        const pack = OptimizerEngine.packShelfRectilinear(testBoard);
+        assert('Optimizador respeta bloqueo de giro 90° (allowRot=false)', pack.placed.length === 1 && pack.placed[0].rotated === false);
+
+        // Test 4: Distinción Margen vs Recargo
+        const mMargin = DomainFurnitureCalc.calculateCustomFurniture({
+          modoEnsanche: 'modo1_tapa_volada', techoAncho: 400, techoProf: 335,
+          cuerpoAnchoBase: 400, cuerpoProfBase: 335, altoTotal: 450, espesor: 18,
+          cantCajones: 1, altoFrente: 160, board: b, correderaTipo: 'telescopica',
+          manoObra: 20000, desperdicioPct: 0, tipoRentabilidad: 'margen', porcentajeGanancia: 50, cantidadLote: 1
+        });
+        assert('Cálculo de Margen del 50% duplica exactamente el costo', mMargin.precioVentaLote === mMargin.costoTotalLote * 2);
+
+        document.getElementById('selfTestResultsBox').innerHTML = logs.join('<br>');
+      }
+    };
+
+    // Inicialización General
+    window.addEventListener('DOMContentLoaded', async () => {
+      // Cerrar drawer con tecla Escape
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          AppUI.toggleDrawer(false);
+          AppUI.closeConfirm();
+        }
       });
-      document.getElementById('cajaTotalVal').textContent = '$' + totFact.toLocaleString('es-AR');
-    }
-    function calcViaje() {
-      const km = parseFloat(document.getElementById('viajeKm').value) || 0;
-      const p = parseFloat(document.getElementById('viajePrecioKm').value) || 0;
-      const tot = Math.round(km * p);
-      document.getElementById('viajeTotalTxt').textContent = '$' + tot.toLocaleString('es-AR');
-      return tot;
-    }
-    function pasarFleteAPresupuesto() {
-      const tot = calcViaje();
-      document.getElementById('presFlete').value = tot;
-      calcPresup();
-      switchTab('presup');
-    }
 
-    function exportBackup() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(window.appData));
-      const a = document.createElement('a');
-      a.href = dataStr; a.download = "backup_jl.json"; a.click();
-    }
+      await OfflineStore.init();
+      AppUI.renderDrawerMenu();
+      OptimizerEngine.initCanvasEvents();
+      AppUI.refreshAllViews();
 
-    function renderAll() {
-      if(!window.appData) return;
-      renderPlacasSection();
-      renderStock();
-      renderRecetas();
-      renderCaja();
-      calcViaje();
-      calcMesitaVariable();
-    }
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      }
+    });
   </script>
 </body>
 </html>
