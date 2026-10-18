@@ -3,235 +3,194 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Carpintería JL - Online Pro</title>
+  <title>Carpintería JL - Professional Work Suite</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#f4f6f8">
   <style>
     :root {
-      --bg: #000000;
-      --card: #06090e;
-      --cyan: #00f3ff;
-      --pink: #ff0055;
-      --yellow: #ffbe0b;
-      --green: #00ff66;
-      --text: #e0fbfc;
-      --muted: #5c7c8a;
+      --bg: #f4f6f8;
+      --card: #ffffff;
+      --primary: #2d3748;
+      --accent: #8c5a3c; /* Tono madera / profesional */
+      --accent-hover: #6d442c;
+      --text: #1a202c;
+      --muted: #718096;
+      --border: #e2e8f0;
+      --green: #2f855a;
+      --pink: #9b2c2c;
+      --yellow: #d69e2e;
     }
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Courier New', Courier, monospace;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       -webkit-tap-highlight-color: transparent;
     }
     body {
       background-color: var(--bg);
       color: var(--text);
-      padding-bottom: 40px;
+      padding-bottom: 60px;
       overflow-x: hidden;
     }
     header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(0, 0, 0, 0.94);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--cyan);
-      box-shadow: 0 0 15px rgba(0, 243, 255, 0.25);
-      padding: 12px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 18px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .header-left { display: flex; align-items: center; gap: 14px; }
     .menu-btn {
-      background: #000;
-      border: 1px solid var(--cyan);
-      color: var(--cyan);
-      font-size: 20px;
-      width: 40px;
-      height: 40px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 0 10px rgba(0, 243, 255, 0.35);
-      font-weight: bold;
+      background: var(--card); border: 1px solid var(--border); color: var(--primary);
+      font-size: 18px; width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-weight: bold;
+      transition: 0.2s;
     }
-    .menu-btn:active { background: var(--cyan); color: #000; }
-    .brand-title {
-      font-size: 16px;
-      font-weight: bold;
-      color: var(--cyan);
-      text-shadow: 0 0 8px var(--cyan);
-      letter-spacing: 1px;
-    }
-    .brand-sub {
-      font-size: 10px;
-      color: var(--green);
-      letter-spacing: 1px;
-      display: block;
-    }
-    .backup-btns { display: flex; gap: 6px; }
+    .menu-btn:active { background: var(--border); }
+    .brand-title { font-size: 16px; font-weight: 700; color: var(--primary); letter-spacing: 0.5px; }
+    .brand-sub { font-size: 11px; color: var(--accent); font-weight: 600; letter-spacing: 0.5px; display: block; }
+    .backup-btns { display: flex; gap: 8px; }
     .btn-top {
-      background: #000;
-      border: 1px solid var(--cyan);
-      color: var(--cyan);
-      padding: 6px 10px;
-      font-size: 11px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-      box-shadow: 0 0 6px rgba(0, 243, 255, 0.2);
+      background: var(--card); border: 1px solid var(--border); color: var(--primary);
+      padding: 7px 12px; font-size: 12px; border-radius: 8px; cursor: pointer; font-weight: 600;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
     .drawer-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.82);
-      z-index: 200;
-      display: none;
-      opacity: 0;
-      transition: opacity 0.2s ease;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4); z-index: 200; display: none; opacity: 0; transition: opacity 0.2s ease;
     }
     .drawer-overlay.open { display: block; opacity: 1; }
     .drawer {
-      position: fixed;
-      top: 0; left: -290px; width: 275px; height: 100%;
-      background: #030508;
-      border-right: 2px solid var(--cyan);
-      box-shadow: 0 0 25px rgba(0, 243, 255, 0.4);
-      z-index: 201;
-      transition: left 0.25s ease;
-      display: flex;
-      flex-direction: column;
-      padding: 18px 14px;
-      overflow-y: auto;
+      position: fixed; top: 0; left: -300px; width: 280px; height: 100%;
+      background: var(--card); border-right: 1px solid var(--border);
+      box-shadow: 4px 0 15px rgba(0,0,0,0.08); z-index: 201;
+      transition: left 0.25s ease; display: flex; flex-direction: column; padding: 20px 16px; overflow-y: auto;
     }
     .drawer.open { left: 0; }
     .drawer-header {
       display: flex; justify-content: space-between; align-items: center;
-      padding-bottom: 14px; margin-bottom: 14px;
-      border-bottom: 1px solid rgba(0, 243, 255, 0.3);
+      padding-bottom: 16px; margin-bottom: 14px; border-bottom: 1px solid var(--border);
     }
-    .drawer-title { color: var(--cyan); font-weight: bold; font-size: 15px; }
+    .drawer-title { color: var(--primary); font-weight: 700; font-size: 15px; }
     .close-drawer {
-      background: transparent; border: 1px solid var(--pink); color: var(--pink);
-      width: 30px; height: 30px; border-radius: 4px; font-weight: bold; cursor: pointer;
+      background: transparent; border: 1px solid var(--border); color: var(--muted);
+      width: 32px; height: 32px; border-radius: 8px; font-weight: bold; cursor: pointer;
     }
     .nav-item {
-      background: #080c11;
-      border: 1px solid rgba(0, 243, 255, 0.25);
-      color: var(--text); padding: 12px; margin-bottom: 8px;
-      border-radius: 6px; font-size: 13px; font-weight: bold;
-      display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: left;
+      background: transparent; border: 1px solid transparent;
+      color: var(--primary); padding: 12px 14px; margin-bottom: 6px; border-radius: 10px;
+      font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 12px; cursor: pointer; text-align: left;
+      transition: 0.2s;
     }
+    .nav-item:hover { background: var(--bg); }
     .nav-item.active {
-      background: rgba(0, 243, 255, 0.15);
-      border-color: var(--cyan);
-      color: var(--cyan);
-      box-shadow: 0 0 12px rgba(0, 243, 255, 0.35);
+      background: var(--accent); color: #ffffff; box-shadow: 0 2px 6px rgba(140, 90, 60, 0.25);
     }
-    .container { padding: 14px; max-width: 700px; margin: 0 auto; }
+    .container { padding: 18px; max-width: 800px; margin: 0 auto; }
     .section { display: none; }
     .section.active { display: block; }
     .section-banner {
       display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 14px; padding: 10px 12px;
-      background: #060a0f; border-left: 3px solid var(--cyan); border-radius: 4px;
+      margin-bottom: 16px; padding: 12px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
-    .section-banner h2 { font-size: 15px; color: var(--cyan); }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    .section-banner h2 { font-size: 15px; color: var(--primary); font-weight: 700; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
     .stat-box {
-      background: var(--card); border: 1px solid var(--cyan); border-radius: 6px;
-      padding: 12px; text-align: center; box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.1);
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
-    .stat-box.pink { border-color: var(--pink); box-shadow: inset 0 0 10px rgba(255, 0, 85, 0.1); }
-    .stat-box.green { border-color: var(--green); box-shadow: inset 0 0 10px rgba(0, 255, 102, 0.1); }
-    .stat-label { font-size: 10px; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; }
-    .stat-val { font-size: 20px; font-weight: bold; color: var(--cyan); text-shadow: 0 0 8px var(--cyan); }
-    .stat-box.pink .stat-val { color: var(--pink); text-shadow: 0 0 8px var(--pink); }
-    .stat-box.green .stat-val { color: var(--green); text-shadow: 0 0 8px var(--green); }
+    .stat-box.pink { border-left: 4px solid var(--pink); }
+    .stat-box.green { border-left: 4px solid var(--green); }
+    .stat-box.accent { border-left: 4px solid var(--accent); }
+    .stat-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
+    .stat-val { font-size: 22px; font-weight: 700; color: var(--primary); }
+    .stat-box.pink .stat-val { color: var(--pink); }
+    .stat-box.green .stat-val { color: var(--green); }
+    .stat-box.accent .stat-val { color: var(--accent); }
     .neon-card {
-      background: var(--card);
-      border: 1px solid rgba(0, 243, 255, 0.4);
-      border-left: 3px solid var(--cyan);
-      border-radius: 6px; padding: 14px; margin-bottom: 14px;
-      box-shadow: 0 0 12px rgba(0, 243, 255, 0.1);
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 18px; margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
     }
     .card-header {
       display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 12px; padding-bottom: 8px;
-      border-bottom: 1px solid rgba(0, 243, 255, 0.2); flex-wrap: wrap; gap: 6px;
+      margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 8px;
     }
-    .card-title { font-size: 13px; font-weight: bold; color: var(--cyan); text-transform: uppercase; }
+    .card-title { font-size: 13px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
     input, select, textarea {
-      width: 100%; background: #020406; border: 1px solid var(--cyan);
-      color: var(--text); padding: 10px; border-radius: 4px; font-size: 14px; margin-bottom: 10px; outline: none;
+      width: 100%; background: #ffffff; border: 1px solid var(--border);
+      color: var(--text); padding: 11px 14px; border-radius: 10px; font-size: 14px; margin-bottom: 12px; outline: none;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.02); transition: 0.2s;
     }
-    input:focus, select:focus { box-shadow: 0 0 8px rgba(0, 243, 255, 0.5); }
-    label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 4px; text-transform: uppercase; }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(140, 90, 60, 0.1); }
+    label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 5px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
     .btn {
-      background: #000; border: 1px solid var(--cyan); color: var(--cyan);
-      padding: 9px 12px; border-radius: 4px; font-size: 12px; font-weight: bold;
-      cursor: pointer; text-transform: uppercase; box-shadow: 0 0 8px rgba(0, 243, 255, 0.2);
+      background: var(--card); border: 1px solid var(--border); color: var(--primary);
+      padding: 10px 16px; border-radius: 10px; font-size: 12px; font-weight: 700;
+      cursor: pointer; text-transform: uppercase; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: 0.2s; letter-spacing: 0.5px;
     }
-    .btn:active { background: var(--cyan); color: #000; }
-    .btn-yellow { border-color: var(--yellow); color: var(--yellow); }
-    .btn-pink { border-color: var(--pink); color: var(--pink); }
-    .btn-green { border-color: var(--green); color: var(--green); }
-    .btn-block { width: 100%; padding: 12px; font-size: 13px; margin-top: 6px; }
+    .btn:hover { background: var(--bg); }
+    .btn:active { transform: translateY(1px); }
+    .btn-yellow { background: #fffaf0; border-color: #feebc8; color: #9c4221; }
+    .btn-pink { background: #fff5f5; border-color: #fed7d7; color: var(--pink); }
+    .btn-green { background: var(--accent); border-color: var(--accent); color: #ffffff; box-shadow: 0 2px 5px rgba(140, 90, 60, 0.25); }
+    .btn-green:hover { background: var(--accent-hover); }
+    .btn-block { width: 100%; padding: 14px; font-size: 13px; margin-top: 8px; text-align: center; }
     .stock-item {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.08); gap: 8px; flex-wrap: wrap;
+      padding: 12px 0; border-bottom: 1px solid var(--border); gap: 10px; flex-wrap: wrap;
     }
-    .stock-info { flex: 1; min-width: 140px; }
-    .stock-name { font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 4px; }
+    .stock-info { flex: 1; min-width: 150px; }
+    .stock-name { font-size: 14px; font-weight: 600; color: var(--primary); margin-bottom: 3px; }
     .stock-sub { font-size: 12px; color: var(--muted); }
-    .badge { display: inline-block; padding: 2px 6px; font-size: 11px; border: 1px solid var(--cyan); color: var(--cyan); border-radius: 4px; margin-left: 6px; }
-    .stock-controls { display: flex; align-items: center; gap: 5px; }
+    .badge { display: inline-block; padding: 3px 8px; font-size: 11px; background: var(--bg); border: 1px solid var(--border); color: var(--primary); border-radius: 6px; margin-left: 6px; font-weight: 600; }
+    .stock-controls { display: flex; align-items: center; gap: 6px; }
     .qty-btn {
-      background: #000; border: 1px solid var(--yellow); color: var(--yellow);
-      padding: 6px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer;
+      background: var(--card); border: 1px solid var(--border); color: var(--primary);
+      padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;
     }
-    .qty-val { font-size: 16px; font-weight: bold; color: var(--cyan); min-width: 36px; text-align: center; }
+    .qty-val { font-size: 15px; font-weight: 700; color: var(--primary); min-width: 36px; text-align: center; }
     .placa-canvas-wrap {
-      background: #020305; border: 1px solid rgba(0, 243, 255, 0.35);
-      border-radius: 6px; padding: 12px; text-align: center; margin-bottom: 12px;
+      background: #1a202c; border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px; text-align: center; margin-bottom: 14px;
     }
     canvas#placaCanvas {
       width: 100%; max-width: 100%; height: auto;
-      border: 2px solid var(--cyan); box-shadow: 0 0 15px rgba(0, 243, 255, 0.35);
-      background: #05080c; display: block; margin: 8px auto;
+      border: 1px solid #4a5568; border-radius: 8px;
+      background: #0d1117; display: block; margin: 8px auto;
     }
     .corte-row {
       display: flex; justify-content: space-between; align-items: center;
-      background: #0a0f16; border-left: 3px solid var(--pink); padding: 9px 10px;
-      margin-bottom: 6px; border-radius: 4px; font-size: 12px; gap: 8px; flex-wrap: wrap;
+      background: var(--bg); border: 1px solid var(--border); border-left: 4px solid var(--accent);
+      padding: 10px 14px; margin-bottom: 8px; border-radius: 8px; font-size: 12px; gap: 10px; flex-wrap: wrap;
+    }
+    .receta-stock-selector {
+      background: var(--bg); border: 1px solid var(--border);
+      padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
     }
     #notifToast {
-      position: fixed; bottom: 20px; right: 20px; background: #060a0f;
-      border: 2px solid var(--green); color: var(--green); padding: 12px 18px;
-      border-radius: 8px; z-index: 9999; box-shadow: 0 0 20px rgba(0,255,102,0.4);
-      display: none; font-weight: bold; font-size: 13px;
+      position: fixed; bottom: 20px; right: 20px; background: var(--primary);
+      border: 1px solid rgba(255,255,255,0.1); color: #ffffff; padding: 14px 20px;
+      border-radius: 12px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: none; font-weight: 600; font-size: 13px; letter-spacing: 0.3px;
     }
   </style>
 </head>
 <body>
 
-  <div id="notifToast">🔔 ¡Nueva actualización de un empleado!</div>
-  <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+  <div id="notifToast">💼 Sincronización en línea: Se actualizaron los datos del taller.</div>
 
   <header>
     <div class="header-left">
-      <button class="menu-btn" onclick="toggleDrawer()" title="Abrir Menú">☰</button>
+      <button class="menu-btn" onclick="toggleDrawer()" title="Menú">☰</button>
       <div>
-        <div class="brand-title">&gt;_ CARPINTERÍA JL</div>
-        <span class="brand-sub">SYS.VER // 8.1.ONLINE-FIX</span>
+        <div class="brand-title">CARPINTERÍA JL</div>
+        <span class="brand-sub">WORK SUITE // V10 PRO</span>
       </div>
     </div>
     <div class="backup-btns">
@@ -242,16 +201,16 @@
   <div id="drawerOverlay" class="drawer-overlay" onclick="toggleDrawer()"></div>
   <nav id="drawer" class="drawer">
     <div class="drawer-header">
-      <span class="drawer-title">&gt;_ MENÚ PRINCIPAL</span>
+      <span class="drawer-title">MENÚ PRINCIPAL</span>
       <button class="close-drawer" onclick="toggleDrawer()">✕</button>
     </div>
-    <button class="nav-item active" id="nav-mesita" onclick="switchTab('mesita')">✨ MESITA VARIABLE</button>
-    <button class="nav-item" id="nav-placas" onclick="switchTab('placas')">📐 OPTIMIZADOR CORTES</button>
-    <button class="nav-item" id="nav-stock" onclick="switchTab('stock')">📦 STOCK &amp; ALERTAS</button>
-    <button class="nav-item" id="nav-muebles" onclick="switchTab('muebles')">🪑 RECETAS MUEBLES</button>
-    <button class="nav-item" id="nav-presup" onclick="switchTab('presup')">🧾 PRESUPUESTOS</button>
-    <button class="nav-item" id="nav-caja" onclick="switchTab('caja')">💰 CAJA Y PEDIDOS</button>
-    <button class="nav-item" id="nav-viaje" onclick="switchTab('viaje')">🚚 VIAJE / FLETE</button>
+    <button class="nav-item active" id="nav-mesita" onclick="switchTab('mesita')">✨ Mesita Variable</button>
+    <button class="nav-item" id="nav-placas" onclick="switchTab('placas')">📐 Optimizador Cortes</button>
+    <button class="nav-item" id="nav-stock" onclick="switchTab('stock')">📦 Inventario & Stock</button>
+    <button class="nav-item" id="nav-muebles" onclick="switchTab('muebles')">🪑 Recetas de Muebles</button>
+    <button class="nav-item" id="nav-presup" onclick="switchTab('presup')">🧾 Presupuestos & Ventas</button>
+    <button class="nav-item" id="nav-caja" onclick="switchTab('caja')">💰 Caja y Pedidos</button>
+    <button class="nav-item" id="nav-viaje" onclick="switchTab('viaje')">🚚 Fletes y Viajes</button>
   </nav>
 
   <div class="container">
@@ -259,53 +218,53 @@
     <!-- 1. MESITA VARIABLE -->
     <section id="sec-mesita" class="section active">
       <div class="section-banner">
-        <h2>✨ CALCULADORA DE MESITA VARIABLE</h2>
+        <h2>Calculadora de Mesita con Techo Variable</h2>
       </div>
       <div class="neon-card">
         <div class="card-header">
-          <span class="card-title">CONFIGURAR PEDIDO</span>
-          <button class="btn btn-yellow" onclick="toggleEditBaseMesita()">✏️ EDITAR BASE</button>
+          <span class="card-title">Configurar Pedido</span>
+          <button class="btn btn-yellow" onclick="toggleEditBaseMesita()">Editar Base</button>
         </div>
 
-        <div id="editBaseMesitaBox" style="display:none; margin-bottom:14px; padding:12px; background:#03060a; border:1px dashed var(--yellow); border-radius:6px;">
-          <div style="color:var(--yellow); font-weight:bold; font-size:12px; margin-bottom:10px;">MEDIDAS ESTÁNDAR BASE:</div>
+        <div id="editBaseMesitaBox" style="display:none; margin-bottom:14px; padding:14px; background:var(--bg); border:1px solid var(--border); border-radius:10px;">
+          <div style="color:var(--accent); font-weight:700; font-size:12px; margin-bottom:10px;">Medidas Estándar Base:</div>
           <div class="grid-2">
-            <div><label>TECHO PROF (MM):</label><input type="number" id="bm_techoProf" value="335"></div>
-            <div><label>TECHO ANCHO (MM):</label><input type="number" id="bm_techoAncho" value="400"></div>
+            <div><label>Techo Prof (mm):</label><input type="number" id="bm_techoProf" value="335"></div>
+            <div><label>Techo Ancho (mm):</label><input type="number" id="bm_techoAncho" value="400"></div>
           </div>
-          <button class="btn btn-green btn-block" onclick="saveBaseMesita()">💾 GUARDAR BASE</button>
+          <button class="btn btn-green btn-block" onclick="saveBaseMesita()">Guardar Base</button>
         </div>
 
         <div class="grid-2">
-          <div><label>PROFUNDIDAD TECHO:</label><input type="number" id="var_techoProf" value="335" oninput="calcMesitaVariable()"></div>
-          <div><label>ANCHO TECHO:</label><input type="number" id="var_techoAncho" value="400" oninput="calcMesitaVariable()"></div>
+          <div><label>Profundidad Techo:</label><input type="number" id="var_techoProf" value="335" oninput="calcMesitaVariable()"></div>
+          <div><label>Ancho Techo:</label><input type="number" id="var_techoAncho" value="400" oninput="calcMesitaVariable()"></div>
         </div>
 
-        <label>MODO DE ENSANCHE:</label>
+        <label>Modo de Ensanche:</label>
         <select id="var_modoEnsanche" onchange="calcMesitaVariable()">
-          <option value="solo_techo">MODO 1: Solo se ensancha el Techo (Tapa Volada)</option>
-          <option value="completo">MODO 2: Se ensancha Todo (Mueble Completo)</option>
+          <option value="solo_techo">Modo 1: Solo se ensancha el Techo (Tapa Volada)</option>
+          <option value="completo">Modo 2: Se ensancha Todo (Mueble Completo)</option>
         </select>
 
-        <label>PLACA DE MELAMINA 18MM:</label>
+        <label>Placa de Melamina 18mm:</label>
         <select id="var_placaId" onchange="calcMesitaVariable()"></select>
 
         <div class="grid-2">
           <div class="stat-box pink">
-            <div class="stat-label">COSTO MATERIALES</div>
+            <div class="stat-label">Costo Materiales</div>
             <div class="stat-val" id="resMesitaCosto">$0</div>
           </div>
           <div class="stat-box green">
-            <div class="stat-label">PRECIO VENTA</div>
+            <div class="stat-label">Precio Venta</div>
             <div class="stat-val" id="resMesitaVenta">$0</div>
           </div>
         </div>
 
         <div id="desgloseMesitaList" style="margin-top:10px;"></div>
 
-        <div class="grid-2" style="margin-top:12px;">
-          <button class="btn btn-yellow" onclick="enviarCortesMesitaAPlaca()">✂️ MANDAR AL OPTIMIZADOR</button>
-          <button class="btn btn-green" onclick="pasarMesitaAPresupuesto()">🧾 PASAR A PRESUPUESTO</button>
+        <div class="grid-2" style="margin-top:14px;">
+          <button class="btn btn-yellow" onclick="enviarCortesMesitaAPlaca()">Mandar al Optimizador</button>
+          <button class="btn btn-green" onclick="pasarMesitaAPresupuesto()">Pasar a Presupuesto</button>
         </div>
       </div>
     </section>
@@ -313,64 +272,64 @@
     <!-- 2. OPTIMIZADOR DE CORTES -->
     <section id="sec-placas" class="section">
       <div class="section-banner">
-        <h2>📐 OPTIMIZADOR DE CORTES INTELIGENTE</h2>
+        <h2>Optimizador de Cortes Inteligente</h2>
       </div>
       <div class="neon-card">
         <div class="card-header">
-          <span class="card-title">SELECCIONAR PLACA</span>
+          <span class="card-title">Seleccionar Placa</span>
           <div style="display:flex; gap:6px;">
-            <button class="btn btn-yellow" onclick="toggleEditPlaca()">✏️ EDITAR</button>
-            <button class="btn" onclick="toggleNewPlaca()">+ NUEVA</button>
+            <button class="btn btn-yellow" onclick="toggleEditPlaca()">Editar</button>
+            <button class="btn" onclick="toggleNewPlaca()">+ Nueva</button>
           </div>
         </div>
         <select id="placaSelect" onchange="onPlacaChange()"></select>
 
-        <div id="editPlacaBox" style="display:none; margin-top:10px; padding-top:10px; border-top:1px dashed var(--yellow);">
-          <label>NOMBRE:</label><input type="text" id="editPlacaName">
+        <div id="editPlacaBox" style="display:none; margin-top:10px; padding-top:10px; border-top:1px solid var(--border);">
+          <label>Nombre:</label><input type="text" id="editPlacaName">
           <div class="grid-2">
-            <div><label>ANCHO (MM):</label><input type="number" id="editPlacaW"></div>
-            <div><label>ALTO (MM):</label><input type="number" id="editPlacaH"></div>
+            <div><label>Ancho (mm):</label><input type="number" id="editPlacaW"></div>
+            <div><label>Alto (mm):</label><input type="number" id="editPlacaH"></div>
           </div>
-          <label>PRECIO ($):</label><input type="number" id="editPlacaPrice">
+          <label>Precio ($):</label><input type="number" id="editPlacaPrice">
           <div style="display:flex; gap:8px;">
-            <button class="btn btn-green" style="flex:1;" onclick="saveEditPlaca()">💾 GUARDAR</button>
-            <button class="btn btn-pink" onclick="deleteCurrentPlaca()">🗑️ BORRAR</button>
+            <button class="btn btn-green" style="flex:1;" onclick="saveEditPlaca()">Guardar</button>
+            <button class="btn btn-pink" onclick="deleteCurrentPlaca()">Borrar</button>
           </div>
         </div>
 
-        <div id="newPlacaBox" style="display:none; margin-top:10px; padding-top:10px; border-top:1px dashed var(--cyan);">
-          <label>NOMBRE:</label><input type="text" id="newPlacaName" placeholder="Placa Roble">
+        <div id="newPlacaBox" style="display:none; margin-top:10px; padding-top:10px; border-top:1px solid var(--border);">
+          <label>Nombre:</label><input type="text" id="newPlacaName" placeholder="Placa Roble">
           <div class="grid-2">
-            <div><label>ANCHO (MM):</label><input type="number" id="newPlacaW" value="2750"></div>
-            <div><label>ALTO (MM):</label><input type="number" id="newPlacaH" value="1830"></div>
+            <div><label>Ancho (mm):</label><input type="number" id="newPlacaW" value="2750"></div>
+            <div><label>Alto (mm):</label><input type="number" id="newPlacaH" value="1830"></div>
           </div>
-          <label>PRECIO ($):</label><input type="number" id="newPlacaPrice" placeholder="150000">
-          <button class="btn btn-green btn-block" onclick="addNewPlaca()">CREAR</button>
+          <label>Precio ($):</label><input type="number" id="newPlacaPrice" placeholder="150000">
+          <button class="btn btn-green btn-block" onclick="addNewPlaca()">Crear Placa</button>
         </div>
       </div>
 
       <div class="neon-card">
-        <div class="card-header"><span class="card-title" id="viewPlacaTitle">PLACA</span></div>
+        <div class="card-header"><span class="card-title" id="viewPlacaTitle">Placa</span></div>
         <div class="placa-canvas-wrap">
           <canvas id="placaCanvas" width="550" height="366"></canvas>
-          <div style="font-size:11px; color:var(--muted); margin-top:4px;">Distribución optimizada (giro en 90° habilitado sin diagonales)</div>
+          <div style="font-size:11px; color:#a0aec0; margin-top:6px;">Distribución optimizada (giro en 90° habilitado rectilíneo)</div>
         </div>
 
         <div class="grid-2">
-          <div class="stat-box pink"><div class="stat-label">USADO</div><div class="stat-val" id="statUsadoValor">$0</div></div>
-          <div class="stat-box green"><div class="stat-label">RESTANTE</div><div class="stat-val" id="statRestoValor">$0</div></div>
+          <div class="stat-box pink"><div class="stat-label">Valor Usado</div><div class="stat-val" id="statUsadoValor">$0</div></div>
+          <div class="stat-box green"><div class="stat-label">Restante Libre</div><div class="stat-val" id="statRestoValor">$0</div></div>
         </div>
 
-        <div style="border-top:1px solid rgba(0,243,255,0.25); padding-top:10px; margin-top:8px;">
+        <div style="border-top:1px solid var(--border); padding-top:12px; margin-top:10px;">
           <div class="grid-2">
-            <div><label>ANCHO (MM):</label><input type="number" id="corteW" placeholder="Ej: 335"></div>
-            <div><label>ALTO (MM):</label><input type="number" id="corteH" placeholder="Ej: 400"></div>
+            <div><label>Ancho (mm):</label><input type="number" id="corteW" placeholder="Ej: 335"></div>
+            <div><label>Alto (mm):</label><input type="number" id="corteH" placeholder="Ej: 400"></div>
           </div>
           <div class="grid-2">
-            <div><label>CANTIDAD:</label><input type="number" id="corteQty" value="1"></div>
-            <div><label>ETIQUETA:</label><input type="text" id="corteTag" placeholder="Pieza"></div>
+            <div><label>Cantidad:</label><input type="number" id="corteQty" value="1"></div>
+            <div><label>Etiqueta:</label><input type="text" id="corteTag" placeholder="Pieza"></div>
           </div>
-          <button class="btn btn-block" onclick="agregarCorteAPlaca()">✂️ AGREGAR CORTE AL OPTIMIZADOR</button>
+          <button class="btn btn-block btn-green" onclick="agregarCorteAPlaca()">Agregar Corte al Optimizador</button>
         </div>
 
         <div style="margin-top:14px;" id="listaCortesPlaca"></div>
@@ -380,21 +339,21 @@
     <!-- 3. STOCK & ALERTAS -->
     <section id="sec-stock" class="section">
       <div class="grid-2">
-        <div class="stat-box"><div class="stat-label">ITEMS</div><div class="stat-val" id="totalItemsCount">0</div></div>
-        <div class="stat-box pink"><div class="stat-label">ALERTAS BAJAS</div><div class="stat-val" id="lowStockCount">0</div></div>
+        <div class="stat-box accent"><div class="stat-label">Items Stock</div><div class="stat-val" id="totalItemsCount">0</div></div>
+        <div class="stat-box pink"><div class="stat-label">Alertas Stock Bajo</div><div class="stat-val" id="lowStockCount">0</div></div>
       </div>
       <div class="neon-card">
         <div class="card-header">
-          <span class="card-title">INVENTARIO EN LÍNEA</span>
-          <button class="btn" onclick="toggleNewStockBox()">+ NUEVO</button>
+          <span class="card-title">Inventario en Línea</span>
+          <button class="btn" onclick="toggleNewStockBox()">+ Nuevo Item</button>
         </div>
         <div id="newStockBox" style="display:none; margin-bottom:12px;">
-          <label>NOMBRE:</label><input type="text" id="newStockName" placeholder="Tornillos">
+          <label>Nombre:</label><input type="text" id="newStockName" placeholder="Tornillos">
           <div class="grid-2">
-            <div><label>PRECIO ($):</label><input type="number" id="newStockPrice" value="50"></div>
-            <div><label>CANTIDAD:</label><input type="number" id="newStockQty" value="100"></div>
+            <div><label>Precio ($):</label><input type="number" id="newStockPrice" value="50"></div>
+            <div><label>Cantidad:</label><input type="number" id="newStockQty" value="100"></div>
           </div>
-          <button class="btn btn-green btn-block" onclick="addStockItem()">GUARDAR</button>
+          <button class="btn btn-green btn-block" onclick="addStockItem()">Guardar en Stock</button>
         </div>
         <div id="stockListContainer"></div>
       </div>
@@ -404,17 +363,16 @@
     <section id="sec-muebles" class="section">
       <div class="neon-card">
         <div class="card-header">
-          <span class="card-title">RECETAS DE MUEBLES (EDITABLES)</span>
-          <button class="btn" onclick="toggleNewReceta()">+ NUEVO MUEBLE</button>
+          <span class="card-title">Recetas de Muebles (Vinculadas a Stock)</span>
+          <button class="btn" onclick="toggleNewReceta()">+ Nuevo Mueble</button>
         </div>
-        <div id="newRecetaBox" style="display:none; margin-bottom:12px;">
-          <label>NOMBRE DEL MUEBLE:</label><input type="text" id="recName">
-          <label>MATERIALES Y PIEZAS:</label><textarea id="recDetalle" placeholder="Ej: Techo, Piso, Laterales"></textarea>
-          <div class="grid-2">
-            <div><label>PLACAS 18MM:</label><input type="number" step="0.1" id="recPlacas" value="0.5"></div>
-            <div><label>COSTO MATERIALES ($):</label><input type="number" id="recCosto" value="30000"></div>
-          </div>
-          <button class="btn btn-green btn-block" onclick="addReceta()">💾 GUARDAR RECETA</button>
+        <div id="newRecetaBox" style="display:none; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:12px;">
+          <label>Nombre del Mueble:</label><input type="text" id="recName" placeholder="Ej: Vanitorio de Baño">
+          
+          <label style="margin-top:8px; color:var(--accent);">Insumos del Stock que consume:</label>
+          <div id="recetaStockCheckList" style="max-height: 220px; overflow-y: auto; margin-bottom: 12px; border: 1px solid var(--border); border-radius: 8px; padding: 8px;"></div>
+
+          <button class="btn btn-green btn-block" onclick="addReceta()">Guardar Receta</button>
         </div>
         <div id="recetasList"></div>
       </div>
@@ -423,40 +381,40 @@
     <!-- 5. PRESUPUESTOS -->
     <section id="sec-presup" class="section">
       <div class="neon-card">
-        <div class="card-header"><span class="card-title">PRESUPUESTOS</span></div>
-        <label>CLIENTE:</label><input type="text" id="presCliente" placeholder="Nombre cliente">
+        <div class="card-header"><span class="card-title">Presupuestos y Ventas</span></div>
+        <label>Cliente:</label><input type="text" id="presCliente" placeholder="Nombre cliente">
         
-        <label>SELECCIONAR MUEBLE (RECETA):</label>
+        <label>Seleccionar Mueble (Receta):</label>
         <select id="presSelectReceta" onchange="onSelectRecetaPresup()"></select>
 
-        <label>DETALLE DEL MUEBLE / MODIFICACIÓN:</label>
+        <label>Detalle del Mueble / Modificación:</label>
         <input type="text" id="presMueble" placeholder="Detalle">
 
         <div class="grid-2">
-          <div><label>COSTO MATERIALES ($):</label><input type="number" id="presCosto" value="0" oninput="calcPresup()"></div>
-          <div><label>COSTO FLETE ($):</label><input type="number" id="presFlete" value="0" oninput="calcPresup()"></div>
+          <div><label>Costo Materiales ($):</label><input type="number" id="presCosto" value="0" oninput="calcPresup()"></div>
+          <div><label>Costo Flete ($):</label><input type="number" id="presFlete" value="0" oninput="calcPresup()"></div>
         </div>
 
-        <div class="stat-box green" style="margin:12px 0;">
-          <div class="stat-label">TOTAL PRESUPUESTO</div>
+        <div class="stat-box green" style="margin:14px 0;">
+          <div class="stat-label">Total Presupuesto</div>
           <div class="stat-val" id="presTotalTxt">$0</div>
         </div>
 
         <div class="grid-2">
-          <button class="btn btn-green" onclick="enviarPresupWhatsApp()">📲 WHATSAPP</button>
-          <button class="btn" onclick="registrarPedidoDesdePresup()">💾 GUARDAR EN CAJA</button>
+          <button class="btn btn-yellow" onclick="enviarPresupWhatsApp()">📲 WhatsApp</button>
+          <button class="btn btn-green" onclick="registrarPedidoDesdePresup()">Guardar y Descontar Stock</button>
         </div>
       </div>
     </section>
 
     <!-- 6. CAJA Y PEDIDOS -->
     <section id="sec-caja" class="section">
-      <div class="stat-box green" style="margin-bottom:14px;">
-        <div class="stat-label">TOTAL FACTURADO / PEDIDOS</div>
+      <div class="stat-box green" style="margin-bottom:16px;">
+        <div class="stat-label">Total Facturado / Pedidos</div>
         <div class="stat-val" id="cajaTotalVal">$0</div>
       </div>
       <div class="neon-card">
-        <div class="card-header"><span class="card-title">PEDIDOS EN TIEMPO REAL</span></div>
+        <div class="card-header"><span class="card-title">Pedidos en Tiempo Real</span></div>
         <div id="pedidosList"></div>
       </div>
     </section>
@@ -464,14 +422,14 @@
     <!-- 7. VIAJES -->
     <section id="sec-viaje" class="section">
       <div class="neon-card">
-        <div class="card-header"><span class="card-title">FLETES Y VIAJES</span></div>
-        <label>DESTINO:</label><input type="text" id="viajeDestino" placeholder="Dirección">
+        <div class="card-header"><span class="card-title">Fletes y Logística</span></div>
+        <label>Destino:</label><input type="text" id="viajeDestino" placeholder="Dirección de entrega">
         <div class="grid-2">
-          <div><label>KM:</label><input type="number" id="viajeKm" value="10" oninput="calcViaje()"></div>
-          <div><label>PRECIO KM ($):</label><input type="number" id="viajePrecioKm" value="1200" oninput="calcViaje()"></div>
+          <div><label>Distancia (Km):</label><input type="number" id="viajeKm" value="10" oninput="calcViaje()"></div>
+          <div><label>Precio por Km ($):</label><input type="number" id="viajePrecioKm" value="1200" oninput="calcViaje()"></div>
         </div>
-        <div class="stat-box" style="margin:10px 0;"><div class="stat-val" id="viajeTotalTxt">$12.000</div></div>
-        <button class="btn btn-green btn-block" onclick="pasarFleteAPresupuesto()">➕ USAR EN PRESUPUESTO</button>
+        <div class="stat-box accent" style="margin:12px 0;"><div class="stat-val" id="viajeTotalTxt">$12.000</div></div>
+        <button class="btn btn-green btn-block" onclick="pasarFleteAPresupuesto()">Usar en Presupuesto</button>
       </div>
     </section>
 
@@ -503,13 +461,10 @@
       selectedPlacaId: 'p_blanca',
       baseMesita: { techoProf: 335, techoAncho: 400, precioMdf: 24000, herrajes: 6500, manoObra: 25000 },
       stock: [
-        { name: 'Placa Melamina 18mm Blanco', price: 146000, qty: 12, unit: 'PLACAS' },
-        { name: 'Tornillos Autoperforantes 3x30', price: 35, qty: 350, unit: 'U' }
+        { id: 's1', name: 'Placa Melamina 18mm Blanco', price: 146000, qty: 12, unit: 'PLACAS' },
+        { id: 's2', name: 'Tornillos Autoperforantes 3x30', price: 35, qty: 350, unit: 'U' }
       ],
-      recetas: [
-        { name: 'Mesita de Luz Estándar', detalle: 'Techo, Piso, 2 Laterales, Frente y Cajón', placas: 0.35, costo: 35000 },
-        { name: 'Vanitorio Baño 60cm', detalle: 'Bajo bacha, estante y puertas', placas: 0.6, costo: 55000 }
-      ],
+      recetas: [],
       pedidos: []
     };
 
@@ -522,7 +477,6 @@
       if (data) {
         window.appData = data;
         if (!isInitialLoad) {
-          document.getElementById('alertSound').play().catch(e => {});
           const toast = document.getElementById('notifToast');
           toast.style.display = 'block';
           setTimeout(() => { toast.style.display = 'none'; }, 4000);
@@ -557,7 +511,6 @@
       renderAll();
     }
 
-    // MESITA VARIABLE
     function toggleEditBaseMesita() {
       const box = document.getElementById('editBaseMesitaBox');
       box.style.display = box.style.display === 'none' ? 'block' : 'none';
@@ -571,6 +524,7 @@
     function calcMesitaVariable() {
       const b = window.appData.baseMesita;
       const placa = window.appData.placas.find(p => p.id === (document.getElementById('var_placaId').value || window.appData.selectedPlacaId)) || window.appData.placas[0];
+      if(!placa) return;
       const tProf = parseFloat(document.getElementById('var_techoProf').value) || b.techoProf;
       const tAncho = parseFloat(document.getElementById('var_techoAncho').value) || b.techoAncho;
       
@@ -598,14 +552,13 @@
       switchTab('presup');
     }
 
-    // PLACAS Y EDITAR
     function getCurrentPlaca() {
       return window.appData.placas.find(p => p.id === window.appData.selectedPlacaId) || window.appData.placas[0];
     }
     function renderPlacasSection() {
       const sel = document.getElementById('placaSelect');
       const varSel = document.getElementById('var_placaId');
-      sel.innerHTML = '';
+      if(sel) sel.innerHTML = '';
       if(varSel) varSel.innerHTML = '';
 
       window.appData.placas.forEach(p => {
@@ -613,7 +566,7 @@
         opt.value = p.id;
         opt.textContent = `${p.name} — $${p.price.toLocaleString('es-AR')}`;
         if (p.id === window.appData.selectedPlacaId) opt.selected = true;
-        sel.appendChild(opt);
+        if(sel) sel.appendChild(opt);
 
         if(varSel) {
           const opt2 = opt.cloneNode(true);
@@ -621,8 +574,10 @@
         }
       });
       const placa = getCurrentPlaca();
-      document.getElementById('viewPlacaTitle').textContent = placa.name;
-      drawOptimizedCanvas(placa);
+      if(placa) {
+        document.getElementById('viewPlacaTitle').textContent = placa.name;
+        drawOptimizedCanvas(placa);
+      }
     }
     function onPlacaChange() {
       window.appData.selectedPlacaId = document.getElementById('placaSelect').value;
@@ -693,6 +648,7 @@
       placa.cuts = placa.cuts.filter(c => c.id !== id);
       saveDataCloud();
     }
+
     function drawOptimizedCanvas(placa) {
       const canvas = document.getElementById('placaCanvas');
       if(!canvas) return;
@@ -702,59 +658,71 @@
       canvas.width = baseW;
       canvas.height = Math.round(baseW * (placa.h / placa.w));
 
-      ctx.fillStyle = '#04070b';
+      ctx.fillStyle = '#0d1117';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      let curX = 0, curY = 0, rowH = 0, usedArea = 0;
-      const totalArea = placa.w * placa.h;
+      let usedArea = 0;
       const list = document.getElementById('listaCortesPlaca');
       list.innerHTML = '';
 
-      const sortedCuts = [...placa.cuts].sort((a,b) => Math.max(b.w,b.h) - Math.max(a.w,a.h));
+      let currentX = 0;
+      let currentY = 0;
+      let rowHeight = 0;
+      const margin = 2;
+
+      const sortedCuts = [...placa.cuts].sort((a,b) => (b.w * b.h) - (a.w * a.h));
 
       sortedCuts.forEach((c) => {
-        let pw = c.w, ph = c.h;
-        if (curX + pw > placa.w && curX + ph <= placa.w) {
-          pw = c.h; ph = c.w;
+        let pw = c.w;
+        let ph = c.h;
+
+        if (currentX + pw > placa.w && currentX + ph <= placa.w) {
+          pw = c.h;
+          ph = c.w;
         }
 
-        const area = pw * ph;
-        usedArea += area;
-
-        if (curX + pw > placa.w) {
-          curX = 0;
-          curY += rowH;
-          rowH = 0;
+        if (currentX + pw > placa.w) {
+          currentX = 0;
+          currentY += rowHeight + margin;
+          rowHeight = 0;
         }
 
-        const rx = curX * scale, ry = curY * scale, rw = pw * scale, rh = ph * scale;
-        ctx.fillStyle = 'rgba(255, 0, 85, 0.3)';
+        const rx = currentX * scale;
+        const ry = currentY * scale;
+        const rw = pw * scale;
+        const rh = ph * scale;
+
+        ctx.fillStyle = 'rgba(140, 90, 60, 0.4)';
         ctx.fillRect(rx, ry, rw, rh);
-        ctx.strokeStyle = '#ff0055';
+        ctx.strokeStyle = '#8c5a3c';
+        ctx.lineWidth = 1.5;
         ctx.strokeRect(rx, ry, rw, rh);
 
-        if (rw > 30 && rh > 18) {
-          ctx.fillStyle = '#fff';
-          ctx.font = '900 9px Courier New';
-          ctx.fillText(`${pw}x${ph}`, rx + 3, ry + 11);
+        if (rw > 28 && rh > 16) {
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 9px sans-serif';
+          ctx.fillText(`${pw}x${ph}`, rx + 2, ry + 11);
         }
 
-        curX += pw;
-        if (ph > rowH) rowH = ph;
+        usedArea += (pw * ph);
+        currentX += pw + margin;
+        if (ph > rowHeight) {
+          rowHeight = ph;
+        }
 
         const row = document.createElement('div');
         row.className = 'corte-row';
-        row.innerHTML = `<div><strong>${c.tag}</strong> (${c.w}x${c.h})</div><button class="btn btn-pink" style="padding:2px 6px;" onclick="eliminarCortePlaca('${c.id}')">✕</button>`;
+        row.innerHTML = `<div><strong>${c.tag}</strong> (${c.w}x${c.h}mm)</div><button class="btn btn-pink" style="padding:2px 6px;" onclick="eliminarCortePlaca('${c.id}')">✕</button>`;
         list.appendChild(row);
       });
 
+      const totalArea = placa.w * placa.h;
       const usedVal = (usedArea / totalArea) * placa.price;
       const restoVal = Math.max(0, placa.price - usedVal);
       document.getElementById('statUsadoValor').textContent = '$' + Math.round(usedVal).toLocaleString('es-AR');
       document.getElementById('statRestoValor').textContent = '$' + Math.round(restoVal).toLocaleString('es-AR');
     }
 
-    // STOCK & ALERTAS
     function toggleNewStockBox() {
       const b = document.getElementById('newStockBox');
       b.style.display = b.style.display === 'none' ? 'block' : 'none';
@@ -764,7 +732,8 @@
       const price = parseFloat(document.getElementById('newStockPrice').value) || 0;
       const qty = parseInt(document.getElementById('newStockQty').value) || 0;
       if (!name) return;
-      window.appData.stock.push({ name, price, qty, unit: 'U' });
+      if(!window.appData.stock) window.appData.stock = [];
+      window.appData.stock.push({ id: 's_' + Date.now(), name, price, qty, unit: 'U' });
       document.getElementById('newStockBox').style.display = 'none';
       saveDataCloud();
     }
@@ -774,8 +743,11 @@
     }
     function renderStock() {
       const cont = document.getElementById('stockListContainer');
+      if(!cont) return;
       cont.innerHTML = '';
       let lowAlerts = 0;
+      if(!window.appData.stock) window.appData.stock = [];
+
       window.appData.stock.forEach((item, i) => {
         if (item.qty <= 5) lowAlerts++;
         const div = document.createElement('div');
@@ -796,48 +768,110 @@
       document.getElementById('lowStockCount').textContent = lowAlerts;
     }
 
-    // RECETAS DE MUEBLES
     function toggleNewReceta() {
       const b = document.getElementById('newRecetaBox');
       b.style.display = b.style.display === 'none' ? 'block' : 'none';
+      if(b.style.display === 'block') {
+        renderRecetaStockCheckList();
+      }
     }
-    function addReceta() {
-      const name = document.getElementById('recName').value.trim();
-      const detalle = document.getElementById('recDetalle').value.trim();
-      const placas = parseFloat(document.getElementById('recPlacas').value) || 0.5;
-      const costo = parseFloat(document.getElementById('recCosto').value) || 0;
-      if (!name) return;
-      window.appData.recetas.push({ name, detalle, placas, costo });
-      document.getElementById('newRecetaBox').style.display = 'none';
-      saveDataCloud();
-    }
-    function renderRecetas() {
-      const cont = document.getElementById('recetasList');
-      const sel = document.getElementById('presSelectReceta');
-      cont.innerHTML = '';
-      sel.innerHTML = '<option value="">-- Seleccionar Mueble Receta --</option>';
 
-      window.appData.recetas.forEach((r, idx) => {
-        const div = document.createElement('div');
-        div.className = 'corte-row';
-        div.innerHTML = `<div><strong>${r.name}</strong><br><span style="color:var(--muted);">${r.detalle}</span></div>
-          <button class="btn btn-pink" style="padding:2px 6px;" onclick="window.appData.recetas.splice(${idx},1);saveDataCloud();">✕</button>`;
-        cont.appendChild(div);
+    function renderRecetaStockCheckList() {
+      const container = document.getElementById('recetaStockCheckList');
+      if(!container) return;
+      container.innerHTML = '';
+      if(!window.appData.stock || window.appData.stock.length === 0) {
+        container.innerHTML = '<div style="font-size:11px; color:var(--muted);">No hay items en el stock. Agregalos primero.</div>';
+        return;
+      }
 
-        const opt = document.createElement('option');
-        opt.value = idx;
-        opt.textContent = `${r.name} ($${r.costo})`;
-        sel.appendChild(opt);
+      window.appData.stock.forEach((s) => {
+        const row = document.createElement('div');
+        row.className = 'receta-stock-selector';
+        row.innerHTML = `
+          <div style="display:flex; align-items:center; gap:8px; flex:1;">
+            <input type="checkbox" id="chk_stock_${s.id || s.name}" style="width:auto; margin:0;" onchange="toggleRecetaStockInput('${s.id || s.name}')">
+            <label for="chk_stock_${s.id || s.name}" style="margin:0; color:var(--primary); cursor:pointer; font-size:12px; font-weight:600;">${s.name}</label>
+          </div>
+          <input type="number" id="qty_stock_${s.id || s.name}" value="1" min="1" style="width:70px; margin:0; display:none;" placeholder="Cant">
+        `;
+        container.appendChild(row);
       });
     }
 
-    // PRESUPUESTOS
+    function toggleRecetaStockInput(id) {
+      const chk = document.getElementById(`chk_stock_${id}`);
+      const input = document.getElementById(`qty_stock_${id}`);
+      if(chk && input) {
+        input.style.display = chk.checked ? 'block' : 'none';
+      }
+    }
+
+    function addReceta() {
+      const name = document.getElementById('recName').value.trim();
+      if (!name) return alert('Poné el nombre del mueble');
+
+      let insumosAsociados = [];
+      let costoTotalCalculado = 0;
+
+      if(window.appData.stock) {
+        window.appData.stock.forEach((s) => {
+          const key = s.id || s.name;
+          const chk = document.getElementById(`chk_stock_${key}`);
+          const input = document.getElementById(`qty_stock_${key}`);
+          if(chk && chk.checked) {
+            const cant = parseFloat(input.value) || 1;
+            insumosAsociados.push({ name: s.name, qty: cant, stockId: s.id });
+            costoTotalCalculado += (s.price * cant);
+          }
+        });
+      }
+
+      if(!window.appData.recetas) window.appData.recetas = [];
+      window.appData.recetas.push({
+        name,
+        insumos: insumosAsociados,
+        costo: costoTotalCalculado
+      });
+
+      document.getElementById('recName').value = '';
+      document.getElementById('newRecetaBox').style.display = 'none';
+      saveDataCloud();
+    }
+
+    function renderRecetas() {
+      const cont = document.getElementById('recetasList');
+      const sel = document.getElementById('presSelectReceta');
+      if(!cont) return;
+      cont.innerHTML = '';
+      if(sel) sel.innerHTML = '<option value="">-- Seleccionar Mueble Receta --</option>';
+
+      if(!window.appData.recetas) window.appData.recetas = [];
+
+      window.appData.recetas.forEach((r, idx) => {
+        let detalleStr = r.insumos ? r.insumos.map(i => `${i.qty}x ${i.name}`).join(', ') : (r.detalle || '');
+        const div = document.createElement('div');
+        div.className = 'corte-row';
+        div.innerHTML = `<div><strong>${r.name}</strong> — <strong style="color:var(--green);">$${r.costo || 0}</strong><br><span style="color:var(--muted); font-size:11px;">${detalleStr}</span></div>
+          <button class="btn btn-pink" style="padding:2px 6px;" onclick="window.appData.recetas.splice(${idx},1);saveDataCloud();">✕</button>`;
+        cont.appendChild(div);
+
+        if(sel) {
+          const opt = document.createElement('option');
+          opt.value = idx;
+          opt.textContent = `${r.name} ($${r.costo || 0})`;
+          sel.appendChild(opt);
+        }
+      });
+    }
+
     function onSelectRecetaPresup() {
       const idx = document.getElementById('presSelectReceta').value;
       if (idx === "") return;
       const r = window.appData.recetas[idx];
-      document.getElementById('presMueble').value = r.name + ' (' + r.detalle + ')';
-      document.getElementById('presCosto').value = r.costo;
+      let detalleStr = r.insumos ? r.insumos.map(i => `${i.qty}x ${i.name}`).join(', ') : (r.detalle || '');
+      document.getElementById('presMueble').value = r.name + ' (' + detalleStr + ')';
+      document.getElementById('presCosto').value = r.costo || 0;
       calcPresup();
     }
     function calcPresup() {
@@ -854,20 +888,38 @@
       const msg = `Hola *${cli}*! Presupuesto Carpintería JL:\n*${mueble}*\nTotal: $${total.toLocaleString('es-AR')}`;
       window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
     }
+
     function registrarPedidoDesdePresup() {
       const cli = document.getElementById('presCliente').value || 'Cliente';
       const mueble = document.getElementById('presMueble').value || 'Mueble';
       const total = calcPresup();
+      const recetaIdx = document.getElementById('presSelectReceta').value;
+
+      if(recetaIdx !== "" && window.appData.recetas[recetaIdx]) {
+        const receta = window.appData.recetas[recetaIdx];
+        if(receta.insumos && window.appData.stock) {
+          receta.insumos.forEach(insumo => {
+            const stockItem = window.appData.stock.find(s => s.id === insumo.stockId || s.name === insumo.name);
+            if(stockItem) {
+              stockItem.qty = Math.max(0, stockItem.qty - insumo.qty);
+            }
+          });
+        }
+      }
+
+      if(!window.appData.pedidos) window.appData.pedidos = [];
       window.appData.pedidos.unshift({ cliente: cli, mueble, total });
       saveDataCloud();
       switchTab('caja');
     }
 
-    // CAJA Y VIAJES
     function renderCaja() {
       const cont = document.getElementById('pedidosList');
+      if(!cont) return;
       cont.innerHTML = '';
       let totFact = 0;
+      if(!window.appData.pedidos) window.appData.pedidos = [];
+
       window.appData.pedidos.forEach((p) => {
         totFact += p.total;
         const div = document.createElement('div');
