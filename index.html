@@ -208,16 +208,11 @@
       border: 2px solid var(--cyan); box-shadow: 0 0 15px rgba(0, 243, 255, 0.35);
       background: #05080c; display: block; margin: 8px auto;
     }
-    .corte-preview-live {
-      background: rgba(0, 255, 102, 0.08); border: 1px dashed var(--green);
-      color: var(--green); padding: 10px; border-radius: 4px; font-size: 13px; margin-bottom: 10px; text-align: center; font-weight: bold;
-    }
     .corte-row {
       display: flex; justify-content: space-between; align-items: center;
       background: #0a0f16; border-left: 3px solid var(--pink); padding: 9px 10px;
       margin-bottom: 6px; border-radius: 4px; font-size: 12px; gap: 8px; flex-wrap: wrap;
     }
-    /* NOTIFICACIÓN FLOTANTE */
     #notifToast {
       position: fixed; bottom: 20px; right: 20px; background: #060a0f;
       border: 2px solid var(--green); color: var(--green); padding: 12px 18px;
@@ -228,10 +223,7 @@
 </head>
 <body>
 
-  <!-- AVISO / NOTIFICACIÓN FLOTANTE -->
   <div id="notifToast">🔔 ¡Nueva actualización de un empleado!</div>
-
-  <!-- AUDIO DE ALERTA OCULTO -->
   <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
   <header>
@@ -239,7 +231,7 @@
       <button class="menu-btn" onclick="toggleDrawer()" title="Abrir Menú">☰</button>
       <div>
         <div class="brand-title">&gt;_ CARPINTERÍA JL</div>
-        <span class="brand-sub">SYS.VER // 8.0.ONLINE-SYNC</span>
+        <span class="brand-sub">SYS.VER // 8.1.ONLINE-FIX</span>
       </div>
     </div>
     <div class="backup-btns">
@@ -318,7 +310,7 @@
       </div>
     </section>
 
-    <!-- 2. OPTIMIZADOR DE CORTES INTELIGENTE -->
+    <!-- 2. OPTIMIZADOR DE CORTES -->
     <section id="sec-placas" class="section">
       <div class="section-banner">
         <h2>📐 OPTIMIZADOR DE CORTES INTELIGENTE</h2>
@@ -326,9 +318,25 @@
       <div class="neon-card">
         <div class="card-header">
           <span class="card-title">SELECCIONAR PLACA</span>
-          <button class="btn" onclick="toggleNewPlaca()">+ NUEVA PLACA</button>
+          <div style="display:flex; gap:6px;">
+            <button class="btn btn-yellow" onclick="toggleEditPlaca()">✏️ EDITAR</button>
+            <button class="btn" onclick="toggleNewPlaca()">+ NUEVA</button>
+          </div>
         </div>
         <select id="placaSelect" onchange="onPlacaChange()"></select>
+
+        <div id="editPlacaBox" style="display:none; margin-top:10px; padding-top:10px; border-top:1px dashed var(--yellow);">
+          <label>NOMBRE:</label><input type="text" id="editPlacaName">
+          <div class="grid-2">
+            <div><label>ANCHO (MM):</label><input type="number" id="editPlacaW"></div>
+            <div><label>ALTO (MM):</label><input type="number" id="editPlacaH"></div>
+          </div>
+          <label>PRECIO ($):</label><input type="number" id="editPlacaPrice">
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-green" style="flex:1;" onclick="saveEditPlaca()">💾 GUARDAR</button>
+            <button class="btn btn-pink" onclick="deleteCurrentPlaca()">🗑️ BORRAR</button>
+          </div>
+        </div>
 
         <div id="newPlacaBox" style="display:none; margin-top:10px; padding-top:10px; border-top:1px dashed var(--cyan);">
           <label>NOMBRE:</label><input type="text" id="newPlacaName" placeholder="Placa Roble">
@@ -377,7 +385,7 @@
       </div>
       <div class="neon-card">
         <div class="card-header">
-          <span class="card-title">INVENTARIO EN LNEA</span>
+          <span class="card-title">INVENTARIO EN LÍNEA</span>
           <button class="btn" onclick="toggleNewStockBox()">+ NUEVO</button>
         </div>
         <div id="newStockBox" style="display:none; margin-bottom:12px;">
@@ -400,8 +408,8 @@
           <button class="btn" onclick="toggleNewReceta()">+ NUEVO MUEBLE</button>
         </div>
         <div id="newRecetaBox" style="display:none; margin-bottom:12px;">
-          <label>NOMBRE DEL MUEBLE (Ej: Vanitorio, Mesita):</label><input type="text" id="recName">
-          <label>MATERIALES Y PIEZAS QUE LLEVA:</label><textarea id="recDetalle" placeholder="Ej: 1 Techo, 1 Piso, 2 Laterales, Cajón, Correderas"></textarea>
+          <label>NOMBRE DEL MUEBLE:</label><input type="text" id="recName">
+          <label>MATERIALES Y PIEZAS:</label><textarea id="recDetalle" placeholder="Ej: Techo, Piso, Laterales"></textarea>
           <div class="grid-2">
             <div><label>PLACAS 18MM:</label><input type="number" step="0.1" id="recPlacas" value="0.5"></div>
             <div><label>COSTO MATERIALES ($):</label><input type="number" id="recCosto" value="30000"></div>
@@ -412,7 +420,7 @@
       </div>
     </section>
 
-    <!-- 5. PRESUPUESTOS (MENÚ DESPLEGABLE, SIN SEÑAS NI MANO DE OBRA) -->
+    <!-- 5. PRESUPUESTOS -->
     <section id="sec-presup" class="section">
       <div class="neon-card">
         <div class="card-header"><span class="card-title">PRESUPUESTOS</span></div>
@@ -474,7 +482,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    // CREDENCIALES DE TU PROYECTO FIREBASE
     const firebaseConfig = {
       apiKey: "AIzaSyCrA-xbsVyDxs4Vn3jhLnEnR5YkGS0jvC",
       authDomain: "carpinteria-jl.firebaseapp.com",
@@ -506,17 +513,15 @@
       pedidos: []
     };
 
-    let appData = defaultData;
+    window.appData = defaultData;
     let isInitialLoad = true;
 
-    // SINCRONIZACIÓN EN TIEMPO REAL CON FIREBASE
     const dbRef = ref(db, 'carpinteria_jl_data');
     onValue(dbRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        appData = data;
+        window.appData = data;
         if (!isInitialLoad) {
-          // NOTIFICACIÓN SONORA Y VISUAL DE CAMBIO
           document.getElementById('alertSound').play().catch(e => {});
           const toast = document.getElementById('notifToast');
           toast.style.display = 'block';
@@ -526,16 +531,15 @@
         set(dbRef, defaultData);
       }
       isInitialLoad = false;
-      renderAll();
+      if (typeof renderAll === 'function') renderAll();
     });
 
     window.saveDataCloud = function() {
-      set(dbRef, appData);
+      set(dbRef, window.appData);
     };
   </script>
 
   <script>
-    // FUNCIONES DE LA APP
     let lastCalculatedMesita = null;
 
     function toggleDrawer() {
@@ -559,14 +563,14 @@
       box.style.display = box.style.display === 'none' ? 'block' : 'none';
     }
     function saveBaseMesita() {
-      appData.baseMesita.techoProf = parseFloat(document.getElementById('bm_techoProf').value) || 335;
-      appData.baseMesita.techoAncho = parseFloat(document.getElementById('bm_techoAncho').value) || 400;
+      window.appData.baseMesita.techoProf = parseFloat(document.getElementById('bm_techoProf').value) || 335;
+      window.appData.baseMesita.techoAncho = parseFloat(document.getElementById('bm_techoAncho').value) || 400;
       document.getElementById('editBaseMesitaBox').style.display = 'none';
       saveDataCloud();
     }
     function calcMesitaVariable() {
-      const b = appData.baseMesita;
-      const placa = appData.placas.find(p => p.id === (document.getElementById('var_placaId').value || appData.selectedPlacaId)) || appData.placas[0];
+      const b = window.appData.baseMesita;
+      const placa = window.appData.placas.find(p => p.id === (document.getElementById('var_placaId').value || window.appData.selectedPlacaId)) || window.appData.placas[0];
       const tProf = parseFloat(document.getElementById('var_techoProf').value) || b.techoProf;
       const tAncho = parseFloat(document.getElementById('var_techoAncho').value) || b.techoAncho;
       
@@ -581,7 +585,7 @@
     }
     function enviarCortesMesitaAPlaca() {
       if (!lastCalculatedMesita) return;
-      const placa = appData.placas.find(p => p.id === lastCalculatedMesita.placaId);
+      const placa = window.appData.placas.find(p => p.id === lastCalculatedMesita.placaId);
       placa.cuts.push({ id: 'c_' + Date.now(), w: lastCalculatedMesita.tProf, h: lastCalculatedMesita.tAncho, tag: 'Techo Mesita' });
       saveDataCloud();
       switchTab('placas');
@@ -594,31 +598,70 @@
       switchTab('presup');
     }
 
-    // OPTIMIZADOR DE CORTES INTELIGENTE (RECTO / GIRO 90°)
+    // PLACAS Y EDITAR
     function getCurrentPlaca() {
-      return appData.placas.find(p => p.id === appData.selectedPlacaId) || appData.placas[0];
+      return window.appData.placas.find(p => p.id === window.appData.selectedPlacaId) || window.appData.placas[0];
     }
     function renderPlacasSection() {
       const sel = document.getElementById('placaSelect');
+      const varSel = document.getElementById('var_placaId');
       sel.innerHTML = '';
-      appData.placas.forEach(p => {
+      if(varSel) varSel.innerHTML = '';
+
+      window.appData.placas.forEach(p => {
         const opt = document.createElement('option');
         opt.value = p.id;
         opt.textContent = `${p.name} — $${p.price.toLocaleString('es-AR')}`;
-        if (p.id === appData.selectedPlacaId) opt.selected = true;
+        if (p.id === window.appData.selectedPlacaId) opt.selected = true;
         sel.appendChild(opt);
+
+        if(varSel) {
+          const opt2 = opt.cloneNode(true);
+          varSel.appendChild(opt2);
+        }
       });
       const placa = getCurrentPlaca();
       document.getElementById('viewPlacaTitle').textContent = placa.name;
       drawOptimizedCanvas(placa);
     }
     function onPlacaChange() {
-      appData.selectedPlacaId = document.getElementById('placaSelect').value;
+      window.appData.selectedPlacaId = document.getElementById('placaSelect').value;
       saveDataCloud();
     }
     function toggleNewPlaca() {
       const b = document.getElementById('newPlacaBox');
       b.style.display = b.style.display === 'none' ? 'block' : 'none';
+      document.getElementById('editPlacaBox').style.display = 'none';
+    }
+    function toggleEditPlaca() {
+      const box = document.getElementById('editPlacaBox');
+      const p = getCurrentPlaca();
+      if (box.style.display === 'none') {
+        document.getElementById('editPlacaName').value = p.name;
+        document.getElementById('editPlacaW').value = p.w;
+        document.getElementById('editPlacaH').value = p.h;
+        document.getElementById('editPlacaPrice').value = p.price;
+        box.style.display = 'block';
+        document.getElementById('newPlacaBox').style.display = 'none';
+      } else {
+        box.style.display = 'none';
+      }
+    }
+    function saveEditPlaca() {
+      const p = getCurrentPlaca();
+      p.name = document.getElementById('editPlacaName').value.trim() || p.name;
+      p.w = parseFloat(document.getElementById('editPlacaW').value) || 2750;
+      p.h = parseFloat(document.getElementById('editPlacaH').value) || 1830;
+      p.price = parseFloat(document.getElementById('editPlacaPrice').value) || 0;
+      document.getElementById('editPlacaBox').style.display = 'none';
+      saveDataCloud();
+    }
+    function deleteCurrentPlaca() {
+      if (window.appData.placas.length <= 1) return alert('Debe quedar al menos una placa.');
+      window.appData.placas = window.appData.placas.filter(p => p.id !== window.appData.selectedPlacaId);
+      window.appData.selectedPlacaId = window.appData.placas[0].id;
+      document.getElementById('editPlacaBox').style.display = 'none';
+      saveDataCloud();
     }
     function addNewPlaca() {
       const name = document.getElementById('newPlacaName').value.trim();
@@ -627,8 +670,9 @@
       const price = parseFloat(document.getElementById('newPlacaPrice').value) || 0;
       if (!name) return;
       const newId = 'placa_' + Date.now();
-      appData.placas.push({ id: newId, name, w, h, price, cuts: [] });
-      appData.selectedPlacaId = newId;
+      window.appData.placas.push({ id: newId, name, w, h, price, cuts: [] });
+      window.appData.selectedPlacaId = newId;
+      document.getElementById('newPlacaBox').style.display = 'none';
       saveDataCloud();
     }
     function agregarCorteAPlaca() {
@@ -651,6 +695,7 @@
     }
     function drawOptimizedCanvas(placa) {
       const canvas = document.getElementById('placaCanvas');
+      if(!canvas) return;
       const ctx = canvas.getContext('2d');
       const baseW = 550;
       const scale = baseW / placa.w;
@@ -665,12 +710,10 @@
       const list = document.getElementById('listaCortesPlaca');
       list.innerHTML = '';
 
-      // Ordenar cortes de mayor a menor para optimizar espacio (Guillotine Packing básico rectilíneo)
       const sortedCuts = [...placa.cuts].sort((a,b) => Math.max(b.w,b.h) - Math.max(a.w,a.h));
 
-      sortedCuts.forEach((c, idx) => {
+      sortedCuts.forEach((c) => {
         let pw = c.w, ph = c.h;
-        // Giro automático en 90° si entra mejor
         if (curX + pw > placa.w && curX + ph <= placa.w) {
           pw = c.h; ph = c.w;
         }
@@ -721,18 +764,19 @@
       const price = parseFloat(document.getElementById('newStockPrice').value) || 0;
       const qty = parseInt(document.getElementById('newStockQty').value) || 0;
       if (!name) return;
-      appData.stock.push({ name, price, qty, unit: 'U' });
+      window.appData.stock.push({ name, price, qty, unit: 'U' });
+      document.getElementById('newStockBox').style.display = 'none';
       saveDataCloud();
     }
     function changeStockQty(idx, delta) {
-      appData.stock[idx].qty = Math.max(0, appData.stock[idx].qty + delta);
+      window.appData.stock[idx].qty = Math.max(0, window.appData.stock[idx].qty + delta);
       saveDataCloud();
     }
     function renderStock() {
       const cont = document.getElementById('stockListContainer');
       cont.innerHTML = '';
       let lowAlerts = 0;
-      appData.stock.forEach((item, i) => {
+      window.appData.stock.forEach((item, i) => {
         if (item.qty <= 5) lowAlerts++;
         const div = document.createElement('div');
         div.className = 'stock-item';
@@ -748,7 +792,7 @@
           </div>`;
         cont.appendChild(div);
       });
-      document.getElementById('totalItemsCount').textContent = appData.stock.length;
+      document.getElementById('totalItemsCount').textContent = window.appData.stock.length;
       document.getElementById('lowStockCount').textContent = lowAlerts;
     }
 
@@ -763,7 +807,8 @@
       const placas = parseFloat(document.getElementById('recPlacas').value) || 0.5;
       const costo = parseFloat(document.getElementById('recCosto').value) || 0;
       if (!name) return;
-      appData.recetas.push({ name, detalle, placas, costo });
+      window.appData.recetas.push({ name, detalle, placas, costo });
+      document.getElementById('newRecetaBox').style.display = 'none';
       saveDataCloud();
     }
     function renderRecetas() {
@@ -772,11 +817,11 @@
       cont.innerHTML = '';
       sel.innerHTML = '<option value="">-- Seleccionar Mueble Receta --</option>';
 
-      appData.recetas.forEach((r, idx) => {
+      window.appData.recetas.forEach((r, idx) => {
         const div = document.createElement('div');
         div.className = 'corte-row';
         div.innerHTML = `<div><strong>${r.name}</strong><br><span style="color:var(--muted);">${r.detalle}</span></div>
-          <button class="btn btn-pink" style="padding:2px 6px;" onclick="appData.recetas.splice(${idx},1);saveDataCloud();">✕</button>`;
+          <button class="btn btn-pink" style="padding:2px 6px;" onclick="window.appData.recetas.splice(${idx},1);saveDataCloud();">✕</button>`;
         cont.appendChild(div);
 
         const opt = document.createElement('option');
@@ -786,11 +831,11 @@
       });
     }
 
-    // PRESUPUESTOS (MENÚ DESPLEGABLE)
+    // PRESUPUESTOS
     function onSelectRecetaPresup() {
       const idx = document.getElementById('presSelectReceta').value;
       if (idx === "") return;
-      const r = appData.recetas[idx];
+      const r = window.appData.recetas[idx];
       document.getElementById('presMueble').value = r.name + ' (' + r.detalle + ')';
       document.getElementById('presCosto').value = r.costo;
       calcPresup();
@@ -813,7 +858,7 @@
       const cli = document.getElementById('presCliente').value || 'Cliente';
       const mueble = document.getElementById('presMueble').value || 'Mueble';
       const total = calcPresup();
-      appData.pedidos.unshift({ cliente: cli, mueble, total });
+      window.appData.pedidos.unshift({ cliente: cli, mueble, total });
       saveDataCloud();
       switchTab('caja');
     }
@@ -823,7 +868,7 @@
       const cont = document.getElementById('pedidosList');
       cont.innerHTML = '';
       let totFact = 0;
-      appData.pedidos.forEach((p, idx) => {
+      window.appData.pedidos.forEach((p) => {
         totFact += p.total;
         const div = document.createElement('div');
         div.className = 'corte-row';
@@ -847,18 +892,19 @@
     }
 
     function exportBackup() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData));
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(window.appData));
       const a = document.createElement('a');
       a.href = dataStr; a.download = "backup_jl.json"; a.click();
     }
 
     function renderAll() {
-      renderMesitaSection();
+      if(!window.appData) return;
       renderPlacasSection();
       renderStock();
       renderRecetas();
       renderCaja();
       calcViaje();
+      calcMesitaVariable();
     }
   </script>
 </body>
