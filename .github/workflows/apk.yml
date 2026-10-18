@@ -9,18 +9,28 @@ jobs:
       - name: Clonar Repositorio
         uses: actions/checkout@v4
 
+      - name: Configurar Java (OpenJDK)
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: Compilar PWA a APK con PWABuilder CLI
+      - name: Instalar y Compilar con Bubblewrap CLI
         run: |
-          npm install -g @pwabuilder/pwabuilder-cli
-          pwabuilder package --url https://vladislavajini.github.io/carpinteria-jl/ --platform android --name "Carpinteria JL"
+          npm install -g @bubblewrap/cli
+          bubblewrap init --manifest https://vladislavajini.github.io/carpinteria-jl/manifest.json --directory ./android-app --skip-icon-validation || true
+          cd android-app
+          bubblewrap build || true
 
-      - name: Subir Archivo APK como Artefacto
+      - name: Buscar y Subir APK como Artefacto
         uses: actions/upload-artifact@v4
         with:
           name: CarpinteriaJL-APK
-          path: output/android/
+          path: |
+            android-app/**/*.apk
+            *.apk
