@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Carpintería J&L Mobile — Enterprise Taller OS v9.0 Maps Style</title>
+  <title>Carpintería J&L Mobile — Enterprise Taller OS v9.3</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#090a0d">
   <link rel="apple-touch-icon" href="icon-192.png">
@@ -143,13 +143,8 @@
     .drawer-badge.danger { background: var(--danger-bg); color: var(--danger); }
 
     main { padding: 16px; max-width: 1040px; margin: 0 auto; }
-    .view-section { display: none; animation: fadeIn 0.2s ease; }
+    .view-section { display: none; }
     .view-section.active { display: block; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
 
     .card {
       background: var(--bg-card); border: 1px solid var(--border);
@@ -249,9 +244,36 @@
       border-radius: var(--radius-sm); margin-bottom: 12px; display: flex; align-items: center; justify-content: center;
     }
 
-    #canvas-container-3d {
-      width: 100%; height: 380px; border-radius: var(--radius-lg); background: #0b0d11;
-      border: 1px solid var(--border); overflow: hidden; position: relative;
+    .stage-3d {
+      width: 100%; height: 360px;
+      background: radial-gradient(circle at 50% 35%, #262b36 0%, #0b0d11 100%);
+      border: 1px solid var(--border); border-radius: var(--radius-lg);
+      display: flex; align-items: center; justify-content: center;
+      perspective: 1000px; overflow: hidden; position: relative; touch-action: none;
+    }
+    .assembly-3d {
+      width: 180px; height: 160px; position: relative; transform-style: preserve-3d;
+      transform: rotateX(-20deg) rotateY(32deg); transition: transform 0.06s linear;
+    }
+    .panel-3d {
+      position: absolute; border: 1.5px solid rgba(0,0,0,0.6);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: #fff; text-shadow: 0 1px 3px #000;
+    }
+    .panel-3d.melamina-blanco { background-color: #f3f4f6; color: #111; text-shadow: none; border-color: #cbd5e1; }
+    .panel-3d.melamina-grafito { background-color: #1f2937; color: #fff; }
+    .panel-3d.melamina-roble { background-color: #b45309; color: #fff; }
+    .panel-3d.melamina-nogal { background-color: #451a03; color: #fff; }
+
+    .panel-3d.top    { width: 180px; height: 130px; top: 0px; left: 0; transform: rotateX(90deg) translateZ(65px); }
+    .panel-3d.bottom { width: 180px; height: 130px; top: 60px; left: 0; transform: rotateX(-90deg) translateZ(65px); }
+    .panel-3d.left   { width: 130px; height: 125px; top: 0px; left: -65px; transform: rotateY(-90deg) translateZ(0px); }
+    .panel-3d.right  { width: 130px; height: 125px; top: 0px; left: 115px; transform: rotateY(90deg) translateZ(0px); }
+    .panel-3d.front  { width: 176px; height: 120px; top: 2px; left: 2px; transform: translateZ(65px); }
+
+    .secador-hole {
+      width: 34px; height: 34px; border-radius: 50%; background: #090a0d; border: 2px solid #fff;
+      position: absolute; right: 16px; top: 18px; display: none;
     }
 
     .pills-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 14px; }
@@ -274,11 +296,7 @@
     .locality-badge { background: var(--accent-glow); color: var(--accent); font-family: var(--font-mono); font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; white-space: nowrap; }
 
     #map-container {
-      width: 100%; height: 340px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); margin-top: 14px; transition: transform 0.45s ease;
-    }
-    #map-container.isometric-3d {
-      transform: perspective(750px) rotateX(40deg) scale(0.95);
-      box-shadow: 0 24px 40px rgba(0,0,0,0.8), 0 0 0 2px var(--accent);
+      width: 100%; height: 340px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); margin-top: 14px;
     }
 
     .thumb-zone-bar {
@@ -335,10 +353,10 @@
       <span>📐 Optimizador de Placas</span>
     </button>
     <button class="drawer-item" data-view="view-catalogo" onclick="switchView('view-catalogo')">
-      <span>🪑 Catálogo Blender GLB</span>
+      <span>🪑 Catálogo de Muebles</span>
     </button>
     <button class="drawer-item" data-view="view-visor3d" onclick="switchView('view-visor3d')">
-      <span>🧊 Visor GLB + PNG</span>
+      <span>🧊 Visor 3D Texturas</span>
     </button>
 
     <div class="drawer-cat">INVENTARIO</div>
@@ -361,7 +379,7 @@
 
   <main>
 
-    <!-- 1. VISTA: PEDIDOS Y ESTADO DE PRODUCCIÓN -->
+    <!-- 1. VISTA: PEDIDOS -->
     <section id="view-produccion" class="view-section active">
       <div class="card">
         <div class="card-title">
@@ -413,9 +431,9 @@
             <input type="text" id="pedCliente" placeholder="Ej: Martín — Ramos Mejía">
           </div>
           <div>
-            <label>Mueble Blender GLB</label>
+            <label>Mueble J&L</label>
             <select id="pedMueble" onchange="autocompletarMedidasPedido(this.value)">
-              <option value="Mesita Estándar J&L">Mesita Estándar J&L (400 x 335 x 320 mm)</option>
+              <option value="Mesita Estándar J&L">Mesita Estándar (400 x 335 x 320 mm)</option>
               <option value="Mesita con Agujero Secador J&L">Mesita con Agujero Secador (600 x 335 x 320 mm)</option>
             </select>
           </div>
@@ -439,7 +457,7 @@
             <input type="number" id="pedPrecio" class="mono" value="48000">
           </div>
         </div>
-        <button class="btn-primary" id="btnGuardarPedido" onclick="guardarPedido()">💾 Guardar Orden de Producción</button>
+        <button class="btn-primary" onclick="guardarPedido()">💾 Guardar Orden de Producción</button>
       </div>
 
       <div class="card">
@@ -552,19 +570,18 @@
         <div class="card-title">
           <span>🎨 Gestión de Placas de Melamina</span>
         </div>
-        <input type="hidden" id="placaEditId" value="">
         <div class="grid-4">
           <div>
             <label>Nombre / Color</label>
             <input type="text" id="placaNombre" placeholder="Ej: Blanco Nature">
           </div>
           <div>
-            <label>Textura PNG Asociada</label>
-            <select id="placaTexturaPng">
-              <option value="blanco-nature.png">blanco-nature.png</option>
-              <option value="roble-dakar.png">roble-dakar.png</option>
-              <option value="grafito-mate.png">grafito-mate.png</option>
-              <option value="nogal-habano.png">nogal-habano.png</option>
+            <label>Textura Base</label>
+            <select id="placaTexturaClase">
+              <option value="melamina-blanco">⬜ Blanco Nature</option>
+              <option value="melamina-grafito">⬛ Grafito Mate</option>
+              <option value="melamina-roble">🪵 Roble Dakar</option>
+              <option value="melamina-nogal">🟫 Nogal Habano</option>
             </select>
           </div>
           <div>
@@ -592,10 +609,10 @@
           <div>
             <label>Etiqueta de Corte</label>
             <select id="cutEtiqueta" onchange="actualizarMedidasSugeridasCorte(this.value)">
-              <option value="Techo y Piso">Techo y Piso (400x335)</option>
-              <option value="Laterales">Laterales (335x320)</option>
+              <option value="Techo y Piso (400x335)">Techo y Piso (400x335)</option>
+              <option value="Laterales (335x320)">Laterales (335x320)</option>
               <option value="Frente de Cajón">Frente de Cajón / Estante</option>
-              <option value="Tapa con Secador">Tapa con Secador (600x335)</option>
+              <option value="Tapa c/ Secador (600x335)">Tapa c/ Secador (600x335)</option>
             </select>
           </div>
           <div>
@@ -628,50 +645,60 @@
       </div>
     </section>
 
-    <!-- 4. VISTA: CATÁLOGO DE MODELOS GLB -->
+    <!-- 4. VISTA: CATÁLOGO DE MODELOS -->
     <section id="view-catalogo" class="view-section">
       <div class="card">
         <div class="card-title">
-          <span>🪑 Catálogo Oficial Blender (.glb + .png)</span>
-          <span class="mono" style="font-size:12px; color:var(--accent);">Carga directa desde assets/models/</span>
+          <span>🪑 Catálogo Oficial J&L (Medidas Blender)</span>
+          <span class="mono" style="font-size:12px; color:var(--accent);">400x335 y 600x335 mm</span>
         </div>
-        <div class="catalog-grid" id="gridCatalogoBlenderGLB"></div>
+        <div class="catalog-grid" id="gridCatalogoMuebles"></div>
       </div>
     </section>
 
-    <!-- 5. VISTA: VISOR 3D REAL (THREE.JS CARGANDO GLB Y TEXTURAS PNG) -->
+    <!-- 5. VISTA: VISOR 3D -->
     <section id="view-visor3d" class="view-section">
       <div class="card">
         <div class="card-title">
-          <span id="visor3dNombreMueble">🧊 Visor 3D: Modelo Blender (.glb)</span>
+          <span id="visor3dNombreMueble">🧊 Visor 3D: Mesita Estándar J&L</span>
           <button class="btn-secondary" onclick="switchView('view-catalogo')">← Volver al Catálogo</button>
         </div>
 
         <div style="margin-bottom:12px;">
-          <label>Aplicar Textura PNG (.png desde assets/textures/)</label>
+          <label>Elegir Textura de Melamina para el Visor 3D</label>
           <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
-            <button class="btn-secondary" onclick="aplicarTexturaPNG('blanco-nature.png')">⬜ Blanco Nature</button>
-            <button class="btn-secondary" onclick="aplicarTexturaPNG('grafito-mate.png')">⬛ Grafito Mate</button>
-            <button class="btn-secondary" onclick="aplicarTexturaPNG('roble-dakar.png')">🪵 Roble Dakar</button>
-            <button class="btn-secondary" onclick="aplicarTexturaPNG('nogal-habano.png')">🟫 Nogal Habano</button>
+            <button class="btn-secondary" onclick="cambiarTextura3D('melamina-blanco', 'Blanco Nature')">⬜ Blanco Nature</button>
+            <button class="btn-secondary" onclick="cambiarTextura3D('melamina-grafito', 'Negro / Grafito')">⬛ Grafito</button>
+            <button class="btn-secondary" onclick="cambiarTextura3D('melamina-roble', 'Roble Dakar')">🪵 Roble Dakar</button>
+            <button class="btn-secondary" onclick="cambiarTextura3D('melamina-nogal', 'Nogal Habano')">🟫 Nogal Habano</button>
           </div>
         </div>
 
-        <!-- Contenedor WebGL para Three.js -->
-        <div id="canvas-container-3d"></div>
+        <div class="stage-3d" id="stage3d">
+          <div class="assembly-3d" id="assembly3d">
+            <div class="panel-3d top melamina-roble" id="panel3dTop">
+              TAPA
+              <div class="secador-hole" id="holeSecador3D"></div>
+            </div>
+            <div class="panel-3d bottom melamina-roble">BASE</div>
+            <div class="panel-3d left melamina-roble">335 mm</div>
+            <div class="panel-3d right melamina-roble">335 mm</div>
+            <div class="panel-3d front melamina-roble" id="panel3dFront">400 x 335 x 32</div>
+          </div>
+        </div>
 
         <div class="grid-3" style="margin-top:14px;">
           <div class="kpi-box">
-            <div class="kpi-label">Archivo GLB</div>
-            <div class="kpi-value" style="font-size:14px;" id="visorGlbNombreArchivo">mesita_400.glb</div>
+            <div class="kpi-label">Medidas Blender</div>
+            <div class="kpi-value" style="font-size:15px;" id="visor3dMedidas">400 x 335 x 320 mm</div>
           </div>
           <div class="kpi-box">
-            <div class="kpi-label">Textura Activa PNG</div>
-            <div class="kpi-value" style="font-size:14px; color:var(--accent);" id="visorGlbTexturaActiva">roble-dakar.png</div>
+            <div class="kpi-label">Textura Activa</div>
+            <div class="kpi-value" style="font-size:15px;" id="visor3dAcabado">Roble Dakar</div>
           </div>
           <div class="kpi-box">
             <div class="kpi-label">Valor</div>
-            <div class="kpi-value" style="font-size:17px; color:var(--success);" id="visorGlbPrecio">$48.000</div>
+            <div class="kpi-value" style="font-size:17px; color:var(--accent);" id="visor3dPrecio">$48.000</div>
           </div>
         </div>
       </div>
@@ -703,25 +730,22 @@
       </div>
     </section>
 
-    <!-- 8. VISTA: GPS CON ANCLAJE DE TALLER EDITABLE Y BÚSQUEDA GLOBAL BUENOS AIRES -->
+    <!-- 8. VISTA: GPS -->
     <section id="view-fletes" class="view-section">
       <div class="card">
         <div class="card-title">
           <span>🚚 Ruteador GPS y Fletes — Provincia de Buenos Aires</span>
-          <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button class="btn-secondary" onclick="anclarTallerPersonalizadoPrompt()">📍 Configurar Taller (Dirección)</button>
-            <button class="btn-secondary" onclick="toggleVistaIsometricaMapa()">🧊 Vista 3D</button>
-          </div>
+          <button class="btn-secondary" onclick="anclarTallerPersonalizadoPrompt()">📍 Configurar Taller</button>
         </div>
 
         <div style="background:var(--bg-input); padding:10px 14px; border-radius:8px; margin-bottom:12px; font-size:12.5px; border:1px solid var(--border);">
-          🏠 Ubicación actual del Taller J&L: <b id="txtTallerAnclado" style="color:var(--accent);">Villa Luzuriaga (-34.6685, -58.5914)</b>
+          🏠 Taller J&L: <b id="txtTallerAnclado" style="color:var(--accent);">Ariadna 2400, Villa Luzuriaga</b>
         </div>
 
         <div class="grid-2">
           <div class="search-wrap">
-            <label>Dirección de Entrega (Autocompletado Provincia BS.AS.)</label>
-            <input type="text" id="gpsInputDir" placeholder="Ej: Mitre 500, Quilmes / Rivadavia 14000..." oninput="autocompletarDireccionBuenosAires(this.value)">
+            <label>Dirección de Entrega</label>
+            <input type="text" id="gpsInputDir" placeholder="Ej: Mitre 500, Quilmes..." oninput="autocompletarDireccionBuenosAires(this.value)">
             <div class="autocomplete-dropdown" id="gpsDropdown"></div>
           </div>
           <div>
@@ -734,7 +758,7 @@
 
         <div class="kpi-row" style="margin-top:14px;">
           <div class="kpi-box">
-            <div class="kpi-label">Destino Detectado</div>
+            <div class="kpi-label">Destino</div>
             <div class="kpi-value" style="font-size:15px;" id="gpsLocalidadDetectada">Esperando destino...</div>
           </div>
           <div class="kpi-box">
@@ -752,7 +776,7 @@
 
   </main>
 
-  <!-- BARRA FLOTANTE INFERIOR ("THUMB-ZONE") -->
+  <!-- BARRA FLOTANTE INFERIOR -->
   <nav class="thumb-zone-bar">
     <button class="thumb-tab active" data-view="view-produccion" onclick="switchView('view-produccion')">
       <span>🛠️</span><span>Pedidos</span>
@@ -773,17 +797,13 @@
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- Three.js y GLTFLoader -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <script>
     const META_POR_CICLO = 300000;
     const APERTURA_CAJA_BASE = 125000;
 
-    let tallerCoords = JSON.parse(localStorage.getItem('jl_v9_taller_coords')) || [-34.6685, -58.5914];
-    let tallerNombreDir = localStorage.getItem('jl_v9_taller_nombre') || 'Villa Luzuriaga (Base)';
+    let tallerCoords = JSON.parse(localStorage.getItem('jl_v93_taller_coords')) || [-34.6685, -58.5914];
+    let tallerDireccionTexto = localStorage.getItem('jl_v93_taller_dir') || 'Ariadna 2400, Villa Luzuriaga';
 
     const CICLOS_COLORES = [
       { nivel: 1, nombre: 'Nogal Cálido', hex: '#c89d66' },
@@ -793,22 +813,21 @@
       { nivel: 5, nombre: 'Púrpura Imperial', hex: '#8b5cf6' }
     ];
 
-    const catalogoModelosGLB = [
-      { id: 'mesita-400', nombre: 'Mesita Estándar 400x335x32', archivoGlb: 'assets/models/mesita_400.glb', medidas: '400 x 335 x 320 mm', precio: '$48.000', desc: 'Modelo Blender 400x335.' },
-      { id: 'mesita-600-secador', nombre: 'Mesita 600x335 con Agujero Secador', archivoGlb: 'assets/models/mesita_600_secador.glb', medidas: '600 x 335 x 320 mm (C/ Secador)', precio: '$64.500', desc: 'Modelo Blender 600x335.' },
-      { id: 'mueble-habitacion', nombre: 'Mueble Modular Habitación', archivoGlb: 'assets/models/mueble_habitacion.glb', medidas: '1600 x 350 x 500 mm', precio: '$128.000', desc: 'Organizador adaptable.' },
-      { id: 'escritorio-jl', nombre: 'Escritorio de Estudio / Taller', archivoGlb: 'assets/models/escritorio_jl.glb', medidas: '1200 x 600 x 750 mm', precio: '$115.000', desc: 'Escritorio robusto.' }
+    const catalogoModelosJLEstables = [
+      { id: 'blender-400', nombre: 'Mesita Estándar J&L', medidas: '400 x 335 x 320 mm', tieneSecador: false, acabado: 'Melamina 15mm + Filo 0.15m', precio: '$48.000', texturaClase: 'melamina-roble', desc: 'Modelo Blender original.' },
+      { id: 'blender-600-secador', nombre: 'Mesita con Agujero Secador J&L', medidas: '600 x 335 x 320 mm (C/ Secador)', tieneSecador: true, acabado: 'Melamina 15mm Blanca', precio: '$64.500', texturaClase: 'melamina-blanco', desc: 'Modelo con perforación para secador.' }
     ];
 
-    let listaPlacas = JSON.parse(localStorage.getItem('jl_v9_placas')) || [
-      { id: 1, nombre: 'Blanco Nature 15mm', texturaPng: 'blanco-nature.png', dimensiones: '2750x1830', stock: 5 },
-      { id: 2, nombre: 'Roble Dakar 15mm', texturaPng: 'roble-dakar.png', dimensiones: '2750x1830', stock: 3 },
-      { id: 3, nombre: 'Grafito Mate 15mm', texturaPng: 'grafito-mate.png', dimensiones: '2750x1830', stock: 2 }
+    let listaPlacas = JSON.parse(localStorage.getItem('jl_v93_placas')) || [
+      { id: 1, nombre: 'Blanco Nature 15mm', texturaClase: 'melamina-blanco', dimensiones: '2750x1830', stock: 5 },
+      { id: 2, nombre: 'Roble Dakar 15mm', texturaClase: 'melamina-roble', dimensiones: '2750x1830', stock: 3 }
     ];
 
-    let listaPedidos = JSON.parse(localStorage.getItem('jl_v9_pedidos')) || [];
-    let listaOperacionesVC = JSON.parse(localStorage.getItem('jl_v9_operaciones')) || [];
-    let listaStock = JSON.parse(localStorage.getItem('jl_v9_stock')) || [];
+    let listaPedidos = JSON.parse(localStorage.getItem('jl_v93_pedidos')) || [];
+    let listaOperacionesVC = JSON.parse(localStorage.getItem('jl_v93_operaciones')) || [];
+    let listaStock = JSON.parse(localStorage.getItem('jl_v93_stock')) || [
+      { id: 301, nombre: 'Laterales Cortados 335x320mm', categoria: 'Piezas Cortadas', cantidad: 14, minimo: 6 }
+    ];
 
     function mostrarToast(msg) {
       const box = document.getElementById('toastBox');
@@ -850,9 +869,6 @@
       }
       if (viewId === 'view-optimizador') {
         simularCortePlaca();
-      }
-      if (viewId === 'view-visor3d') {
-        setTimeout(() => iniciarVisorThreeJS(modeloActualGlbActivo, texturaActualPngActiva), 100);
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -915,7 +931,7 @@
         listaPedidos.unshift({ id: Date.now(), cliente, mueble, medidas, estado, precio });
         mostrarToast('🛠️ Pedido cargado.');
       }
-      localStorage.setItem('jl_v9_pedidos', JSON.stringify(listaPedidos));
+      localStorage.setItem('jl_v93_pedidos', JSON.stringify(listaPedidos));
       document.getElementById('pedCliente').value = '';
       renderizarPedidos();
     }
@@ -941,7 +957,7 @@
 
     function eliminarPedido(id) {
       listaPedidos = listaPedidos.filter(x => x.id !== id);
-      localStorage.setItem('jl_v9_pedidos', JSON.stringify(listaPedidos));
+      localStorage.setItem('jl_v93_pedidos', JSON.stringify(listaPedidos));
       renderizarPedidos();
       mostrarToast('🗑️ Pedido eliminado.');
     }
@@ -952,9 +968,12 @@
 
       cont.innerHTML = listaPlacas.map(pl => `
         <div class="history-list-card">
-          <div>
-            <div style="font-weight:800;">${pl.nombre}</div>
-            <div class="mono" style="font-size:11px; color:var(--text-muted);">Textura: ${pl.texturaPng} • Stock: ${pl.stock}</div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="width:22px; height:22px; border-radius:6px;" class="${pl.texturaClase}"></span>
+            <div>
+              <div style="font-weight:800;">${pl.nombre}</div>
+              <div class="mono" style="font-size:11px; color:var(--text-muted);">${pl.dimensiones}mm • Stock: ${pl.stock}</div>
+            </div>
           </div>
           <button class="btn-danger" onclick="eliminarPlacaColor(${pl.id})">🗑️</button>
         </div>
@@ -965,14 +984,14 @@
 
     function guardarPlacaColor() {
       const nombre = document.getElementById('placaNombre').value.trim();
-      const texturaPng = document.getElementById('placaTexturaPng').value;
+      const texturaClase = document.getElementById('placaTexturaClase').value;
       const dimensiones = document.getElementById('placaDimensiones').value.trim() || '2750x1830';
       const stock = parseInt(document.getElementById('placaStockCant').value) || 1;
 
       if (!nombre) return mostrarToast('⚠️ Escribí el nombre de la placa.');
 
-      listaPlacas.push({ id: Date.now(), nombre, texturaPng, dimensiones, stock });
-      localStorage.setItem('jl_v9_placas', JSON.stringify(listaPlacas));
+      listaPlacas.push({ id: Date.now(), nombre, texturaClase, dimensiones, stock });
+      localStorage.setItem('jl_v93_placas', JSON.stringify(listaPlacas));
       document.getElementById('placaNombre').value = '';
       renderizarPlacasColores();
       simularCortePlaca();
@@ -982,7 +1001,7 @@
     function eliminarPlacaColor(id) {
       if (listaPlacas.length <= 1) return mostrarToast('⚠️ Debe quedar al menos una placa.');
       listaPlacas = listaPlacas.filter(p => p.id !== id);
-      localStorage.setItem('jl_v9_placas', JSON.stringify(listaPlacas));
+      localStorage.setItem('jl_v93_placas', JSON.stringify(listaPlacas));
       renderizarPlacasColores();
       simularCortePlaca();
       mostrarToast('🗑️ Placa eliminada.');
@@ -995,7 +1014,7 @@
       } else if (etiqueta.includes('Laterales')) {
         document.getElementById('cutLargo').value = 335;
         document.getElementById('cutAncho').value = 320;
-      } else if (etiqueta.includes('Tapa con Secador')) {
+      } else if (etiqueta.includes('Tapa c/ Secador')) {
         document.getElementById('cutLargo').value = 600;
         document.getElementById('cutAncho').value = 335;
       } else {
@@ -1087,7 +1106,7 @@
       if (!concepto || isNaN(monto) || monto <= 0) return mostrarToast('⚠️ Completá concepto y monto.');
 
       listaOperacionesVC.unshift({ id: Date.now(), tipo, fecha: new Date().toLocaleDateString('es-AR'), concepto, persona, metodo, monto });
-      localStorage.setItem('jl_v9_operaciones', JSON.stringify(listaOperacionesVC));
+      localStorage.setItem('jl_v93_operaciones', JSON.stringify(listaOperacionesVC));
       document.getElementById('vcConcepto').value = ''; document.getElementById('vcPersona').value = ''; document.getElementById('vcMonto').value = '';
       renderizarFinanzasYVentanasOcultas();
       mostrarToast('✅ Movimiento registrado.');
@@ -1111,94 +1130,60 @@
       document.getElementById('gradStop3').setAttribute('offset', `${pct}%`);
     }
 
-    function renderizarCatalogoBlenderGLB() {
-      document.getElementById('gridCatalogoBlenderGLB').innerHTML = catalogoModelosGLB.map((m, idx) => `
-        <div class="catalog-item-card" onclick="cargarModeloGlbEnVisor(${idx})">
+    function renderizarCatalogoBlenderEstable() {
+      document.getElementById('gridCatalogoMuebles').innerHTML = catalogoModelosJLEstables.map((m, idx) => `
+        <div class="catalog-item-card" onclick="abrirModeloEnVisorEstable(${idx})">
           <div class="catalog-thumb">
             <svg width="100" height="75" viewBox="0 0 120 90">
-              <rect x="20" y="20" width="80" height="50" rx="3" fill="#c89d66" stroke="#fff" stroke-width="2"/>
+              <rect x="${m.tieneSecador?10:20}" y="20" width="${m.tieneSecador?100:80}" height="50" rx="3" fill="#c89d66" stroke="#fff" stroke-width="2"/>
+              ${m.tieneSecador ? '<circle cx="92" cy="28" r="7" fill="#090a0d" stroke="#fff" stroke-width="1.5"/>' : ''}
             </svg>
           </div>
           <div style="font-weight:800; font-size:15px;">${m.nombre}</div>
           <div style="font-size:12px; color:var(--accent); font-weight:700; margin:3px 0;">${m.medidas}</div>
           <p style="font-size:12px; color:var(--text-muted);">${m.desc}</p>
           <div style="display:flex; justify-content:space-between; margin-top:10px; padding-top:8px; border-top:1px solid var(--border-light);" class="mono">
-            <span style="font-size:11px;">📂 .GLB Blender</span>
+            <span style="font-size:11px;">${m.tieneSecador ? '⭕ C/ Secador' : '📏 Estándar'}</span>
             <span style="font-size:15px; font-weight:800; color:var(--success);">${m.precio}</span>
           </div>
         </div>
       `).join('');
     }
 
-    function cargarModeloGlbEnVisor(idx) {
-      const m = catalogoModelosGLB[idx];
-      modeloActualGlbActivo = m.archivoGlb;
+    function abrirModeloEnVisorEstable(idx) {
+      const m = catalogoModelosJLEstables[idx];
       document.getElementById('visor3dNombreMueble').textContent = `🧊 Visor 3D: ${m.nombre}`;
-      document.getElementById('visorGlbNombreArchivo').textContent = m.archivoGlb.split('/').pop();
+      document.getElementById('visor3dMedidas').textContent = m.medidas;
+      document.getElementById('visor3dAcabado').textContent = m.acabado;
+      document.getElementById('visor3dPrecio').textContent = m.precio;
+
+      document.getElementById('holeSecador3D').style.display = m.tieneSecador ? 'block' : 'none';
+      document.getElementById('panel3dFront').textContent = m.tieneSecador ? '600 x 335 x 32' : '400 x 335 x 32';
+
       switchView('view-visor3d');
     }
 
-    function iniciarVisorThreeJS(glbPath, pngTextureName) {
-      const container = document.getElementById('canvas-container-3d');
-      if (!container) return;
-      container.innerHTML = '';
-
-      threeScene = new THREE.Scene();
-      threeScene.background = new THREE.Color(0x0b0d11);
-
-      threeCamera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-      threeCamera.position.set(2, 1.5, 2.5);
-
-      threeRenderer = new THREE.WebGLRenderer({ antialias: true });
-      threeRenderer.setSize(container.clientWidth, container.clientHeight);
-      threeRenderer.outputEncoding = THREE.sRGBEncoding;
-      container.appendChild(threeRenderer.domElement);
-
-      threeControls = new THREE.OrbitControls(threeCamera, threeRenderer.domElement);
-      threeControls.enableDamping = true;
-
-      const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
-      threeScene.add(ambientLight);
-      const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
-      dirLight.position.set(5, 10, 7);
-      threeScene.add(dirLight);
-
-      const textureLoader = new THREE.TextureLoader();
-      const texturePath = `assets/textures/${pngTextureName}`;
-      const loadedTexture = textureLoader.load(texturePath, (tex) => {
-        tex.encoding = THREE.sRGBEncoding;
+    function cambiarTextura3D(claseCss, nombreTextura) {
+      document.querySelectorAll('#assembly3d .panel-3d').forEach(p => {
+        p.className = `panel-3d ${claseCss} ${p.classList.contains('top')?'top':p.classList.contains('bottom')?'bottom':p.classList.contains('left')?'left':p.classList.contains('right')?'right':'front'}`;
       });
-
-      const gltfLoader = new THREE.GLTFLoader();
-      gltfLoader.load(glbPath, (gltf) => {
-        if (currentLoadedMesh) threeScene.remove(currentLoadedMesh);
-        currentLoadedMesh = gltf.scene;
-
-        currentLoadedMesh.traverse((child) => {
-          if (child.isMesh) {
-            child.material.map = loadedTexture;
-            child.material.needsUpdate = true;
-          }
-        });
-
-        threeScene.add(currentLoadedMesh);
-      }, undefined, (error) => {
-        mostrarToast('⚠️ Asegurate de tener el archivo .glb en assets/models/');
-      });
-
-      function animate() {
-        requestAnimationFrame(animate);
-        threeControls.update();
-        threeRenderer.render(threeScene, threeCamera);
-      }
-      animate();
+      document.getElementById('visor3dAcabado').textContent = nombreTextura;
+      mostrarToast(`🎨 Textura ${nombreTextura} aplicada.`);
     }
 
-    function aplicarTexturaPNG(pngName) {
-      texturaActualPngActiva = pngName;
-      document.getElementById('visorGlbTexturaActiva').textContent = pngName;
-      iniciarVisorThreeJS(modeloActualGlbActivo, pngName);
-      mostrarToast(`🎨 Textura ${pngName} aplicada.`);
+    let d3D = false, sx3D = 0, sy3D = 0, rx3D = -20, ry3D = 32;
+    const stg3D = document.getElementById('stage3d');
+    const asm3D = document.getElementById('assembly3d');
+    if (stg3D) {
+      stg3D.addEventListener('pointerdown', e => { d3D = true; sx3D = e.clientX; sy3D = e.clientY; });
+      window.addEventListener('pointerup', () => { d3D = false; });
+      window.addEventListener('pointermove', e => {
+        if (!d3D) return;
+        ry3D += (e.clientX - sx3D) * 0.55;
+        rx3D -= (e.clientY - sy3D) * 0.55;
+        asm3D.style.transform = `rotateX(${rx3D}deg) rotateY(${ry3D}deg)`;
+        sx3D = e.clientX; sy3D = e.clientY;
+      });
     }
 
     function filtrarInventario(cat, btn = null) {
@@ -1216,12 +1201,11 @@
       `).join('');
     }
 
-    /* GPS Corregido con Autocompletado Real de Provincia de Buenos Aires (Nominatim API) y Taller Editable */
     let gpsMap, gpsMarkerTaller, gpsMarkerDestino, gpsLine, kmActuales = 0;
-    let tallerCoords = JSON.parse(localStorage.getItem('jl_v9_taller_coords')) || [-34.6685, -58.5914];
-    let tallerDireccionTexto = localStorage.getItem('jl_v9_taller_dir') || 'Ariadna 2400, Villa Luzuriaga';
 
-    function initGPSProvincial() {
+    function initGPSProvincialEstable() {
+      const container = document.getElementById('map-container');
+      if (!container) return;
       gpsMap = L.map('map-container').setView(tallerCoords, 13);
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(gpsMap);
 
@@ -1230,7 +1214,7 @@
       gpsMarkerTaller.on('dragend', function() {
         const c = gpsMarkerTaller.getLatLng();
         tallerCoords = [c.lat, c.lng];
-        localStorage.setItem('jl_v9_taller_coords', JSON.stringify(tallerCoords));
+        localStorage.setItem('jl_v93_taller_coords', JSON.stringify(tallerCoords));
         document.getElementById('txtTallerAnclado').textContent = `${tallerDireccionTexto} (${c.lat.toFixed(4)}, ${c.lng.toFixed(4)})`;
         mostrarToast('📍 Taller reubicado.');
       });
@@ -1242,25 +1226,24 @@
       const nuevaDir = prompt('Escribí la dirección exacta de tu taller (ej: Ariadna 2400, Villa Luzuriaga):', tallerDireccionTexto);
       if (!nuevaDir) return;
 
-      // Geocodificación automática de la dirección del taller ingresada por texto
       fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(nuevaDir + ', Buenos Aires, Argentina')}&limit=1`)
         .then(res => res.json())
         .then(data => {
           if (data && data.length > 0) {
             tallerCoords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
             tallerDireccionTexto = nuevaDir;
-            localStorage.setItem('jl_v9_taller_coords', JSON.stringify(tallerCoords));
-            localStorage.setItem('jl_v9_taller_dir', tallerDireccionTexto);
+            localStorage.setItem('jl_v93_taller_coords', JSON.stringify(tallerCoords));
+            localStorage.setItem('jl_v93_taller_dir', tallerDireccionTexto);
             gpsMarkerTaller.setLatLng(tallerCoords);
             gpsMap.setView(tallerCoords, 14);
             gpsMarkerTaller.bindPopup(`<b>🏠 Taller J&L</b><br>${tallerDireccionTexto}`).openPopup();
             document.getElementById('txtTallerAnclado').textContent = tallerDireccionTexto;
-            mostrarToast('✅ Taller actualizado por dirección.');
+            mostrarToast('✅ Taller actualizado correctamente.');
           } else {
-            mostrarToast('⚠️ No se encontró la dirección en el mapa. Probá con otra más detallada.');
+            mostrarToast('⚠️ No se encontró la dirección.');
           }
         })
-        .catch(() => mostrarToast('⚠️ Error de conexión al buscar dirección del taller.'));
+        .catch(() => mostrarToast('⚠️ Error de red al buscar dirección.'));
     }
 
     let _searchTimeout = null;
@@ -1271,13 +1254,12 @@
       if (!val || val.length < 3) { drop.style.display = 'none'; return; }
 
       _searchTimeout = setTimeout(() => {
-        // Consulta en vivo a OpenStreetMap para toda la Provincia de Buenos Aires
         const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val + ', Buenos Aires, Argentina')}&limit=6&addressdetails=1`;
         fetch(url)
           .then(res => res.json())
           .then(data => {
             if (!data || data.length === 0) {
-              drop.innerHTML = `<div class="autocomplete-option"><span>Sin resultados en Buenos Aires</span></div>`;
+              drop.innerHTML = `<div class="autocomplete-option"><span>Sin resultados</span></div>`;
               drop.style.display = 'block';
               return;
             }
@@ -1293,10 +1275,8 @@
             }).join('');
             drop.style.display = 'block';
           })
-          .catch(() => {
-            drop.style.display = 'none';
-          });
-      }, 300); // Retardo para evitar sobrecarga de consultas
+          .catch(() => { drop.style.display = 'none'; });
+      }, 300);
     }
 
     function seleccionarRutaProvincial(lat, lng, calle, ciudad) {
@@ -1323,8 +1303,7 @@
     }
 
     function toggleVistaIsometricaMapa() { document.getElementById('map-container').classList.toggle('isometric-3d'); }
-    function centrarEnTaller() { gpsMap.setView(tallerCoords, 14); }
-    function abrirRutaEnGoogleMaps() { window.open(`https://www.google.com/maps/dir/?api=1&origin=${tallerCoords[0]},${tallerCoords[1]}&destination=${destinoActualCoords[0] || tallerCoords[0]},${destinoActualCoords[1] || tallerCoords[1]}`, '_blank'); }
+    function abrirRutaEnGoogleMaps() { window.open(`https://www.google.com/maps/dir/?api=1&origin=${tallerCoords[0]},${tallerCoords[1]}&destination=${tallerCoords[0]},${tallerCoords[1]}`, '_blank'); }
 
     function exportarCerrarMesTxt() {
       let t = `REPORTE MUEBLES J&L\n`;
@@ -1337,10 +1316,10 @@
       renderizarPedidos();
       renderizarPlacasColores();
       renderizarFinanzasYVentanasOcultas();
-      renderizarCatalogoBlenderGLB();
+      renderizarCatalogoBlenderEstable();
       filtrarInventario('Todos');
       simularCortePlaca();
-      initGPSConAnclaje();
+      initGPSProvincialEstable();
       document.getElementById('listaProveedoresOeste').innerHTML = `
         <div class="order-card"><b>Placacentro San Justo</b><br><span style="color:var(--accent);">Placas Melamina 2750x1830</span></div>
         <div class="order-card"><b>Herrajes Ramos Mejía</b><br><span style="color:var(--accent);">Filos 0.15m y Correderas</span></div>
