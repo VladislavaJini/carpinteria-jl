@@ -3,62 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Muebles J&L — Mobile Taller OS v11.0</title>
+  <title>Muebles J&L — Modern UI Pro v13.0 Stock Selector</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#090a0d">
+  <meta name="theme-color" content="#f8fafc">
   <link rel="apple-touch-icon" href="icon-192.png">
 
   <!-- Tipografía Híbrida -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <style>
     :root {
+      --bg-main: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-card: #ffffff;
+      --bg-elevated: #f1f5f9;
+      --bg-input: #f8fafc;
+      --border: #e2e8f0;
+      --border-light: rgba(0, 0, 0, 0.04);
+      --border-focus: #f97316;
+      --text-main: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --accent: #f97316;
+      --accent-hover: #ea580c;
+      --accent-glow: rgba(249, 115, 22, 0.15);
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.12);
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.12);
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --font-title: 'Plus Jakarta Sans', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --radius-sm: 12px;
+      --radius-md: 20px;
+      --radius-lg: 28px;
+    }
+
+    body.taller-pro {
       --bg-main: #090a0d;
       --bg-surface: #12141a;
       --bg-card: #161920;
       --bg-elevated: #1e222b;
       --bg-input: #1b1f27;
       --border: #2a2f3a;
-      --border-light: rgba(255, 255, 255, 0.08);
-      --border-focus: #c89d66;
+      --border-focus: #facc15;
       --text-main: #f3f4f6;
       --text-secondary: #d1d5db;
       --text-muted: #8e95a5;
-      --accent: #c89d66;
-      --accent-hover: #dfb57e;
-      --accent-glow: rgba(200, 157, 102, 0.18);
-      --success: #10b981;
-      --success-bg: rgba(16, 185, 129, 0.12);
-      --danger: #ef4444;
-      --danger-bg: rgba(239, 68, 68, 0.14);
-      --warning: #f59e0b;
-      --info: #3b82f6;
-      --font-title: 'Plus Jakarta Sans', sans-serif;
-      --font-body: 'Inter', sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-      --radius-sm: 10px;
-      --radius-md: 16px;
-      --radius-lg: 24px;
-    }
-
-    body.taller-pro {
-      --bg-main: #000000;
-      --bg-surface: #050507;
-      --bg-card: #0b0c0f;
-      --bg-elevated: #14161c;
-      --bg-input: #121419;
-      --border: #facc15;
-      --border-focus: #fde047;
-      --text-main: #ffffff;
-      --text-secondary: #ffffff;
-      --text-muted: #e5e7eb;
       --accent: #facc15;
-      --accent-glow: rgba(250, 204, 21, 0.28);
+      --accent-glow: rgba(250, 204, 21, 0.2);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -67,45 +67,46 @@
       background-color: var(--bg-main);
       color: var(--text-main);
       font-family: var(--font-body);
-      font-size: 14.5px;
-      line-height: 1.45;
-      padding-bottom: 110px;
+      font-size: 14px;
+      line-height: 1.5;
+      padding-bottom: 120px;
       overflow-x: hidden;
+      transition: background 0.3s, color 0.3s;
     }
 
     header {
       position: sticky; top: 0; z-index: 1100;
-      background: rgba(18, 20, 26, 0.92); backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border); padding: 14px 18px;
-      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border); padding: 16px 20px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
     }
+    body.taller-pro header { background: rgba(18, 20, 26, 0.85); }
 
-    .brand-group { display: flex; align-items: center; gap: 12px; }
+    .brand-group { display: flex; align-items: center; gap: 14px; }
 
     .btn-menu {
-      background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main);
-      width: 42px; height: 42px; border-radius: var(--radius-md); font-size: 20px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
+      background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text-main);
+      width: 44px; height: 44px; border-radius: var(--radius-sm); font-size: 20px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: 0.2s;
     }
 
-    .brand-title { font-family: var(--font-title); font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
-    .brand-sub { font-size: 11px; color: var(--accent); font-family: var(--font-mono); display: block; font-weight: 600; }
+    .brand-title { font-family: var(--font-title); font-size: 18px; font-weight: 800; letter-spacing: -0.4px; }
+    .brand-sub { font-size: 11px; color: var(--accent); font-family: var(--font-mono); display: block; font-weight: 700; }
 
     .btn-taller-pro {
-      background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main);
-      padding: 8px 14px; border-radius: 24px; font-size: 11.5px; font-weight: 700; cursor: pointer; white-space: nowrap;
+      background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text-main);
+      padding: 8px 16px; border-radius: 24px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;
     }
 
-    body.taller-pro .btn-taller-pro { background: var(--accent); color: #000; border-color: #fff; }
-
     .drawer-overlay {
-      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(6px); z-index: 2000; display: none;
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(6px); z-index: 2000; display: none;
     }
 
     .drawer {
-      position: fixed; top: 0; left: -320px; width: 300px; height: 100vh;
+      position: fixed; top: 0; left: -320px; width: 310px; height: 100vh;
       background: var(--bg-surface); border-right: 1px solid var(--border); z-index: 2001;
-      padding: 24px 16px; transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1); overflow-y: auto;
+      padding: 24px 18px; transition: left 0.35s cubic-bezier(0.16, 1, 0.3, 1); overflow-y: auto;
+      box-shadow: 10px 0 40px rgba(0,0,0,0.1);
     }
 
     .drawer.open { left: 0; }
@@ -118,13 +119,13 @@
 
     .drawer-cat {
       font-size: 10.5px; font-family: var(--font-mono); color: var(--accent);
-      text-transform: uppercase; letter-spacing: 1.5px; margin: 18px 0 8px 6px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 1.5px; margin: 20px 0 8px 8px; font-weight: 800;
     }
 
     .drawer-item {
       width: 100%; text-align: left; background: transparent; border: 1px solid transparent;
-      color: var(--text-secondary); padding: 12px 14px; border-radius: var(--radius-md);
-      font-size: 13.5px; font-weight: 600; cursor: pointer; display: flex; align-items: center;
+      color: var(--text-secondary); padding: 12px 16px; border-radius: var(--radius-sm);
+      font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center;
       justify-content: space-between; margin-bottom: 6px; transition: 0.2s;
     }
 
@@ -139,157 +140,161 @@
     }
     .drawer-badge.danger { background: var(--danger-bg); color: var(--danger); }
 
-    main { padding: 18px; max-width: 1040px; margin: 0 auto; }
+    main { padding: 20px; max-width: 1040px; margin: 0 auto; }
     .view-section { display: none !important; }
     .view-section.active { display: block !important; }
 
     .card {
       background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 20px; margin-bottom: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      border-radius: var(--radius-md); padding: 22px; margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
     }
 
     .card-title {
-      font-family: var(--font-title); font-size: 16.5px; font-weight: 800;
-      margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
-      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+      font-family: var(--font-title); font-size: 17px; font-weight: 800;
+      margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
     }
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
 
     @media (max-width: 720px) {
       .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
     }
 
-    .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 16px; }
-    .kpi-box { background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; }
-    .kpi-label { font-size: 10.5px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; }
-    .kpi-value { font-family: var(--font-mono); font-size: 18.5px; font-weight: 800; margin-top: 4px; }
+    .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 18px; }
+    .kpi-box { background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; }
+    .kpi-label { font-size: 10.5px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.6px; }
+    .kpi-value { font-family: var(--font-mono); font-size: 20px; font-weight: 800; margin-top: 6px; }
 
     label {
-      display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 6px; margin-top: 12px;
+      display: block; font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 6px; margin-top: 14px;
     }
 
     input, select {
       width: 100%; background: var(--bg-input); border: 1px solid var(--border);
-      color: var(--text-main); padding: 13px 16px; border-radius: var(--radius-md);
+      color: var(--text-main); padding: 14px 18px; border-radius: var(--radius-sm);
       font-family: var(--font-body); font-size: 14px; outline: none; transition: 0.2s;
     }
 
-    input:focus, select:focus { border-color: var(--border-focus); background: var(--bg-surface); }
+    input:focus, select:focus { border-color: var(--border-focus); background: var(--bg-surface); box-shadow: 0 0 0 3px var(--accent-glow); }
     .mono { font-family: var(--font-mono); }
 
     .btn-primary {
-      width: 100%; background: var(--accent); color: #090a0d; border: none;
-      padding: 14px 18px; border-radius: var(--radius-md); font-family: var(--font-title);
-      font-weight: 800; font-size: 14.5px; margin-top: 16px; cursor: pointer; transition: 0.2s;
+      width: 100%; background: var(--accent); color: #ffffff; border: none;
+      padding: 15px 20px; border-radius: var(--radius-sm); font-family: var(--font-title);
+      font-weight: 800; font-size: 15px; margin-top: 18px; cursor: pointer; transition: 0.2s;
+      box-shadow: 0 8px 20px var(--accent-glow);
     }
     .btn-primary:active { transform: scale(0.98); }
 
     .btn-secondary {
       background: var(--bg-elevated); color: var(--text-main); border: 1px solid var(--border);
-      padding: 10px 14px; border-radius: var(--radius-md); font-size: 12px; font-weight: 700;
-      cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 10px 16px; border-radius: var(--radius-sm); font-size: 12.5px; font-weight: 700;
+      cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s;
     }
 
     .btn-danger {
-      background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.4);
-      padding: 8px 12px; border-radius: var(--radius-sm); font-size: 11.5px; font-weight: 700; cursor: pointer;
+      background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;
     }
 
-    .goal-container { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .goal-container { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
     .mesita-vector-card {
-      width: 120px; height: 120px; background: var(--bg-input); border: 1px solid var(--border);
-      border-radius: var(--radius-md); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px;
+      width: 130px; height: 130px; background: var(--bg-input); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px;
     }
 
     .cycle-pill {
       background: var(--accent-glow); color: var(--accent); border: 1px solid var(--accent);
-      padding: 4px 12px; border-radius: 20px; font-family: var(--font-mono); font-size: 11.5px; font-weight: 700;
+      padding: 4px 14px; border-radius: 20px; font-family: var(--font-mono); font-size: 12px; font-weight: 700;
     }
 
-    .progress-bar-track { width: 100%; height: 10px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 99px; overflow: hidden; margin: 10px 0; }
+    .progress-bar-track { width: 100%; height: 10px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 99px; overflow: hidden; margin: 12px 0; }
     .progress-bar-fill { height: 100%; background: var(--accent); width: 0%; transition: 0.4s; }
 
-    .order-card { background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 12px; }
+    .order-card { background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 18px; margin-bottom: 14px; }
     .order-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
     .order-id { font-family: var(--font-mono); font-size: 11px; color: var(--accent); background: var(--accent-glow); padding: 2px 8px; border-radius: 6px; }
     .order-status-badge { font-family: var(--font-mono); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; background: var(--info-bg); color: var(--info); }
     .order-status-badge.terminado { background: var(--success-bg); color: var(--success); }
     .order-status-badge.embalado { background: var(--accent-glow); color: var(--accent); }
-    .order-status-badge.entregado { background: #334155; color: #94a3b8; }
+    .order-status-badge.entregado { background: #cbd5e1; color: #475569; }
 
     .order-specs {
-      font-family: var(--font-mono); font-size: 11.5px; color: var(--text-secondary);
-      background: rgba(0,0,0,0.25); padding: 10px; border-radius: var(--radius-sm); margin: 10px 0; border-left: 3px solid var(--accent);
+      font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);
+      background: var(--bg-surface); padding: 12px; border-radius: 8px; margin: 12px 0; border-left: 3px solid var(--accent);
+      border: 1px solid var(--border);
     }
     .order-actions {
-      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-light);
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border);
     }
 
     .history-list-card {
-      background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-md);
-      padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 14px;
     }
 
-    .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .catalog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
     .catalog-item-card {
-      background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; cursor: pointer; transition: 0.2s;
+      background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 18px; cursor: pointer; transition: 0.2s;
     }
-    .catalog-item-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+    .catalog-item-card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 10px 25px rgba(0,0,0,0.06); }
     .catalog-thumb {
-      width: 100%; height: 130px; background: radial-gradient(circle, #252a34 0%, #12141a 100%);
-      border-radius: var(--radius-sm); margin-bottom: 12px; display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 140px; background: radial-gradient(circle, #e2e8f0 0%, #cbd5e1 100%);
+      border-radius: 8px; margin-bottom: 14px; display: flex; align-items: center; justify-content: center;
     }
+    body.taller-pro .catalog-thumb { background: radial-gradient(circle, #252a34 0%, #12141a 100%); }
 
     #canvas-container-3d {
-      width: 100%; height: 400px; border-radius: var(--radius-lg); background: #0b0d11;
+      width: 100%; height: 420px; border-radius: var(--radius-sm); background: #0b0d11;
       border: 1px solid var(--border); overflow: hidden; position: relative; touch-action: none;
     }
 
-    .pills-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 14px; }
+    .pills-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 16px; }
     .pill-btn {
       background: var(--bg-input); border: 1px solid var(--border); color: var(--text-muted);
-      padding: 8px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; white-space: nowrap; cursor: pointer;
+      padding: 8px 16px; border-radius: 20px; font-size: 12.5px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: 0.2s;
     }
-    .pill-btn.active { background: var(--accent); color: #090a0d; border-color: var(--accent); }
+    .pill-btn.active { background: var(--accent); color: #ffffff; border-color: var(--accent); }
 
     .search-wrap { position: relative; }
     .autocomplete-dropdown {
       position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-surface);
-      border: 1px solid var(--accent); border-radius: var(--radius-md); margin-top: 4px; max-height: 240px; overflow-y: auto; z-index: 1200; display: none;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+      border: 1px solid var(--accent); border-radius: var(--radius-sm); margin-top: 4px; max-height: 240px; overflow-y: auto; z-index: 1200; display: none;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
     }
     .autocomplete-option {
-      padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 13.5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 8px;
+      padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 10px;
     }
     .autocomplete-option:hover { background: var(--bg-elevated); }
-    .locality-badge { background: var(--accent-glow); color: var(--accent); font-family: var(--font-mono); font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; white-space: nowrap; }
+    .locality-badge { background: var(--accent-glow); color: var(--accent); font-family: var(--font-mono); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
 
     #map-container {
-      width: 100%; height: 340px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); margin-top: 14px;
+      width: 100%; height: 360px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border); margin-top: 16px;
     }
 
-    /* Barra Inferior Estilo Dock Minimalista */
     .thumb-zone-bar {
-      position: fixed; bottom: 12px; left: 16px; right: 16px; max-width: 500px; margin: 0 auto;
-      background: rgba(18, 20, 26, 0.94); backdrop-filter: blur(20px);
-      border: 1px solid var(--border); border-radius: 32px; display: flex; justify-content: space-around; padding: 10px 14px; z-index: 1500;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+      position: fixed; bottom: 16px; left: 16px; right: 16px; max-width: 480px; margin: 0 auto;
+      background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(24px);
+      border: 1px solid var(--border); border-radius: 36px; display: flex; justify-content: space-around; padding: 10px 16px; z-index: 1500;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
     }
+    body.taller-pro .thumb-zone-bar { background: rgba(18, 20, 26, 0.9); }
+
     .thumb-tab {
-      background: none; border: none; color: var(--text-muted); font-family: var(--font-body); font-size: 10.5px; font-weight: 700;
-      display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 6px 10px; border-radius: 20px; transition: 0.2s;
+      background: none; border: none; color: var(--text-muted); font-family: var(--font-body); font-size: 11px; font-weight: 700;
+      display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 8px 12px; border-radius: 24px; transition: 0.2s;
     }
     .thumb-tab.active { color: var(--accent); background: var(--accent-glow); }
 
     #toastBox {
-      position: fixed; bottom: 92px; right: 20px; z-index: 3000; background: var(--bg-elevated); border: 1px solid var(--accent);
-      color: var(--text-main); padding: 12px 18px; border-radius: var(--radius-md); font-size: 13px; font-weight: 700; display: none;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      position: fixed; bottom: 100px; right: 20px; z-index: 3000; background: var(--bg-surface); border: 1px solid var(--accent);
+      color: var(--text-main); padding: 14px 20px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 700; display: none;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
     }
   </style>
 </head>
@@ -306,7 +311,7 @@
         <span class="brand-sub">VILLA LUZURIAGA • OS</span>
       </div>
     </div>
-    <div style="display:flex; gap:8px;">
+    <div style="display:flex; gap:10px;">
       <button class="btn-taller-pro" onclick="toggleTallerPro()">☀️ Modo Taller Pro</button>
     </div>
   </header>
@@ -319,7 +324,7 @@
         <div class="brand-title" style="font-size:16px;">CARPINTERÍA J&L</div>
         <span class="brand-sub">Leandro Gabriel Llanes</span>
       </div>
-      <button class="btn-secondary" style="padding:6px 10px;" onclick="toggleDrawer()">✕</button>
+      <button class="btn-secondary" style="padding:6px 12px;" onclick="toggleDrawer()">✕</button>
     </div>
 
     <div class="drawer-cat">GENERAL</div>
@@ -380,9 +385,9 @@
           <span>🚀 Panel Principal — Taller J&L</span>
           <span class="cycle-pill" id="inicioCicloBadge">Ciclo 1</span>
         </div>
-        <div id="cardEnvioCercano" style="background:var(--accent-glow); border:1px solid var(--accent); border-radius:var(--radius-md); padding:14px; margin-bottom:16px;">
+        <div id="cardEnvioCercano" style="background:var(--accent-glow); border:1px solid var(--accent); border-radius:var(--radius-sm); padding:16px; margin-bottom:18px;">
           <div style="font-size:11px; text-transform:uppercase; color:var(--accent); font-weight:800; font-family:var(--font-mono);">🚚 Próximo Envío / Entrega Programada</div>
-          <div id="inicioEnvioTexto" style="font-size:15px; font-weight:800; margin-top:4px;">No hay envíos pendientes próximos.</div>
+          <div id="inicioEnvioTexto" style="font-size:15px; font-weight:800; margin-top:6px;">No hay envíos pendientes próximos.</div>
         </div>
 
         <div class="goal-container">
@@ -417,16 +422,14 @@
       </div>
     </section>
 
-    <!-- 1. VISTA: PRODUCCIÓN Y TALLER (Con alta de muebles y descuento automático de stock) -->
+    <!-- 1. VISTA: PRODUCCIÓN Y TALLER -->
     <section id="view-produccion" class="view-section">
       <div class="card">
-        <div class="card-title">🛠️ Registrar Producción de Mueble y Descontar Insumos</div>
+        <div class="card-title">🛠️ Registrar Producción y Descontar Insumos</div>
         <div class="grid-2">
           <div>
             <label>Seleccionar Mueble a Producir</label>
-            <select id="prodMuebleSelect" onchange="actualizarInsumosProdSelect(this.value)">
-              <!-- Se carga dinámicamente desde el catálogo -->
-            </select>
+            <select id="prodMuebleSelect" onchange="actualizarInsumosProdSelect(this.value)"></select>
           </div>
           <div>
             <label>Cliente / Destino</label>
@@ -434,8 +437,8 @@
           </div>
         </div>
         <div>
-          <label>Insumos / Componentes requeridos que se descontarán del Stock</label>
-          <input type="text" id="prodInsumosDescuento" placeholder="Ej: 2 Laterales, 16 Tornillos, 4 Escuadras" readonly style="color:var(--accent);">
+          <label>Insumos que se descontarán del Stock</label>
+          <input type="text" id="prodInsumosDescuento" readonly style="color:var(--accent);">
         </div>
         <button class="btn-primary" onclick="registrarProduccionYDescontarStock()">⚡ Iniciar Producción y Descontar Stock</button>
       </div>
@@ -446,11 +449,11 @@
       </div>
     </section>
 
-    <!-- 2. VISTA: OPTIMIZADOR CON VISTA RECTANGULAR Y ZOOM TÁCTIL -->
+    <!-- 2. VISTA: OPTIMIZADOR -->
     <section id="view-optimizador" class="view-section">
       <div class="card">
         <div class="card-title">
-          <span>📐 Optimizador de Placas (Vista Rectangular y Zoom)</span>
+          <span>📐 Optimizador de Placas (Zoom Táctil)</span>
           <span style="font-size:11px; color:var(--accent);">Desliza o pellizca para zoom</span>
         </div>
         <div class="grid-3">
@@ -472,7 +475,7 @@
             <input type="number" id="cutCant" class="mono" value="4" oninput="simularCortePlaca()">
           </div>
         </div>
-        <div class="grid-2" style="margin-top:10px;">
+        <div class="grid-2" style="margin-top:12px;">
           <div>
             <label>Largo Pieza (mm)</label>
             <input type="number" id="cutLargo" class="mono" value="400" oninput="simularCortePlaca()">
@@ -483,11 +486,11 @@
           </div>
         </div>
         
-        <div id="canvasZoomWrapper" style="width:100%; height:260px; background:#12151c; border:1px solid var(--border); border-radius:12px; margin-top:12px; overflow:hidden; touch-action:none; position:relative; display:flex; align-items:center; justify-content:center;">
+        <div id="canvasZoomWrapper" style="width:100%; height:260px; background:#0b0d11; border:1px solid var(--border); border-radius:var(--radius-sm); margin-top:14px; overflow:hidden; touch-action:none; position:relative; display:flex; align-items:center; justify-content:center;">
           <canvas id="cutCanvas" style="display:block; transform-origin:center center; cursor:grab;"></canvas>
         </div>
 
-        <div class="kpi-row" style="margin-top:12px;">
+        <div class="kpi-row" style="margin-top:14px;">
           <div class="kpi-box">
             <div class="kpi-label">Aprovechamiento</div>
             <div class="kpi-value" id="cutAprovechamiento">0%</div>
@@ -498,14 +501,14 @@
           </div>
         </div>
 
-        <div style="margin-top:16px; display:flex; flex-direction:column; gap:12px;">
-          <div class="kpi-box" style="padding:14px; background:var(--bg-input);">
+        <div style="margin-top:18px; display:flex; flex-direction:column; gap:14px;">
+          <div class="kpi-box" style="padding:16px; background:var(--bg-input);">
             <div class="kpi-label" style="color:var(--success); margin-bottom:8px;">📋 1. Listado de Cortes Asignados</div>
             <div id="listaCortesDetalle" style="font-family:var(--font-mono); font-size:12.5px; max-height:180px; overflow-y:auto; color:var(--text-secondary);">
               Sin cortes trazados.
             </div>
           </div>
-          <div class="kpi-box" style="padding:14px; background:var(--bg-input);">
+          <div class="kpi-box" style="padding:16px; background:var(--bg-input);">
             <div class="kpi-label" style="color:var(--warning); margin-bottom:8px;">📦 2. Listado de Sobrantes Estimados</div>
             <div id="listaSobrantesDetalle" style="font-family:var(--font-mono); font-size:12.5px; max-height:180px; overflow-y:auto; color:var(--text-secondary);">
               Sin sobrantes calculados.
@@ -516,21 +519,21 @@
       </div>
     </section>
 
-    <!-- 3. VISTA: PLACAS & PRECIOS TEXTURAS -->
+    <!-- 3. VISTA: PLACAS & PRECIOS -->
     <section id="view-placas" class="view-section">
       <div class="card">
-        <div class="card-title">🎨 Placas Base con Texturas de la Veta & Precios</div>
-        <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px;">
-          Texturas oficiales desde GitHub. Control de precios (Precio Viejo en <span style="color:var(--danger); font-weight:700;">Rojo</span>, Precio Actualizado en <span style="color:var(--success); font-weight:700;">Verde</span>).
+        <div class="card-title">🎨 Placas Base con Texturas & Precios</div>
+        <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:14px;">
+          Control de precios (Precio Viejo en <span style="color:var(--danger); font-weight:700;">Rojo</span>, Precio Actualizado en <span style="color:var(--success); font-weight:700;">Verde</span>).
         </p>
         <div id="contenedorPlacasTexturasPrecios"></div>
       </div>
     </section>
 
-    <!-- 4. VISTA: STOCK Y CATEGORÍAS (ABM) -->
+    <!-- 4. VISTA: STOCK -->
     <section id="view-inventario" class="view-section">
       <div class="card">
-        <div class="card-title">📦 Gestión de Stock y Categorías (Crear, Editar, Borrar, Renombrar)</div>
+        <div class="card-title">📦 Gestión de Stock y Categorías</div>
         <div class="grid-3">
           <div>
             <label>Nombre del Ítem</label>
@@ -538,18 +541,18 @@
           </div>
           <div>
             <label>Categoría</label>
-            <input type="text" id="stockCategoria" placeholder="Ej: Herrajes (Editable)">
+            <input type="text" id="stockCategoria" placeholder="Ej: Herrajes">
           </div>
           <div>
             <label>Cantidad / Mínimo</label>
-            <div class="grid-2" style="gap:4px;">
+            <div class="grid-2" style="gap:6px;">
               <input type="number" id="stockCant" class="mono" placeholder="Cant" value="50">
               <input type="number" id="stockMin" class="mono" placeholder="Mín" value="10">
             </div>
           </div>
         </div>
         <button class="btn-primary" onclick="guardarItemStock()">+ Guardar / Añadir Ítem de Stock</button>
-        <div id="contenedorInventarioABM" style="margin-top:16px;"></div>
+        <div id="contenedorInventarioABM" style="margin-top:18px;"></div>
       </div>
     </section>
 
@@ -591,14 +594,14 @@
 
       <div class="card">
         <div class="card-title">
-          <span>📋 Listado de Pedidos Activos (Control de Estado)</span>
+          <span>📋 Listado de Pedidos Activos</span>
           <span class="mono" style="font-size:12px; color:var(--accent);" id="contadorPedidosActivos">0</span>
         </div>
         <div id="contenedorListaPedidosVentas"></div>
       </div>
     </section>
 
-    <!-- 6. VISTA: HISTORIAL DE PEDIDOS -->
+    <!-- 6. VISTA: HISTORIAL -->
     <section id="view-ventas-historial" class="view-section">
       <div class="card">
         <div class="card-title">
@@ -609,7 +612,7 @@
       </div>
     </section>
 
-    <!-- 7. VISTA: MUEBLES (Vista Previa con salto al Visor 3D) -->
+    <!-- 7. VISTA: MUEBLES (Vista Previa) -->
     <section id="view-muebles" class="view-section">
       <div class="card">
         <div class="card-title">🪑 Muebles — Seleccioná un mueble para abrirlo en el Visor 3D</div>
@@ -617,10 +620,10 @@
       </div>
     </section>
 
-    <!-- 8. VISTA: CATÁLOGO DE MUEBLES (ABM con piezas y herrajes) -->
+    <!-- 8. VISTA: CATÁLOGO DE MUEBLES (ABM con Selector de Stock y Botones +/- de a 1, 5 y 10) -->
     <section id="view-catalogo-muebles" class="view-section">
       <div class="card">
-        <div class="card-title">📐 Catálogo de Muebles (Gestión Interna de Piezas y Herrajes)</div>
+        <div class="card-title">📐 Catálogo de Muebles (Gestión Interna e Insumos)</div>
         <div class="grid-2">
           <div>
             <label>Nombre del Mueble</label>
@@ -631,11 +634,16 @@
             <input type="text" id="catMuebleMedidas" class="mono" placeholder="Ej: 1200 x 400 x 800 mm">
           </div>
         </div>
-        <div>
-          <label>Componentes / Piezas / Herrajes (Para descuento de stock)</label>
-          <input type="text" id="catMuebleComponentes" placeholder="Ej: 2 Laterales 750x380, 16 Tornillos, 4 Escuadras">
+
+        <div style="margin-top:14px;">
+          <label>Seleccionar Insumos del Stock y Cantidades Requeridas</label>
+          <div style="font-size:11.5px; color:var(--text-muted); margin-bottom:8px;">Usa los botones para ajustar las cantidades de cada material que usa este mueble:</div>
+          <div id="selectorStockParaMueble" style="background:var(--bg-input); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; max-height:220px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
+            <!-- Se carga automáticamente con el stock -->
+          </div>
         </div>
-        <div class="grid-2" style="margin-top:10px;">
+
+        <div class="grid-2" style="margin-top:14px;">
           <div>
             <label>Precio Base ($)</label>
             <input type="number" id="catMueblePrecio" class="mono" value="85000">
@@ -644,11 +652,11 @@
             <button class="btn-primary" style="margin-top:0;" onclick="guardarModeloCatalogoABM()">+ Guardar / Añadir Mueble</button>
           </div>
         </div>
-        <div id="listaCatalogoMueblesABM" style="margin-top:16px;"></div>
+        <div id="listaCatalogoMueblesABM" style="margin-top:18px;"></div>
       </div>
     </section>
 
-    <!-- 9. VISTA: VISOR 3D THREE.JS -->
+    <!-- 9. VISTA: VISOR 3D -->
     <section id="view-visor3d" class="view-section">
       <div class="card">
         <div class="card-title">
@@ -656,16 +664,16 @@
           <button class="btn-secondary" onclick="switchView('view-muebles')">← Volver a Muebles</button>
         </div>
 
-        <div style="margin-bottom:12px;">
+        <div style="margin-bottom:14px;">
           <label>Modelo 3D Activo (.glb)</label>
-          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; margin-bottom:12px;">
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; margin-bottom:14px;">
             <button class="btn-secondary" onclick="cambiarModeloGlbActivo('assets/models/Mesita_blanca.glb', 'Mesita_blanca.glb')">Mesita Blanca</button>
             <button class="btn-secondary" onclick="cambiarModeloGlbActivo('assets/models/Mesita_negra.glb', 'Mesita_negra.glb')">Mesita Negra</button>
             <button class="btn-secondary" onclick="cambiarModeloGlbActivo('assets/models/Mesita_Secador_blanco.glb', 'Mesita_Secador_blanco.glb')">Secador Blanco</button>
             <button class="btn-secondary" onclick="cambiarModeloGlbActivo('assets/models/Mesita_Secador_negra.glb', 'Mesita_Secador_negra.glb')">Secador Negro</button>
           </div>
 
-          <label>Textura Oficial de la Veta (.png en assets/Textures/)</label>
+          <label>Textura Oficial de la Veta (.png)</label>
           <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;">
             <button class="btn-secondary" onclick="aplicarTexturaPngOficial('Baltico.png')">Baltico.png</button>
             <button class="btn-secondary" onclick="aplicarTexturaPngOficial('Carvalho Mezzo.png')">Carvalho Mezzo.png</button>
@@ -678,7 +686,7 @@
 
         <div id="canvas-container-3d"></div>
 
-        <div class="grid-3" style="margin-top:14px;">
+        <div class="grid-3" style="margin-top:16px;">
           <div class="kpi-box">
             <div class="kpi-label">Modelo GLB</div>
             <div class="kpi-value" style="font-size:12px;" id="visorGlbNombreActivo">Mesita_blanca.glb</div>
@@ -748,7 +756,7 @@
       </div>
     </section>
 
-    <!-- 11. VISTA: GPS FLETES (Corregido para abrir Maps con nombre de lugar) -->
+    <!-- 11. VISTA: GPS FLETES -->
     <section id="view-fletes" class="view-section">
       <div class="card">
         <div class="card-title">
@@ -756,14 +764,14 @@
           <button class="btn-secondary" onclick="anclarTallerPersonalizadoPrompt()">📍 Configurar Taller</button>
         </div>
 
-        <div style="background:var(--bg-input); padding:10px 14px; border-radius:8px; margin-bottom:12px; font-size:12.5px; border:1px solid var(--border);">
+        <div style="background:var(--bg-input); padding:12px 16px; border-radius:8px; margin-bottom:14px; font-size:13px; border:1px solid var(--border);">
           🏠 Ubicación Taller J&L: <b id="txtTallerAnclado" style="color:var(--accent);">Ariadna 2400, Villa Luzuriaga</b>
         </div>
 
         <div class="grid-2">
           <div class="search-wrap">
             <label>Dirección de Entrega (Autocompletado Provincia BS.AS.)</label>
-            <input type="text" id="gpsInputDir" placeholder="Ej: Mitre 500, Quilmes / Rivadavia 14000..." oninput="autocompletarDireccionBuenosAires(this.value)">
+            <input type="text" id="gpsInputDir" placeholder="Ej: Mitre 500, Quilmes..." oninput="autocompletarDireccionBuenosAires(this.value)">
             <div class="autocomplete-dropdown" id="gpsDropdown"></div>
           </div>
           <div>
@@ -774,7 +782,7 @@
 
         <div id="map-container"></div>
 
-        <div class="kpi-row" style="margin-top:14px;">
+        <div class="kpi-row" style="margin-top:16px;">
           <div class="kpi-box">
             <div class="kpi-label">Destino Detectado</div>
             <div class="kpi-value" style="font-size:15px;" id="gpsLocalidadDetectada">Esperando destino...</div>
@@ -794,7 +802,7 @@
 
   </main>
 
-  <!-- BARRA FLOTANTE INFERIOR DOCK MINIMALISTA -->
+  <!-- BARRA DE NAVEGACIÓN DOCK FLOTANTE -->
   <nav class="thumb-zone-bar">
     <button class="thumb-tab active" data-view="view-inicio" onclick="switchView('view-inicio')">
       <span>🏠</span><span>Inicio</span>
@@ -824,18 +832,18 @@
     const META_POR_CICLO = 300000;
     const APERTURA_CAJA_BASE = 125000;
 
-    let tallerCoords = JSON.parse(localStorage.getItem('jl_v11_taller_coords')) || [-34.6685, -58.5914];
-    let tallerDireccionTexto = localStorage.getItem('jl_v11_taller_dir') || 'Ariadna 2400, Villa Luzuriaga';
+    let tallerCoords = JSON.parse(localStorage.getItem('jl_v13_taller_coords')) || [-34.6685, -58.5914];
+    let tallerDireccionTexto = localStorage.getItem('jl_v13_taller_dir') || 'Ariadna 2400, Villa Luzuriaga';
 
     const CICLOS_COLORES = [
-      { nivel: 1, nombre: 'Nogal Cálido', hex: '#c89d66' },
+      { nivel: 1, nombre: 'Nogal Cálido', hex: '#f97316' },
       { nivel: 2, nombre: 'Verde Esmeralda', hex: '#10b981' },
       { nivel: 3, nombre: 'Dorado Solar', hex: '#f59e0b' },
       { nivel: 4, nombre: 'Azul Cobalto', hex: '#3b82f6' },
       { nivel: 5, nombre: 'Púrpura Imperial', hex: '#8b5cf6' }
     ];
 
-    let listaPlacasBase = JSON.parse(localStorage.getItem('jl_v11_placas')) || [
+    let listaPlacasBase = JSON.parse(localStorage.getItem('jl_v13_placas')) || [
       { id: 1, nombre: 'Baltico 15mm', textura: 'Baltico.png', dimensiones: '2750x1830', precioViejo: 45000, precioNuevo: 48000, stock: 5 },
       { id: 2, nombre: 'Carvalho Mezzo 15mm', textura: 'Carvalho Mezzo.png', dimensiones: '2750x1830', precioViejo: 46000, precioNuevo: 49500, stock: 4 },
       { id: 3, nombre: 'Gaudi 15mm', textura: 'Gaudi.png', dimensiones: '2750x1830', precioViejo: 44000, precioNuevo: 47000, stock: 3 },
@@ -844,24 +852,24 @@
       { id: 6, nombre: 'Teka artico 15mm', textura: 'Teka artico.png', dimensiones: '2750x1830', precioViejo: 47000, precioNuevo: 51000, stock: 4 }
     ];
 
-    let listaStock = JSON.parse(localStorage.getItem('jl_v11_stock')) || [
+    let listaStock = JSON.parse(localStorage.getItem('jl_v13_stock')) || [
       { id: 301, nombre: 'Laterales Cortados 335x320mm', categoria: 'Piezas Cortadas', cantidad: 14, minimo: 6 },
       { id: 302, nombre: 'Tornillos 2x25', categoria: 'Herrajes', cantidad: 120, minimo: 30 },
       { id: 303, nombre: 'Escuadras Metálicas', categoria: 'Herrajes', cantidad: 40, minimo: 10 }
     ];
 
-    let listaPedidosClientes = JSON.parse(localStorage.getItem('jl_v11_pedidos')) || [
+    let listaPedidosClientes = JSON.parse(localStorage.getItem('jl_v13_pedidos')) || [
       { id: 1001, cliente: 'Carlos Gomez — Ramos Mejía', mueble: 'Mesita Estándar J&L', fechaRec: '2026-10-15', fechaEnt: '2026-10-22', estado: 'En proceso', precio: 48000 }
     ];
 
-    let listaCatalogoMueblesABM = JSON.parse(localStorage.getItem('jl_v11_catalogo_muebles')) || [
+    let listaCatalogoMueblesABM = JSON.parse(localStorage.getItem('jl_v13_catalogo_muebles')) || [
       { id: 501, nombre: 'Mesita Estándar J&L', medidas: '400 x 335 x 320 mm', componentes: '2 Laterales 335x320, 16 Tornillos, 4 Escuadras', precio: 48000, glb: 'assets/models/Mesita_blanca.glb' },
       { id: 502, nombre: 'Mesita con Agujero Secador J&L', medidas: '600 x 335 x 320 mm', componentes: '2 Laterales 335x320, 20 Tornillos, 4 Escuadras', precio: 64500, glb: 'assets/models/Mesita_Secador_blanco.glb' }
     ];
 
-    let listaProduccionTaller = JSON.parse(localStorage.getItem('jl_v11_produccion')) || [];
+    let listaProduccionTaller = JSON.parse(localStorage.getItem('jl_v13_produccion')) || [];
 
-    let listaOperacionesVC = JSON.parse(localStorage.getItem('jl_v11_operaciones')) || [
+    let listaOperacionesVC = JSON.parse(localStorage.getItem('jl_v13_operaciones')) || [
       { id: 201, tipo: 'VENTA', fecha: '18/10/2026', concepto: 'Mesita Estándar J&L', persona: 'Cliente Ramos', metodo: 'Transferencia', monto: 48000 }
     ];
 
@@ -904,6 +912,7 @@
 
       if (viewId === 'view-inicio') renderizarPanelInicio();
       if (viewId === 'view-produccion') renderizarSelectProduccionYTaller();
+      if (viewId === 'view-catalogo-muebles') renderizarSelectorStockParaMueble();
       if (viewId === 'view-fletes' && gpsMap) setTimeout(() => gpsMap.invalidateSize(), 200);
       if (viewId === 'view-optimizador') simularCortePlaca();
       if (viewId === 'view-placas') renderizarPlacasYPrecios();
@@ -959,7 +968,6 @@
       }
     }
 
-    /* PRODUCCIÓN Y DESCUENTO AUTOMÁTICO DE STOCK */
     function renderizarSelectProduccionYTaller() {
       const select = document.getElementById('prodMuebleSelect');
       if (!select) return;
@@ -984,19 +992,17 @@
 
       if (!muebleObj) return mostrarToast('⚠️ Seleccioná un mueble válido.');
 
-      // Descontar componentes detectados numéricamente en el string de componentes
-      // Ejemplo simplificado: buscar coincidencias en el stock general e ir restando
       const textoComp = muebleObj.componentes.toLowerCase();
       listaStock.forEach(item => {
         const nombreItem = item.nombre.toLowerCase();
-        if (textoComp.includes(nombreItem) || textoComp.includes('tornillo') && nombreItem.includes('tornillo')) {
-          item.cantidad = Math.max(0, item.cantidad - 4); // Descuento conservador por lote
+        if (textoComp.includes(nombreItem)) {
+          item.cantidad = Math.max(0, item.cantidad - 1);
         }
       });
-      localStorage.setItem('jl_v11_stock', JSON.stringify(listaStock));
+      localStorage.setItem('jl_v13_stock', JSON.stringify(listaStock));
 
       listaProduccionTaller.unshift({ id: Date.now(), mueble: muebleNombre, cliente, componentes: muebleObj.componentes, estado: 'En Corte de Placa' });
-      localStorage.setItem('jl_v11_produccion', JSON.stringify(listaProduccionTaller));
+      localStorage.setItem('jl_v13_produccion', JSON.stringify(listaProduccionTaller));
       
       document.getElementById('prodCliente').value = '';
       renderizarListaProduccionTaller();
@@ -1031,12 +1037,49 @@
 
     function eliminarOrdenProduccion(id) {
       listaProduccionTaller = listaProduccionTaller.filter(x => x.id !== id);
-      localStorage.setItem('jl_v11_produccion', JSON.stringify(listaProduccionTaller));
+      localStorage.setItem('jl_v13_produccion', JSON.stringify(listaProduccionTaller));
       renderizarListaProduccionTaller();
       mostrarToast('🗑️ Orden retirada del taller.');
     }
 
-    /* OPTIMIZADOR CON VISTA RECTANGULAR Y ZOOM TÁCTIL */
+    /* SELECTOR DE STOCK CON BOTONES DE + / - PARA EL CATÁLOGO DE MUEBLES */
+    let cantidadesInsumosMuebleTemp = {};
+
+    function renderizarSelectorStockParaMueble() {
+      const cont = document.getElementById('selectorStockParaMueble');
+      if (!cont) return;
+
+      if (listaStock.length === 0) {
+        cont.innerHTML = `<div style="color:var(--text-muted); font-size:12px; text-align:center;">No hay ítems en el stock para asignar. Cargalos primero en la sección Stock.</div>`;
+        return;
+      }
+
+      cont.innerHTML = listaStock.map(item => {
+        const cantActual = cantidadesInsumosMuebleTemp[item.id] || 0;
+        return `
+          <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-surface); padding:8px 12px; border-radius:8px; border:1px solid var(--border);">
+            <div>
+              <div style="font-weight:700; font-size:13px;">${item.nombre}</div>
+              <div style="font-size:10px; color:var(--text-muted);">Stock disponible: ${item.cantidad} u.</div>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <button class="btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="ajustarCantInsumoMueble(${item.id}, -10)">-10</button>
+              <button class="btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="ajustarCantInsumoMueble(${item.id}, -1)">-1</button>
+              <span class="mono" style="font-weight:800; font-size:14px; min-width:28px; text-align:center;" id="cantInsumo_${item.id}">${cantActual}</span>
+              <button class="btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="ajustarCantInsumoMueble(${item.id}, 1)">+1</button>
+              <button class="btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="ajustarCantInsumoMueble(${item.id}, 10)">+10</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function ajustarCantInsumoMueble(idStock, delta) {
+      cantidadesInsumosMuebleTemp[idStock] = Math.max(0, (cantidadesInsumosMuebleTemp[idStock] || 0) + delta);
+      const span = document.getElementById(`cantInsumo_${idStock}`);
+      if (span) span.textContent = cantidadesInsumosMuebleTemp[idStock];
+    }
+
     let zoomScale = 1, panX = 0, panY = 0, isDragging = false, startX = 0, startY = 0;
     const wrapper = document.getElementById('canvasZoomWrapper');
 
@@ -1181,7 +1224,7 @@
       if (p) {
         p.precioViejo = p.precioNuevo;
         p.precioNuevo = parseFloat(val) || p.precioNuevo;
-        localStorage.setItem('jl_v11_placas', JSON.stringify(listaPlacasBase));
+        localStorage.setItem('jl_v13_placas', JSON.stringify(listaPlacasBase));
         mostrarToast('✅ Precio guardado.');
         renderizarPlacasYPrecios();
       }
@@ -1195,7 +1238,7 @@
 
       const filtrados = listaStock.filter(i => catActiva === 'Todos' ? true : i.categoria === catActiva);
       cont.innerHTML = `
-        <div class="pills-bar" style="margin-bottom:12px;">
+        <div class="pills-bar" style="margin-bottom:14px;">
           ${categorias.map(c => `<button class="pill-btn ${c===catActiva?'active':''}" onclick="renderizarStockABM('${c}')">${c}</button>`).join('')}
         </div>
         <div>
@@ -1205,12 +1248,12 @@
                 <div style="font-weight:800; font-size:15px;">${i.nombre}</div>
                 <div style="font-size:12px; color:var(--text-muted);">Cat: <b>${i.categoria}</b> • Mín: ${i.minimo}</div>
               </div>
-              <div style="display:flex; align-items:center; gap:8px;">
+              <div style="display:flex; align-items:center; gap:10px;">
                 <span class="mono" style="font-weight:800; font-size:16px;">${i.cantidad} u.</span>
                 <button class="btn-danger" onclick="eliminarItemStock(${i.id})">🗑️</button>
               </div>
             </div>
-          `).join('') || '<div style="color:var(--text-muted); text-align:center; padding:10px;">Sin ítems.</div>'}
+          `).join('') || '<div style="color:var(--text-muted); text-align:center; padding:12px;">Sin ítems.</div>'}
         </div>
       `;
     }
@@ -1223,16 +1266,18 @@
       if (!nombre) return mostrarToast('⚠️ Escribí el nombre.');
 
       listaStock.push({ id: Date.now(), nombre, categoria, cantidad, minimo });
-      localStorage.setItem('jl_v11_stock', JSON.stringify(listaStock));
+      localStorage.setItem('jl_v13_stock', JSON.stringify(listaStock));
       document.getElementById('stockNombre').value = '';
       renderizarStockABM();
+      renderizarSelectorStockParaMueble();
       mostrarToast('📦 Ítem guardado.');
     }
 
     function eliminarItemStock(id) {
       listaStock = listaStock.filter(i => i.id !== id);
-      localStorage.setItem('jl_v11_stock', JSON.stringify(listaStock));
+      localStorage.setItem('jl_v13_stock', JSON.stringify(listaStock));
       renderizarStockABM();
+      renderizarSelectorStockParaMueble();
       mostrarToast('🗑️ Ítem eliminado.');
     }
 
@@ -1262,7 +1307,7 @@
               <div style="font-weight:800; font-size:15px; margin-top:4px;">${p.cliente}</div>
               <div style="color:var(--accent); font-weight:700; font-size:13px;">${p.mueble}</div>
             </div>
-            <select class="order-status-badge ${p.estado.toLowerCase().replace(' ', '')}" style="width:auto; padding:4px 8px;" onchange="actualizarEstadoPedido(${p.id}, this.value)">
+            <select class="order-status-badge ${p.estado.toLowerCase().replace(' ', '')}" style="width:auto; padding:4px 10px;" onchange="actualizarEstadoPedido(${p.id}, this.value)">
               <option value="En proceso" ${p.estado==='En proceso'?'selected':''}>⏳ En proceso</option>
               <option value="Terminado" ${p.estado==='Terminado'?'selected':''}>✅ Terminado</option>
               <option value="Embalado" ${p.estado==='Embalado'?'selected':''}>📦 Embalado</option>
@@ -1289,7 +1334,7 @@
       if (!cliente) return mostrarToast('⚠️ Escribí el cliente.');
 
       listaPedidosClientes.unshift({ id: Date.now(), cliente, mueble, fechaRec, fechaEnt, estado: 'En proceso', precio });
-      localStorage.setItem('jl_v11_pedidos', JSON.stringify(listaPedidosClientes));
+      localStorage.setItem('jl_v13_pedidos', JSON.stringify(listaPedidosClientes));
       document.getElementById('pedCliente').value = '';
       renderizarPedidosClientes();
       mostrarToast('📋 Pedido guardado.');
@@ -1299,7 +1344,7 @@
       const p = listaPedidosClientes.find(x => x.id === id);
       if (p) {
         p.estado = nuevoEstado;
-        localStorage.setItem('jl_v11_pedidos', JSON.stringify(listaPedidosClientes));
+        localStorage.setItem('jl_v13_pedidos', JSON.stringify(listaPedidosClientes));
         renderizarPedidosClientes();
         mostrarToast(`✅ Estado: ${nuevoEstado}`);
       }
@@ -1307,7 +1352,7 @@
 
     function eliminarPedidoCliente(id) {
       listaPedidosClientes = listaPedidosClientes.filter(x => x.id !== id);
-      localStorage.setItem('jl_v11_pedidos', JSON.stringify(listaPedidosClientes));
+      localStorage.setItem('jl_v13_pedidos', JSON.stringify(listaPedidosClientes));
       renderizarPedidosClientes();
       mostrarToast('🗑️ Pedido eliminado.');
     }
@@ -1349,7 +1394,7 @@
           <div style="font-weight:800; font-size:15px;">${m.nombre}</div>
           <div style="font-size:12px; color:var(--accent); font-weight:700; margin:3px 0;">${m.medidas}</div>
           <p style="font-size:12px; color:var(--text-muted);">${m.componentes}</p>
-          <div style="display:flex; justify-content:space-between; margin-top:10px; padding-top:8px; border-top:1px solid var(--border-light);" class="mono">
+          <div style="display:flex; justify-content:space-between; margin-top:12px; padding-top:10px; border-top:1px solid var(--border);" class="mono">
             <span style="font-size:11px;">🧊 Ver en 3D</span>
             <span style="font-size:15px; font-weight:800; color:var(--success);">$${Number(m.precio).toLocaleString('es-AR')}</span>
           </div>
@@ -1367,6 +1412,7 @@
     }
 
     function renderizarCatalogoMueblesABM() {
+      renderizarSelectorStockParaMueble();
       const cont = document.getElementById('listaCatalogoMueblesABM');
       if (!cont) return;
       cont.innerHTML = listaCatalogoMueblesABM.map(m => `
@@ -1375,7 +1421,7 @@
             <div style="font-weight:800; font-size:15px;">${m.nombre} (${m.medidas})</div>
             <div style="font-size:12px; color:var(--text-muted);">Componentes: ${m.componentes}</div>
           </div>
-          <div style="display:flex; align-items:center; gap:8px;">
+          <div style="display:flex; align-items:center; gap:10px;">
             <span class="mono" style="font-weight:800; color:var(--success);">$${Number(m.precio).toLocaleString('es-AR')}</span>
             <button class="btn-danger" onclick="eliminarModeloCatalogoABM(${m.id})">🗑️</button>
           </div>
@@ -1386,22 +1432,33 @@
     function guardarModeloCatalogoABM() {
       const nombre = document.getElementById('catMuebleNombre').value.trim();
       const medidas = document.getElementById('catMuebleMedidas').value.trim() || '400 x 335 x 320 mm';
-      const componentes = document.getElementById('catMuebleComponentes').value.trim() || 'Piso, techo, laterales';
       const precio = parseFloat(document.getElementById('catMueblePrecio').value) || 0;
-      if (!nombre) return mostrarToast('⚠️ Escribí el nombre.');
+      if (!nombre) return mostrarToast('⚠️ Escribí el nombre del mueble.');
+
+      // Compilar los componentes seleccionados mediante los botones +/-
+      let compsArr = [];
+      for (let idStock in cantidadesInsumosMuebleTemp) {
+        const cant = cantidadesInsumosMuebleTemp[idStock];
+        if (cant > 0) {
+          const itemStk = listaStock.find(x => String(x.id) === String(idStock));
+          if (itemStk) compsArr.push(`${cant} ${itemStk.nombre}`);
+        }
+      }
+      const componentes = compsArr.join(', ') || 'Piezas estándar';
 
       listaCatalogoMueblesABM.push({ id: Date.now(), nombre, medidas, componentes, precio, glb: 'assets/models/Mesita_blanca.glb' });
-      localStorage.setItem('jl_v11_catalogo_muebles', JSON.stringify(listaCatalogoMueblesABM));
+      localStorage.setItem('jl_v13_catalogo_muebles', JSON.stringify(listaCatalogoMueblesABM));
+      
       document.getElementById('catMuebleNombre').value = '';
-      document.getElementById('catMuebleComponentes').value = '';
+      cantidadesInsumosMuebleTemp = {};
       renderizarCatalogoMueblesABM();
       renderizarSelectProduccionYTaller();
-      mostrarToast('📐 Mueble guardado.');
+      mostrarToast('📐 Mueble guardado con sus insumos.');
     }
 
     function eliminarModeloCatalogoABM(id) {
       listaCatalogoMueblesABM = listaCatalogoMueblesABM.filter(m => m.id !== id);
-      localStorage.setItem('jl_v11_catalogo_muebles', JSON.stringify(listaCatalogoMueblesABM));
+      localStorage.setItem('jl_v13_catalogo_muebles', JSON.stringify(listaCatalogoMueblesABM));
       renderizarCatalogoMueblesABM();
       renderizarSelectProduccionYTaller();
       mostrarToast('🗑️ Mueble eliminado.');
@@ -1491,7 +1548,7 @@
       if (!concepto || isNaN(monto) || monto <= 0) return mostrarToast('⚠️ Completá concepto y monto.');
 
       listaOperacionesVC.unshift({ id: Date.now(), tipo, fecha: new Date().toLocaleDateString('es-AR'), concepto, persona, metodo, monto });
-      localStorage.setItem('jl_v11_operaciones', JSON.stringify(listaOperacionesVC));
+      localStorage.setItem('jl_v13_operaciones', JSON.stringify(listaOperacionesVC));
       document.getElementById('vcConcepto').value = ''; document.getElementById('vcPersona').value = ''; document.getElementById('vcMonto').value = '';
       renderizarFinanzas();
       mostrarToast('✅ Movimiento registrado.');
@@ -1522,7 +1579,7 @@
       gpsMarkerTaller.on('dragend', function() {
         const c = gpsMarkerTaller.getLatLng();
         tallerCoords = [c.lat, c.lng];
-        localStorage.setItem('jl_v11_taller_coords', JSON.stringify(tallerCoords));
+        localStorage.setItem('jl_v13_taller_coords', JSON.stringify(tallerCoords));
       });
       const txt = document.getElementById('txtTallerAnclado');
       if (txt) txt.textContent = tallerDireccionTexto;
@@ -1538,8 +1595,8 @@
           if (data && data.length > 0) {
             tallerCoords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
             tallerDireccionTexto = nuevaDir;
-            localStorage.setItem('jl_v11_taller_coords', JSON.stringify(tallerCoords));
-            localStorage.setItem('jl_v11_taller_dir', tallerDireccionTexto);
+            localStorage.setItem('jl_v13_taller_coords', JSON.stringify(tallerCoords));
+            localStorage.setItem('jl_v13_taller_dir', tallerDireccionTexto);
             if (gpsMarkerTaller) gpsMarkerTaller.setLatLng(tallerCoords);
             if (gpsMap) gpsMap.setView(tallerCoords, 14);
             const txt = document.getElementById('txtTallerAnclado');
@@ -1593,7 +1650,7 @@
 
       if (gpsMap) {
         gpsMarkerDestino = L.marker(destinoCoords).addTo(gpsMap).bindPopup(`Entrega: ${calle} (${ciudad})`).openPopup();
-        gpsLine = L.polyline([tallerCoords, destinoCoords], { color: '#c89d66', weight: 4 }).addTo(gpsMap);
+        gpsLine = L.polyline([tallerCoords, destinoCoords], { color: '#f97316', weight: 4 }).addTo(gpsMap);
         gpsMap.fitBounds(gpsLine.getBounds(), { padding: [30, 30] });
       }
 
@@ -1607,8 +1664,7 @@
       document.getElementById('gpsCostoTexto').textContent = `$${Math.round(4500 + kmActuales * t).toLocaleString('es-AR')}`;
     }
 
-    /* Corrección Google Maps para usar nombres de lugares en lugar de solo coordenadas */
-    function abrirRutaEnGoogleMaps() {
+    function abrirRutaInGoogleMaps() {
       const destinoQuery = encodeURIComponent(destinoNombreActual || tallerDireccionTexto);
       const origenQuery = encodeURIComponent(tallerDireccionTexto);
       window.open(`https://www.google.com/maps/dir/?api=1&origin=${origenQuery}&destination=${destinoQuery}`, '_blank');
@@ -1617,6 +1673,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       renderizarPanelInicio();
       renderizarSelectProduccionYTaller();
+      renderizarSelectorStockParaMueble();
       renderizarPlacasYPrecios();
       renderizarStockABM('Todos');
       renderizarPedidosClientes();
