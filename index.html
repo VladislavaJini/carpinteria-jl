@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Carpintería J&L Mobile — Enterprise Taller OS v9.6 Optimizador Pro</title>
+  <title>Carpintería J&L Mobile — Enterprise Taller OS v10.0 Ultimate</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#090a0d">
   <link rel="apple-touch-icon" href="icon-192.png">
@@ -219,7 +219,9 @@
     .order-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
     .order-id { font-family: var(--font-mono); font-size: 11px; color: var(--accent); background: var(--accent-glow); padding: 2px 8px; border-radius: 6px; }
     .order-status-badge { font-family: var(--font-mono); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; background: var(--info-bg); color: var(--info); }
-    .order-status-badge.listo { background: var(--success-bg); color: var(--success); }
+    .order-status-badge.terminado { background: var(--success-bg); color: var(--success); }
+    .order-status-badge.embalado { background: var(--accent-glow); color: var(--accent); }
+    .order-status-badge.entregado { background: #334155; color: #94a3b8; }
 
     .order-specs {
       font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);
@@ -244,34 +246,9 @@
       border-radius: var(--radius-sm); margin-bottom: 12px; display: flex; align-items: center; justify-content: center;
     }
 
-    .stage-3d {
-      width: 100%; height: 360px;
-      background: radial-gradient(circle at 50% 35%, #262b36 0%, #0b0d11 100%);
-      border: 1px solid var(--border); border-radius: var(--radius-lg);
-      display: flex; align-items: center; justify-content: center;
-      perspective: 1000px; overflow: hidden; position: relative; touch-action: none;
-    }
-    .assembly-3d {
-      width: 180px; height: 160px; position: relative; transform-style: preserve-3d;
-      transform: rotateX(-20deg) rotateY(32deg); transition: transform 0.06s linear;
-    }
-    .panel-3d {
-      position: absolute; border: 1.5px solid rgba(0,0,0,0.6);
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-mono); font-size: 10px; font-weight: 700;
-    }
-    .panel-3d.color-blanco { background-color: #ffffff; color: #111111; border-color: #cbd5e1; }
-    .panel-3d.color-negro { background-color: #111111; color: #ffffff; border-color: #334155; }
-
-    .panel-3d.top    { width: 180px; height: 130px; top: 0px; left: 0; transform: rotateX(90deg) translateZ(65px); }
-    .panel-3d.bottom { width: 180px; height: 130px; top: 60px; left: 0; transform: rotateX(-90deg) translateZ(65px); }
-    .panel-3d.left   { width: 130px; height: 125px; top: 0px; left: -65px; transform: rotateY(-90deg) translateZ(0px); }
-    .panel-3d.right  { width: 130px; height: 125px; top: 0px; left: 115px; transform: rotateY(90deg) translateZ(0px); }
-    .panel-3d.front  { width: 176px; height: 120px; top: 2px; left: 2px; transform: translateZ(65px); }
-
-    .secador-hole {
-      width: 34px; height: 34px; border-radius: 50%; background: #090a0d; border: 2px solid #fff;
-      position: absolute; right: 16px; top: 18px; display: none;
+    #canvas-container-3d {
+      width: 100%; height: 380px; border-radius: var(--radius-lg); background: #0b0d11;
+      border: 1px solid var(--border); overflow: hidden; position: relative;
     }
 
     .pills-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 14px; }
@@ -296,14 +273,6 @@
     #map-container {
       width: 100%; height: 340px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); margin-top: 14px;
     }
-
-    /* Estilo para Pantalla Completa del Optimizador */
-    #cutCanvasContainer { position: relative; width: 100%; background: #12151c; border: 1px solid var(--border); border-radius: 12px; margin-top: 12px; overflow: hidden; }
-    #cutCanvasContainer.fullscreen {
-      position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important;
-      z-index: 99999 !important; border-radius: 0 !important; background: #090a0d !important; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    }
-    #cutCanvasContainer.fullscreen canvas { max-width: 100% !important; max-height: 80vh !important; width: auto !important; height: auto !important; }
 
     .thumb-zone-bar {
       position: fixed; bottom: 0; left: 0; right: 0; background: rgba(18, 20, 26, 0.96); backdrop-filter: blur(16px);
@@ -350,28 +319,44 @@
       <button class="btn-secondary" style="padding:6px 10px;" onclick="toggleDrawer()">✕</button>
     </div>
 
+    <div class="drawer-cat">GENERAL</div>
+    <button class="drawer-item active" data-view="view-inicio" onclick="switchView('view-inicio')">
+      <span>🏠 Inicio & Resumen</span>
+    </button>
+
     <div class="drawer-cat">TALLER & PRODUCCIÓN</div>
-    <button class="drawer-item active" data-view="view-produccion" onclick="switchView('view-produccion')">
-      <span>🛠️ Pedidos y Producción</span>
-      <span class="drawer-badge" id="badgePedidosDrawer">0</span>
+    <button class="drawer-item" data-view="view-produccion" onclick="switchView('view-produccion')">
+      <span>🛠️ Producción y Taller</span>
     </button>
     <button class="drawer-item" data-view="view-optimizador" onclick="switchView('view-optimizador')">
       <span>📐 Optimizador de Placas</span>
     </button>
-    <button class="drawer-item" data-view="view-catalogo" onclick="switchView('view-catalogo')">
-      <span>🪑 Catálogo de Muebles</span>
+    <button class="drawer-item" data-view="view-placas" onclick="switchView('view-placas')">
+      <span>🎨 Placas & Precios Texturas</span>
     </button>
-    <button class="drawer-item" data-view="view-visor3d" onclick="switchView('view-visor3d')">
-      <span>🧊 Visor 3D Sólido</span>
-    </button>
-
-    <div class="drawer-cat">INVENTARIO</div>
     <button class="drawer-item" data-view="view-inventario" onclick="switchView('view-inventario')">
-      <span>📦 Stock y Reposición</span>
+      <span>📦 Stock y Categorías</span>
       <span class="drawer-badge danger" id="badgeCriticosDrawer">0</span>
     </button>
-    <button class="drawer-item" data-view="view-proveedores" onclick="switchView('view-proveedores')">
-      <span>🏭 Proveedores Zona Oeste</span>
+
+    <div class="drawer-cat">VENTAS & CLIENTES</div>
+    <button class="drawer-item" data-view="view-ventas-pedidos" onclick="switchView('view-ventas-pedidos')">
+      <span>📋 Pedidos de Clientes</span>
+      <span class="drawer-badge" id="badgePedidosDrawer">0</span>
+    </button>
+    <button class="drawer-item" data-view="view-ventas-historial" onclick="switchView('view-ventas-historial')">
+      <span>📄 Historial de Pedidos (.txt)</span>
+    </button>
+
+    <div class="drawer-cat">DISEÑO & MODELOS</div>
+    <button class="drawer-item" data-view="view-muebles" onclick="switchView('view-muebles')">
+      <span>🪑 Muebles (Vista Previa)</span>
+    </button>
+    <button class="drawer-item" data-view="view-catalogo-muebles" onclick="switchView('view-catalogo-muebles')">
+      <span>📐 Catálogo de Muebles (ABM)</span>
+    </button>
+    <button class="drawer-item" data-view="view-visor3d" onclick="switchView('view-visor3d')">
+      <span>🧊 Visor 3D (.glb + .png)</span>
     </button>
 
     <div class="drawer-cat">FINANZAS & LOGÍSTICA</div>
@@ -385,13 +370,19 @@
 
   <main>
 
-    <!-- 1. VISTA: PEDIDOS -->
-    <section id="view-produccion" class="view-section active">
+    <!-- 0. VISTA: INICIO (Resumen, Vector Ciclos, Stock Crítico y Envío más cercano) -->
+    <section id="view-inicio" class="view-section active">
       <div class="card">
         <div class="card-title">
-          <span>📈 Ventas del Mes — Vector por Ciclos</span>
-          <span class="cycle-pill" id="cicloBadgeTexto">Ciclo 1 • Sólido</span>
+          <span>🚀 Panel Principal — Taller J&L</span>
+          <span class="cycle-pill" id="inicioCicloBadge">Ciclo 1</span>
         </div>
+        <!-- Tarjeta Inteligente Envío Más Cercano -->
+        <div id="cardEnvioCercano" style="background:var(--accent-glow); border:1px solid var(--accent); border-radius:var(--radius-md); padding:14px; margin-bottom:16px;">
+          <div style="font-size:11px; text-transform:uppercase; color:var(--accent); font-weight:800; font-family:var(--font-mono);">🚚 Próximo Envío / Entrega Programada</div>
+          <div id="inicioEnvioTexto" style="font-size:16px; font-weight:800; margin-top:4px;">No hay envíos pendientes próximos.</div>
+        </div>
+
         <div class="goal-container">
           <div class="mesita-vector-card">
             <svg width="92" height="92" viewBox="0 0 100 100">
@@ -403,15 +394,13 @@
             </svg>
           </div>
           <div style="flex: 1; min-width: 220px;">
+            <label>Ventas del Mes (Vector por Ciclos)</label>
             <div style="display:flex; justify-content:space-between; align-items:baseline;">
-              <span class="mono" style="font-size: 25px; font-weight: 800;" id="ventasMesTotalTexto">$0</span>
-              <span class="mono" style="font-size: 13px; color: var(--accent);" id="porcentajeCicloTexto">0%</span>
+              <span class="mono" style="font-size: 25px; font-weight: 800;" id="inicioVentasTotal">$0</span>
+              <span class="mono" style="font-size: 13px; color: var(--accent);" id="inicioPorcentajeCiclo">0%</span>
             </div>
             <div class="progress-bar-track">
-              <div class="progress-bar-fill" id="barraCicloFill"></div>
-            </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
-              <button class="btn-secondary" onclick="exportarCerrarMesTxt()">📄 Descargar Cierre Mes (.txt)</button>
+              <div class="progress-bar-fill" id="inicioBarraFill"></div>
             </div>
           </div>
         </div>
@@ -419,184 +408,30 @@
 
       <div class="card">
         <div class="card-title">
-          <span id="formPedidoTitulo">➕ Cargar Pedido a Producción</span>
-          <button class="btn-secondary" id="btnCancelarEdicionPedido" style="display:none;" onclick="cancelarEdicionPedido()">Cancelar</button>
+          <span>🚨 Alertas de Stock Crítico</span>
+          <button class="btn-secondary" onclick="switchView('view-inventario')">Ver Stock Completo →</button>
         </div>
-        <input type="hidden" id="pedEditId" value="">
-        <div class="grid-2">
-          <div>
-            <label>Cliente y Localidad</label>
-            <input type="text" id="pedCliente" placeholder="Ej: Martín — Ramos Mejía">
-          </div>
-          <div>
-            <label>Mueble J&L</label>
-            <select id="pedMueble" onchange="autocompletarMedidasPedido(this.value)">
-              <option value="Mesita Estándar J&L">Mesita Estándar (400 x 335 x 320 mm)</option>
-              <option value="Mesita con Agujero Secador J&L">Mesita con Agujero Secador (600 x 335 x 320 mm)</option>
-            </select>
-          </div>
-        </div>
-        <div class="grid-3">
-          <div>
-            <label>Medidas (Ancho x Prof x Alto)</label>
-            <input type="text" id="pedMedidas" class="mono" value="400 x 335 x 320 mm">
-          </div>
-          <div>
-            <label>Estado en Taller</label>
-            <select id="pedEstado">
-              <option value="En Corte de Placa">🪚 En Corte de Placa</option>
-              <option value="Filo 0.15m y Lijado Ambos Lados">📏 Filo 0.15m y Lijado Ambos Lados</option>
-              <option value="Armado Final">🔩 Armado Final</option>
-              <option value="Listo para Entregar">✅ Listo para Entregar</option>
-            </select>
-          </div>
-          <div>
-            <label>Precio ($)</label>
-            <input type="number" id="pedPrecio" class="mono" value="48000">
-          </div>
-        </div>
-        <button class="btn-primary" onclick="guardarPedido()">💾 Guardar Orden de Producción</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title">
-          <span>📋 Órdenes Activas</span>
-          <span class="mono" style="font-size:12px; color:var(--text-muted);" id="resumenOrdenesActivas">0 órdenes</span>
-        </div>
-        <div id="contenedorListaPedidos"></div>
+        <div id="inicioContenedorStockCritico"></div>
       </div>
     </section>
 
-    <!-- 2. VISTA: FINANZAS Y VENTANAS OCULTAS -->
-    <section id="view-finanzas" class="view-section">
-      <div class="kpi-row">
-        <div class="kpi-box">
-          <div class="kpi-label">Total Ventas</div>
-          <div class="kpi-value" style="color:var(--success);" id="kpiTotalVentas">$0</div>
-        </div>
-        <div class="kpi-box">
-          <div class="kpi-label">Total Compras</div>
-          <div class="kpi-value" style="color:var(--danger);" id="kpiTotalCompras">$0</div>
-        </div>
-        <div class="kpi-box">
-          <div class="kpi-label">Saldo Caja Taller</div>
-          <div class="kpi-value" style="color:var(--accent);" id="kpiSaldoCaja">$0</div>
-        </div>
-      </div>
-
+    <!-- 1. VISTA: PRODUCCIÓN Y TALLER -->
+    <section id="view-produccion" class="view-section">
       <div class="card">
-        <div class="card-title">🔍 Consultar Historiales Completos</div>
-        <div class="grid-2">
-          <button class="btn-secondary" style="padding:16px; border-color:var(--success); color:var(--success); font-size:14px;" onclick="switchView('view-historial-ventas')">
-            🟢 Historial Ventas (<span id="countBtnVentas">0</span>) →
-          </button>
-          <button class="btn-secondary" style="padding:16px; border-color:var(--danger); color:var(--danger); font-size:14px;" onclick="switchView('view-historial-compras')">
-            🔴 Historial Compras (<span id="countBtnCompras">0</span>) →
-          </button>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">➕ Registrar Nueva Venta o Compra</div>
-        <div class="grid-2">
-          <div>
-            <label>Tipo de Movimiento</label>
-            <select id="vcTipo">
-              <option value="VENTA">🟢 VENTA (Ingreso por Mueble)</option>
-              <option value="COMPRA">🔴 COMPRA (Insumos / Placas)</option>
-            </select>
-          </div>
-          <div>
-            <label>Método de Pago</label>
-            <select id="vcMetodo">
-              <option value="Efectivo">💵 Efectivo</option>
-              <option value="Transferencia">🏦 Transferencia / MercadoPago</option>
-            </select>
-          </div>
-        </div>
-        <div class="grid-3">
-          <div>
-            <label>Concepto / Detalle</label>
-            <input type="text" id="vcConcepto" placeholder="Ej: Mesita 400x335 / Placa Blanca">
-          </div>
-          <div>
-            <label>Cliente o Proveedor</label>
-            <input type="text" id="vcPersona" placeholder="Ej: Cliente Haedo / Placacentro">
-          </div>
-          <div>
-            <label>Importe ($)</label>
-            <input type="number" id="vcMonto" class="mono" placeholder="48000">
-          </div>
-        </div>
-        <button class="btn-primary" onclick="registrarOperacionVC()">📥 Guardar Movimiento</button>
+        <div class="card-title">🛠️ Órdenes Activas en Taller</div>
+        <div id="contenedorProduccionTaller"></div>
       </div>
     </section>
 
-    <!-- 2B. VENTANA OCULTA: HISTORIAL VENTAS -->
-    <section id="view-historial-ventas" class="view-section">
-      <div class="card">
-        <div class="card-title">
-          <span style="color:var(--success);">🟢 Historial Completo de Ventas</span>
-          <button class="btn-secondary" onclick="switchView('view-finanzas')">← Volver a Finanzas</button>
-        </div>
-        <div class="kpi-box" style="margin-bottom:14px;">
-          <div class="kpi-label">Suma Acumulada de Ventas</div>
-          <div class="kpi-value" style="color:var(--success);" id="ventanaSumaVentas">$0</div>
-        </div>
-        <div id="contenedorTarjetasVentas"></div>
-      </div>
-    </section>
-
-    <!-- 2C. VENTANA OCULTA: HISTORIAL COMPRAS -->
-    <section id="view-historial-compras" class="view-section">
-      <div class="card">
-        <div class="card-title">
-          <span style="color:var(--danger);">🔴 Historial Completo de Compras e Insumos</span>
-          <button class="btn-secondary" onclick="switchView('view-finanzas')">← Volver a Finanzas</button>
-        </div>
-        <div class="kpi-box" style="margin-bottom:14px;">
-          <div class="kpi-label">Suma Acumulada de Compras</div>
-          <div class="kpi-value" style="color:var(--danger);" id="ventanaSumaCompras">$0</div>
-        </div>
-        <div id="contenedorTarjetasCompras"></div>
-      </div>
-    </section>
-
-    <!-- 3. VISTA: OPTIMIZADOR CON PANTALLA COMPLETA/ZOOM Y LISTADOS DE CORTES Y SOBRANTES -->
+    <!-- 2. VISTA: OPTIMIZADOR DE PLACAS CON ZOOM Y LISTADO ORDENADO -->
     <section id="view-optimizador" class="view-section">
       <div class="card">
         <div class="card-title">
-          <span>🎨 Gestión de Placas de Melamina</span>
-        </div>
-        <div class="grid-4">
-          <div>
-            <label>Nombre / Color</label>
-            <input type="text" id="placaNombre" placeholder="Ej: Blanco Puro">
+          <span>📐 Optimizador con Zoom y Listados Detallados</span>
+          <div style="display:flex; gap:6px;">
+            <button class="btn-secondary" onclick="zoomOptimizador(0.15)">🔍 + Zoom</button>
+            <button class="btn-secondary" onclick="zoomOptimizador(-0.15)">🔎 - Zoom</button>
           </div>
-          <div>
-            <label>Color Sólido Base</label>
-            <select id="placaColorClase">
-              <option value="color-blanco">⬜ Blanco Sólido</option>
-              <option value="color-negro">⬛ Negro Sólido</option>
-            </select>
-          </div>
-          <div>
-            <label>Medidas (mm)</label>
-            <input type="text" id="placaDimensiones" class="mono" value="2750x1830">
-          </div>
-          <div>
-            <label>Stock</label>
-            <input type="number" id="placaStockCant" class="mono" value="4">
-          </div>
-        </div>
-        <button class="btn-primary" onclick="guardarPlacaColor()">+ Guardar Placa</button>
-        <div id="listaPlacasColores" style="margin-top:16px;"></div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">
-          <span>📐 Optimizador con Zoom y Listado de Cortes / Sobrantes</span>
-          <button class="btn-secondary" onclick="toggleFullscreenOptimizador()">🔍 Pantalla Completa / Zoom</button>
         </div>
         <div class="grid-3">
           <div>
@@ -628,10 +463,8 @@
           </div>
         </div>
         
-        <!-- Contenedor del Canvas con Soporte Fullscreen -->
-        <div id="cutCanvasContainer">
-          <button class="btn-secondary" style="position:absolute; top:10px; right:10px; z-index:10; font-size:11px; padding:6px 10px;" onclick="toggleFullscreenOptimizador()">⛶ Maximizar</button>
-          <canvas id="cutCanvas" width="900" height="600" style="width:100%; height:auto; background:#12151c; border-radius:12px; display:block;"></canvas>
+        <div style="width:100%; background:#12151c; border:1px solid var(--border); border-radius:12px; margin-top:12px; overflow:auto; text-align:center;">
+          <canvas id="cutCanvas" width="900" height="600" style="background:#12151c; display:inline-block;"></canvas>
         </div>
 
         <div class="kpi-row" style="margin-top:12px;">
@@ -645,17 +478,17 @@
           </div>
         </div>
 
-        <!-- LISTADOS DE CORTES Y SOBRANTES DEBAJO DE LA VISTA PREVIA -->
-        <div style="margin-top:16px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <!-- LISTADOS: PRIMERO CORTES ASIGNADOS, DESPUÉS SOBRANTES -->
+        <div style="margin-top:16px; display:flex; flex-direction:column; gap:12px;">
           <div class="kpi-box" style="padding:14px; background:var(--bg-input);">
-            <div class="kpi-label" style="color:var(--success); margin-bottom:8px;">📋 Listado de Cortes Asignados</div>
-            <div id="listaCortesDetalle" style="font-family:var(--font-mono); font-size:12.5px; max-height:160px; overflow-y:auto; color:var(--text-secondary);">
+            <div class="kpi-label" style="color:var(--success); margin-bottom:8px;">📋 1. Listado de Cortes Asignados</div>
+            <div id="listaCortesDetalle" style="font-family:var(--font-mono); font-size:12.5px; max-height:180px; overflow-y:auto; color:var(--text-secondary);">
               Sin cortes trazados.
             </div>
           </div>
           <div class="kpi-box" style="padding:14px; background:var(--bg-input);">
-            <div class="kpi-label" style="color:var(--warning); margin-bottom:8px;">📦 Listado de Sobrantes Estimados</div>
-            <div id="listaSobrantesDetalle" style="font-family:var(--font-mono); font-size:12.5px; max-height:160px; overflow-y:auto; color:var(--text-secondary);">
+            <div class="kpi-label" style="color:var(--warning); margin-bottom:8px;">📦 2. Listado de Sobrantes Estimados</div>
+            <div id="listaSobrantesDetalle" style="font-family:var(--font-mono); font-size:12.5px; max-height:180px; overflow-y:auto; color:var(--text-secondary);">
               Sin sobrantes calculados.
             </div>
           </div>
@@ -664,99 +497,250 @@
       </div>
     </section>
 
-    <!-- 4. VISTA: CATÁLOGO DE MODELOS -->
-    <section id="view-catalogo" class="view-section">
+    <!-- 3. VISTA: PLACAS & PRECIOS TEXTURAS (GitHub Textures) -->
+    <section id="view-placas" class="view-section">
       <div class="card">
-        <div class="card-title">
-          <span>🪑 Catálogo Oficial J&L (Medidas Blender)</span>
-          <span class="mono" style="font-size:12px; color:var(--accent);">400x335 y 600x335 mm</span>
-        </div>
-        <div class="catalog-grid" id="gridCatalogoMuebles"></div>
+        <div class="card-title">🎨 Placas Base con Texturas (GitHub Assets/Textures) & Precios</div>
+        <p style="font-size:12.5px; color:var(--text-muted); margin-bottom:12px;">
+          Cada placa base incluye su textura oficial y control de precios (Precio Viejo en <span style="color:var(--danger); font-weight:700;">Rojo</span>, Precio Actualizado en <span style="color:var(--success); font-weight:700;">Verde</span>).
+        </p>
+        <div id="contenedorPlacasTexturasPrecios"></div>
       </div>
     </section>
 
-    <!-- 5. VISTA: VISOR 3D SÓLIDO -->
+    <!-- 4. VISTA: STOCK Y CATEGORÍAS (ABM Completo) -->
+    <section id="view-inventario" class="view-section">
+      <div class="card">
+        <div class="card-title">📦 Gestión de Stock y Categorías (Crear, Editar, Borrar)</div>
+        <div class="grid-3">
+          <div>
+            <label>Nombre del Ítem</label>
+            <input type="text" id="stockNombre" placeholder="Ej: Correderas Telescópicas">
+          </div>
+          <div>
+            <label>Categoría</label>
+            <input type="text" id="stockCategoria" placeholder="Ej: Herrajes (Editable)">
+          </div>
+          <div>
+            <label>Cantidad / Mínimo</label>
+            <div class="grid-2" style="gap:4px;">
+              <input type="number" id="stockCant" class="mono" placeholder="Cant" value="10">
+              <input type="number" id="stockMin" class="mono" placeholder="Mín" value="3">
+            </div>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="guardarItemStock()">+ Guardar / Añadir Ítem de Stock</button>
+        <div id="contenedorInventarioABM" style="margin-top:16px;"></div>
+      </div>
+    </section>
+
+    <!-- 5. VISTA: PEDIDOS DE CLIENTES (Sección Ventas) -->
+    <section id="view-ventas-pedidos" class="view-section">
+      <div class="card">
+        <div class="card-title">
+          <span>📋 Pedidos de Clientes & Fechas de Entrega</span>
+        </div>
+        <div class="grid-2">
+          <div>
+            <label>Cliente y Localidad</label>
+            <input type="text" id="pedCliente" placeholder="Ej: Martín — Ramos Mejía">
+          </div>
+          <div>
+            <label>Mueble J&L</label>
+            <select id="pedMueble" onchange="autocompletarMedidasPedido(this.value)">
+              <option value="Mesita Estándar J&L">Mesita Estándar (400 x 335 x 320 mm)</option>
+              <option value="Mesita con Agujero Secador J&L">Mesita con Agujero Secador (600 x 335 x 320 mm)</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid-3">
+          <div>
+            <label>Fecha Recepción</label>
+            <input type="date" id="pedFechaRec" class="mono">
+          </div>
+          <div>
+            <label>Fecha Entrega Programada</label>
+            <input type="date" id="pedFechaEnt" class="mono">
+          </div>
+          <div>
+            <label>Precio ($)</label>
+            <input type="number" id="pedPrecio" class="mono" value="48000">
+          </div>
+        </div>
+        <button class="btn-primary" onclick="guardarPedidoCliente()">💾 Registrar Pedido con Fechas</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span>📋 Listado de Pedidos Activos (Control de Estado)</span>
+          <span class="mono" style="font-size:12px; color:var(--accent);" id="contadorPedidosActivos">0</span>
+        </div>
+        <div id="contenedorListaPedidosVentas"></div>
+      </div>
+    </section>
+
+    <!-- 6. VISTA: HISTORIAL DE PEDIDOS (Descarga .txt) -->
+    <section id="view-ventas-historial" class="view-section">
+      <div class="card">
+        <div class="card-title">
+          <span>📄 Historial de Pedidos y Cierres Mensuales</span>
+          <button class="btn-secondary" onclick="exportarHistorialPedidosTxt()">📥 Descargar Historial (.txt)</button>
+        </div>
+        <div id="contenedorHistorialPedidosTxt"></div>
+      </div>
+    </section>
+
+    <!-- 7. VISTA: MUEBLES (Vista Previa Estética) -->
+    <section id="view-muebles" class="view-section">
+      <div class="card">
+        <div class="card-title">🪑 Muebles — Vista Previa y Estética</div>
+        <div class="catalog-grid" id="gridCatalogoMueblesVista"></div>
+      </div>
+    </section>
+
+    <!-- 8. VISTA: CATÁLOGO DE MUEBLES (ABM con piezas y herrajes) -->
+    <section id="view-catalogo-muebles" class="view-section">
+      <div class="card">
+        <div class="card-title">📐 Catálogo de Muebles (Gestión Interna de Piezas y Herrajes)</div>
+        <input type="hidden" id="muebleEditId" value="">
+        <div class="grid-2">
+          <div>
+            <label>Nombre del Mueble</label>
+            <input type="text" id="catMuebleNombre" placeholder="Ej: Modular Comedor J&L">
+          </div>
+          <div>
+            <label>Medidas Generales</label>
+            <input type="text" id="catMuebleMedidas" class="mono" placeholder="Ej: 1200 x 400 x 800 mm">
+          </div>
+        </div>
+        <div>
+          <label>Componentes / Piezas / Herrajes (Piso, techo, laterales, tornillos, escuadras...)</label>
+          <input type="text" id="catMuebleComponentes" placeholder="Ej: 2 Laterales 750x380, 1 Techo, 8 Escuadras, 24 Tornillos">
+        </div>
+        <div class="grid-2" style="margin-top:10px;">
+          <div>
+            <label>Precio Base ($)</label>
+            <input type="number" id="catMueblePrecio" class="mono" value="85000">
+          </div>
+          <div style="display:flex; align-items:flex-end;">
+            <button class="btn-primary" style="margin-top:0;" onclick="guardarModeloCatalogoABM()">+ Guardar / Añadir Mueble</button>
+          </div>
+        </div>
+        <div id="listaCatalogoMueblesABM" style="margin-top:16px;"></div>
+      </div>
+    </section>
+
+    <!-- 9. VISTA: VISOR 3D (.glb + .png) -->
     <section id="view-visor3d" class="view-section">
       <div class="card">
         <div class="card-title">
-          <span id="visor3dNombreMueble">🧊 Visor 3D: Mesita Estándar J&L</span>
-          <button class="btn-secondary" onclick="switchView('view-catalogo')">← Volver al Catálogo</button>
+          <span id="visor3dNombreMueble">🧊 Visor 3D: Modelos .glb con Texturas .png</span>
+          <button class="btn-secondary" onclick="switchView('view-catalogo-muebles')">← Volver al Catálogo</button>
         </div>
 
         <div style="margin-bottom:12px;">
-          <label>Elegir Color Sólido (Blanco o Negro)</label>
-          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
-            <button class="btn-secondary" onclick="cambiarColorSólido3D('color-blanco', 'Blanco Sólido')">⬜ Blanco Sólido</button>
-            <button class="btn-secondary" onclick="cambiarColorSólido3D('color-negro', 'Negro Sólido')">⬛ Negro Sólido</button>
+          <label>Seleccionar Modelo 3D (.glb exacto de GitHub)</label>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; margin-bottom:12px;">
+            <button class="btn-secondary" onclick="cambiarModeloGlbActivo('assets/models/Mesita_blanca.glb', 'Mesita_blanca.glb')">Mesita Blanca</button>
+            <button class="btn-secondary" onclick="cambiarModeloGlbActivo('assets/models/Mesita_negra.glb', 'Mesita_negra.glb')">Mesita Negra</button>
+            <button class="btn-secondary" onclick="cambiarModeloGlbActivo('assets/models/Mesita_Secador_blanco.glb', 'Mesita_Secador_blanco.glb')">Secador Blanco</button>
+            <button class="btn-secondary" onclick="cambiarModeloGlbActivo('assets/models/Mesita_Secador_negra.glb', 'Mesita_Secador_negra.glb')">Secador Negro</button>
+          </div>
+
+          <label>Aplicar Textura Oficial (.png desde assets/Textures/ con mayúscula exacta)</label>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;">
+            <button class="btn-secondary" onclick="aplicarTexturaPngOficial('Baltico.png')">Baltico</button>
+            <button class="btn-secondary" onclick="aplicarTexturaPngOficial('Carvalho Mezzo.png')">Carvalho Mezzo</button>
+            <button class="btn-secondary" onclick="aplicarTexturaPngOficial('Gaudi.png')">Gaudi</button>
+            <button class="btn-secondary" onclick="aplicarTexturaPngOficial('Helsinki.png')">Helsinki</button>
+            <button class="btn-secondary" onclick="aplicarTexturaPngOficial('Kiri.png')">Kiri</button>
+            <button class="btn-secondary" onclick="aplicarTexturaPngOficial('Teka artico.png')">Teka artico</button>
           </div>
         </div>
 
-        <div class="stage-3d" id="stage3d">
-          <div class="assembly-3d" id="assembly3d">
-            <div class="panel-3d top color-blanco" id="panel3dTop">
-              TAPA
-              <div class="secador-hole" id="holeSecador3D"></div>
-            </div>
-            <div class="panel-3d bottom color-blanco">BASE</div>
-            <div class="panel-3d left color-blanco">335 mm</div>
-            <div class="panel-3d right color-blanco">335 mm</div>
-            <div class="panel-3d front color-blanco" id="panel3dFront">400 x 335 x 32</div>
-          </div>
-        </div>
+        <!-- Contenedor WebGL Three.js -->
+        <div id="canvas-container-3d"></div>
 
         <div class="grid-3" style="margin-top:14px;">
           <div class="kpi-box">
-            <div class="kpi-label">Medidas Blender</div>
-            <div class="kpi-value" style="font-size:15px;" id="visor3dMedidas">400 x 335 x 320 mm</div>
+            <div class="kpi-label">Modelo GLB</div>
+            <div class="kpi-value" style="font-size:13px;" id="visorGlbNombreActivo">Mesita_blanca.glb</div>
           </div>
           <div class="kpi-box">
-            <div class="kpi-label">Color Activo</div>
-            <div class="kpi-value" style="font-size:15px;" id="visor3dAcabado">Blanco Sólido</div>
+            <div class="kpi-label">Textura Activa PNG</div>
+            <div class="kpi-value" style="font-size:13px; color:var(--accent);" id="visorPngNombreActivo">Baltico.png</div>
           </div>
           <div class="kpi-box">
-            <div class="kpi-label">Valor</div>
-            <div class="kpi-value" style="font-size:17px; color:var(--accent);" id="visor3dPrecio">$48.000</div>
+            <div class="kpi-label">Estado Visor</div>
+            <div class="kpi-value" style="font-size:14px; color:var(--success);">WebGL Activo</div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 6. VISTA: STOCK -->
-    <section id="view-inventario" class="view-section">
+    <!-- 10. VISTA: FINANZAS -->
+    <section id="view-finanzas" class="view-section">
+      <div class="kpi-row">
+        <div class="kpi-box">
+          <div class="kpi-label">Total Ventas</div>
+          <div class="kpi-value" style="color:var(--success);" id="kpiTotalVentas">$0</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-label">Total Compras</div>
+          <div class="kpi-value" style="color:var(--danger);" id="kpiTotalCompras">$0</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-label">Saldo Caja Taller</div>
+          <div class="kpi-value" style="color:var(--accent);" id="kpiSaldoCaja">$0</div>
+        </div>
+      </div>
+
       <div class="card">
-        <div class="card-title">
-          <span>📦 Stock y Punto de Reposición</span>
-          <span class="mono" style="font-size:12px; color:var(--danger);" id="alertaStockHeader"></span>
+        <div class="card-title">➕ Registrar Nueva Venta o Compra</div>
+        <div class="grid-2">
+          <div>
+            <label>Tipo de Movimiento</label>
+            <select id="vcTipo">
+              <option value="VENTA">🟢 VENTA (Ingreso por Mueble)</option>
+              <option value="COMPRA">🔴 COMPRA (Insumos / Placas)</option>
+            </select>
+          </div>
+          <div>
+            <label>Método de Pago</label>
+            <select id="vcMetodo">
+              <option value="Efectivo">💵 Efectivo</option>
+              <option value="Transferencia">🏦 Transferencia / MercadoPago</option>
+            </select>
+          </div>
         </div>
-        <div class="pills-bar">
-          <button class="pill-btn active" onclick="filtrarInventario('Todos', this)">Todos</button>
-          <button class="pill-btn" onclick="filtrarInventario('Piezas Cortadas', this)">Piezas Cortadas</button>
-          <button class="pill-btn" onclick="filtrarInventario('Herrajes', this)">Herrajes</button>
-          <button class="pill-btn" onclick="filtrarInventario('Filos', this)">Filos 0.15m</button>
-          <button class="pill-btn" onclick="filtrarInventario('Critico', this)">🚨 Críticos</button>
+        <div class="grid-3">
+          <div>
+            <label>Concepto / Detalle</label>
+            <input type="text" id="vcConcepto" placeholder="Ej: Mesita 400x335">
+          </div>
+          <div>
+            <label>Cliente o Proveedor</label>
+            <input type="text" id="vcPersona" placeholder="Ej: Cliente Ramos">
+          </div>
+          <div>
+            <label>Importe ($)</label>
+            <input type="number" id="vcMonto" class="mono" placeholder="48000">
+          </div>
         </div>
-        <div id="contenedorStockItems"></div>
+        <button class="btn-primary" onclick="registrarOperacionVC()">📥 Guardar Movimiento</button>
       </div>
     </section>
 
-    <!-- 7. VISTA: PROVEEDORES -->
-    <section id="view-proveedores" class="view-section">
-      <div class="card">
-        <div class="card-title">🏭 Proveedores Zona Oeste</div>
-        <div id="listaProveedoresOeste"></div>
-      </div>
-    </section>
-
-    <!-- 8. VISTA: GPS CON ANCLAJE EDITABLE POR TEXTO LIBRE Y AUTOCOMPLETADO BUENOS AIRES -->
+    <!-- 11. VISTA: GPS FLETES -->
     <section id="view-fletes" class="view-section">
       <div class="card">
         <div class="card-title">
           <span>🚚 Ruteador GPS y Fletes — Provincia de Buenos Aires</span>
-          <button class="btn-secondary" onclick="anclarTallerPersonalizadoPrompt()">📍 Configurar Taller (Dirección)</button>
+          <button class="btn-secondary" onclick="anclarTallerPersonalizadoPrompt()">📍 Configurar Taller</button>
         </div>
 
         <div style="background:var(--bg-input); padding:10px 14px; border-radius:8px; margin-bottom:12px; font-size:12.5px; border:1px solid var(--border);">
-          🏠 Ubicación actual del Taller J&L: <b id="txtTallerAnclado" style="color:var(--accent);">Ariadna 2400, Villa Luzuriaga</b>
+          🏠 Ubicación Taller J&L: <b id="txtTallerAnclado" style="color:var(--accent);">Ariadna 2400, Villa Luzuriaga</b>
         </div>
 
         <div class="grid-2">
@@ -793,34 +777,38 @@
 
   </main>
 
-  <!-- BARRA FLOTANTE INFERIOR -->
+  <!-- BARRA FLOTANTE INFERIOR ("THUMB-ZONE") -->
   <nav class="thumb-zone-bar">
-    <button class="thumb-tab active" data-view="view-produccion" onclick="switchView('view-produccion')">
-      <span>🛠️</span><span>Pedidos</span>
+    <button class="thumb-tab active" data-view="view-inicio" onclick="switchView('view-inicio')">
+      <span>🏠</span><span>Inicio</span>
     </button>
-    <button class="thumb-tab" data-view="view-finanzas" onclick="switchView('view-finanzas')">
-      <span>💵</span><span>Finanzas</span>
+    <button class="thumb-tab" data-view="view-ventas-pedidos" onclick="switchView('view-ventas-pedidos')">
+      <span>📋</span><span>Pedidos</span>
     </button>
     <button class="thumb-tab" data-view="view-optimizador" onclick="switchView('view-optimizador')">
-      <span>📐</span><span>Placas</span>
+      <span>📐</span><span>Optimizador</span>
     </button>
-    <button class="thumb-tab" data-view="view-catalogo" onclick="switchView('view-catalogo')">
-      <span>🪑</span><span>Blender</span>
+    <button class="thumb-tab" data-view="view-muebles" onclick="switchView('view-muebles')">
+      <span>🪑</span><span>Muebles</span>
     </button>
     <button class="thumb-tab" data-view="view-fletes" onclick="switchView('view-fletes')">
-      <span>🚚</span><span>GPS Fletes</span>
+      <span>🚚</span><span>Fletes</span>
     </button>
   </nav>
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Three.js y GLTFLoader para .glb + .png oficiales de GitHub -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <script>
     const META_POR_CICLO = 300000;
     const APERTURA_CAJA_BASE = 125000;
 
-    let tallerCoords = JSON.parse(localStorage.getItem('jl_v96_taller_coords')) || [-34.6685, -58.5914];
-    let tallerDireccionTexto = localStorage.getItem('jl_v96_taller_dir') || 'Ariadna 2400, Villa Luzuriaga';
+    let tallerCoords = JSON.parse(localStorage.getItem('jl_v10_taller_coords')) || [-34.6685, -58.5914];
+    let tallerDireccionTexto = localStorage.getItem('jl_v10_taller_dir') || 'Ariadna 2400, Villa Luzuriaga';
 
     const CICLOS_COLORES = [
       { nivel: 1, nombre: 'Nogal Cálido', hex: '#c89d66' },
@@ -830,20 +818,32 @@
       { nivel: 5, nombre: 'Púrpura Imperial', hex: '#8b5cf6' }
     ];
 
-    const catalogoModelosJLEstables = [
-      { id: 'blender-400', nombre: 'Mesita Estándar J&L', medidas: '400 x 335 x 320 mm', tieneSecador: false, acabado: 'Melamina Sólida 15mm', precio: '$48.000', colorClase: 'color-blanco', desc: 'Modelo Blender original.' },
-      { id: 'blender-600-secador', nombre: 'Mesita con Agujero Secador J&L', medidas: '600 x 335 x 320 mm (C/ Secador)', tieneSecador: true, acabado: 'Melamina Sólida 15mm', precio: '$64.500', colorClase: 'color-blanco', desc: 'Modelo con perforación para secador.' }
+    /* Placas base inicializadas con las texturas oficiales de GitHub Assets/Textures/ */
+    let listaPlacasBase = JSON.parse(localStorage.getItem('jl_v10_placas')) || [
+      { id: 1, nombre: 'Baltico 15mm', textura: 'Baltico.png', dimensiones: '2750x1830', precioViejo: 45000, precioNuevo: 48000, stock: 5 },
+      { id: 2, nombre: 'Carvalho Mezzo 15mm', textura: 'Carvalho Mezzo.png', dimensiones: '2750x1830', precioViejo: 46000, precioNuevo: 49500, stock: 4 },
+      { id: 3, nombre: 'Gaudi 15mm', textura: 'Gaudi.png', dimensiones: '2750x1830', precioViejo: 44000, precioNuevo: 47000, stock: 3 },
+      { id: 4, nombre: 'Helsinki 15mm', textura: 'Helsinki.png', dimensiones: '2750x1830', precioViejo: 48000, precioNuevo: 52000, stock: 6 },
+      { id: 5, nombre: 'Kiri 15mm', textura: 'Kiri.png', dimensiones: '2750x1830', precioViejo: 43000, precioNuevo: 46500, stock: 2 },
+      { id: 6, nombre: 'Teka artico 15mm', textura: 'Teka artico.png', dimensiones: '2750x1830', precioViejo: 47000, precioNuevo: 51000, stock: 4 }
     ];
 
-    let listaPlacas = JSON.parse(localStorage.getItem('jl_v96_placas')) || [
-      { id: 1, nombre: 'Blanco Sólido 15mm', colorClase: 'color-blanco', dimensiones: '2750x1830', stock: 5 },
-      { id: 2, nombre: 'Negro Sólido 15mm', colorClase: 'color-negro', dimensiones: '2750x1830', stock: 3 }
+    let listaStock = JSON.parse(localStorage.getItem('jl_v10_stock')) || [
+      { id: 301, nombre: 'Laterales Cortados 335x320mm', categoria: 'Piezas Cortadas', cantidad: 14, minimo: 6 },
+      { id: 302, nombre: 'Correderas Telescópicas 35cm', categoria: 'Herrajes', cantidad: 2, minimo: 5 }
     ];
 
-    let listaPedidos = JSON.parse(localStorage.getItem('jl_v96_pedidos')) || [];
-    let listaOperacionesVC = JSON.parse(localStorage.getItem('jl_v96_operaciones')) || [];
-    let listaStock = JSON.parse(localStorage.getItem('jl_v96_stock')) || [
-      { id: 301, nombre: 'Laterales Cortados 335x320mm', categoria: 'Piezas Cortadas', cantidad: 14, minimo: 6 }
+    let listaPedidosClientes = JSON.parse(localStorage.getItem('jl_v10_pedidos')) || [
+      { id: 1001, cliente: 'Carlos Gomez — Ramos Mejía', mueble: 'Mesita Estándar J&L', fechaRec: '2026-10-15', fechaEnt: '2026-10-22', estado: 'En proceso', precio: 48000 }
+    ];
+
+    let listaCatalogoMueblesABM = JSON.parse(localStorage.getItem('jl_v10_catalogo_muebles')) || [
+      { id: 501, nombre: 'Mesita Estándar J&L', medidas: '400 x 335 x 320 mm', componentes: '2 Laterales 335x320, 1 Techo, 1 Piso, 4 Patas, 16 Tornillos', precio: 48000 },
+      { id: 502, nombre: 'Mesita con Agujero Secador J&L', medidas: '600 x 335 x 320 mm', componentes: '2 Laterales 335x320, 1 Techo c/ Secador, 1 Piso, 20 Tornillos', precio: 64500 }
+    ];
+
+    let listaOperacionesVC = JSON.parse(localStorage.getItem('jl_v10_operaciones')) || [
+      { id: 201, tipo: 'VENTA', fecha: '18/10/2026', concepto: 'Mesita Estándar J&L', persona: 'Cliente Ramos', metodo: 'Transferencia', monto: 48000 }
     ];
 
     function mostrarToast(msg) {
@@ -871,12 +871,10 @@
       const target = document.getElementById(viewId);
       if (target) target.classList.add('active');
 
-      const equivalenciaMenu = (viewId === 'view-historial-ventas' || viewId === 'view-historial-compras') ? 'view-finanzas' : viewId;
-
+      const equivalenciaMenu = viewId;
       document.querySelectorAll('.drawer-item').forEach(item => {
         item.classList.toggle('active', item.getAttribute('data-view') === equivalenciaMenu);
       });
-
       document.querySelectorAll('.thumb-tab').forEach(tab => {
         tab.classList.toggle('active', tab.getAttribute('data-view') === equivalenciaMenu);
       });
@@ -886,185 +884,94 @@
       if (drawer) drawer.classList.remove('open');
       if (overlay) overlay.classList.remove('open');
 
+      if (viewId === 'view-inicio') {
+        renderizarPanelInicio();
+      }
       if (viewId === 'view-fletes' && gpsMap) {
         setTimeout(() => gpsMap.invalidateSize(), 200);
       }
       if (viewId === 'view-optimizador') {
         simularCortePlaca();
       }
+      if (viewId === 'view-placas') {
+        renderizarPlacasYPrecios();
+      }
+      if (viewId === 'view-inventario') {
+        renderizarStockABM('Todos');
+      }
+      if (viewId === 'view-ventas-pedidos') {
+        renderizarPedidosClientes();
+      }
+      if (viewId === 'view-ventas-historial') {
+        renderizarHistorialPedidosTxt();
+      }
+      if (viewId === 'view-muebles') {
+        renderizarCatalogoMueblesVista();
+      }
+      if (viewId === 'view-catalogo-muebles') {
+        renderizarCatalogoMueblesABM();
+      }
+      if (viewId === 'view-visor3d') {
+        setTimeout(() => iniciarVisorThreeJS(modeloGlbActualActivo, texturaPngActualActiva), 100);
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function autocompletarMedidasPedido(modelo) {
-      const inputMedidas = document.getElementById('pedMedidas');
-      const inputPrecio = document.getElementById('pedPrecio');
-      if (!inputMedidas || !inputPrecio) return;
+    /* 0. PANEL INICIO: Vector Ciclos, Stock Crítico y Envío más cercano */
+    function renderizarPanelInicio() {
+      const ventas = listaOperacionesVC.filter(o => o.tipo === 'VENTA');
+      const sumaV = ventas.reduce((a, b) => a + Number(b.monto), 0);
+      const idx = Math.floor(sumaV / META_POR_CICLO);
+      const pct = Math.min(100, Math.round(((sumaV % META_POR_CICLO) / META_POR_CICLO) * 100));
+      const col = CICLOS_COLORES[idx % CICLOS_COLORES.length];
 
-      if (modelo.includes('600')) {
-        inputMedidas.value = '600 x 335 x 320 mm (Agujero Secador)';
-        inputPrecio.value = 64500;
+      document.getElementById('inicioVentasTotal').textContent = `$${sumaV.toLocaleString('es-AR')}`;
+      document.getElementById('inicioPorcentajeCiclo').textContent = `${pct}%`;
+      document.getElementById('inicioCicloBadge').textContent = `Ciclo ${idx + 1} • ${col.nombre}`;
+      const barra = document.getElementById('inicioBarraFill');
+      if (barra) { barra.style.width = `${pct}%`; barra.style.backgroundColor = col.hex; }
+
+      // Stock Crítico en Inicio
+      const criticos = listaStock.filter(i => Number(i.cantidad) <= Number(i.minimo));
+      document.getElementById('badgeCriticosDrawer').textContent = criticos.length;
+      const contStock = document.getElementById('inicioContenedorStockCritico');
+      if (criticos.length === 0) {
+        contStock.innerHTML = `<div style="color:var(--success); font-weight:700; font-size:13px;">✅ Todo el inventario se encuentra al día. Sin alertas críticas.</div>`;
       } else {
-        inputMedidas.value = '400 x 335 x 320 mm';
-        inputPrecio.value = 48000;
-      }
-    }
-
-    function renderizarPedidos() {
-      const cont = document.getElementById('contenedorListaPedidos');
-      const badgeDrawer = document.getElementById('badgePedidosDrawer');
-      const resumen = document.getElementById('resumenOrdenesActivas');
-      if (!cont) return;
-
-      if (resumen) resumen.textContent = `${listaPedidos.length} órdenes`;
-      if (badgeDrawer) badgeDrawer.textContent = listaPedidos.length;
-
-      if (listaPedidos.length === 0) {
-        cont.innerHTML = `<div style="padding:14px; text-align:center; color:var(--text-muted);">Sin pedidos activos.</div>`;
-        return;
-      }
-
-      cont.innerHTML = listaPedidos.map(p => `
-        <div class="order-card">
-          <div class="order-header">
+        contStock.innerHTML = criticos.map(i => `
+          <div class="history-list-card" style="border-color:var(--danger);">
             <div>
-              <span class="order-id">#${String(p.id).slice(-4)}</span>
-              <div style="font-weight:800; font-size:15px; margin-top:4px;">${p.cliente}</div>
-              <div style="color:var(--accent); font-weight:700; font-size:13px;">${p.mueble}</div>
+              <div style="font-weight:800; color:var(--danger);">${i.nombre}</div>
+              <div style="font-size:11px; color:var(--text-muted);">Categoría: ${i.categoria} • Mínimo requerido: ${i.minimo}</div>
             </div>
-            <span class="order-status-badge ${p.estado.includes('Listo') ? 'listo' : ''}">${p.estado}</span>
+            <span class="mono" style="color:var(--danger); font-weight:800; font-size:16px;">${i.cantidad} u.</span>
           </div>
-          <div class="order-specs">📐 Medidas: <b>${p.medidas}</b> | 💰 $${Number(p.precio).toLocaleString('es-AR')}</div>
-          <div class="order-actions">
-            <button class="btn-secondary" onclick="editarPedido(${p.id})">✏️ Editar</button>
-            <button class="btn-danger" onclick="eliminarPedido(${p.id})">🗑️ Eliminar</button>
-          </div>
-        </div>
-      `).join('');
-    }
+        `).join('');
+      }
 
-    function guardarPedido() {
-      const editId = document.getElementById('pedEditId').value;
-      const cliente = document.getElementById('pedCliente').value.trim();
-      const mueble = document.getElementById('pedMueble').value;
-      const medidas = document.getElementById('pedMedidas').value.trim();
-      const estado = document.getElementById('pedEstado').value;
-      const precio = parseFloat(document.getElementById('pedPrecio').value) || 0;
-
-      if (!cliente) return mostrarToast('⚠️ Escribí el cliente.');
-
-      if (editId) {
-        const idx = listaPedidos.findIndex(x => String(x.id) === String(editId));
-        if (idx !== -1) listaPedidos[idx] = { id: Number(editId), cliente, mueble, medidas, estado, precio };
-        cancelarEdicionPedido();
-        mostrarToast('✅ Pedido actualizado.');
+      // Envío más cercano (basado en fecha actual de hoy contra fechaEnt)
+      const hoy = new Date();
+      hoy.setHours(0,0,0,0);
+      const pendientes = listaPedidosClientes.filter(p => p.estado !== 'Entregado');
+      
+      if (pendientes.length === 0) {
+        document.getElementById('inicioEnvioTexto').textContent = 'No hay envíos ni entregas pendientes.';
       } else {
-        listaPedidos.unshift({ id: Date.now(), cliente, mueble, medidas, estado, precio });
-        mostrarToast('🛠️ Pedido cargado.');
+        pendientes.sort((a, b) => new Date(a.fechaEnt) - new Date(b.fechaEnt));
+        const proximo = pendientes[0];
+        document.getElementById('inicioEnvioTexto').innerHTML = `
+          <b>${proximo.cliente}</b> (${proximo.mueble})<br>
+          📅 Fecha Programada: <span style="font-family:var(--font-mono); color:var(--accent);">${proximo.fechaEnt}</span> • Estado: <b>${proximo.estado}</b>
+        `;
       }
-      localStorage.setItem('jl_v96_pedidos', JSON.stringify(listaPedidos));
-      document.getElementById('pedCliente').value = '';
-      renderizarPedidos();
     }
 
-    function editarPedido(id) {
-      const p = listaPedidos.find(x => x.id === id);
-      if (!p) return;
-      document.getElementById('pedEditId').value = p.id;
-      document.getElementById('pedCliente').value = p.cliente;
-      document.getElementById('pedMedidas').value = p.medidas;
-      document.getElementById('pedEstado').value = p.estado;
-      document.getElementById('pedPrecio').value = p.precio;
-      const formTitulo = document.getElementById('formPedidoTitulo');
-      const btnCancelar = document.getElementById('btnCancelarEdicionPedido');
-      if (formTitulo) formTitulo.textContent = '✏️ Corrigiendo Pedido';
-      if (btnCancelar) btnCancelar.style.display = 'inline-flex';
-    }
-
-    function cancelarEdicionPedido() {
-      document.getElementById('pedEditId').value = '';
-      document.getElementById('pedCliente').value = '';
-      const formTitulo = document.getElementById('formPedidoTitulo');
-      const btnCancelar = document.getElementById('btnCancelarEdicionPedido');
-      if (formTitulo) formTitulo.textContent = '➕ Cargar Pedido a Producción';
-      if (btnCancelar) btnCancelar.style.display = 'none';
-    }
-
-    function eliminarPedido(id) {
-      listaPedidos = listaPedidos.filter(x => x.id !== id);
-      localStorage.setItem('jl_v96_pedidos', JSON.stringify(listaPedidos));
-      renderizarPedidos();
-      mostrarToast('🗑️ Pedido eliminado.');
-    }
-
-    function renderizarPlacasColores() {
-      const cont = document.getElementById('listaPlacasColores');
-      const select = document.getElementById('selectPlacaActiva');
-      if (!cont || !select) return;
-
-      cont.innerHTML = listaPlacas.map(pl => `
-        <div class="history-list-card">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <span style="width:22px; height:22px; border-radius:6px;" class="${pl.colorClase}"></span>
-            <div>
-              <div style="font-weight:800;">${pl.nombre}</div>
-              <div class="mono" style="font-size:11px; color:var(--text-muted);">${pl.dimensiones}mm • Stock: ${pl.stock}</div>
-            </div>
-          </div>
-          <button class="btn-danger" onclick="eliminarPlacaColor(${pl.id})">🗑️</button>
-        </div>
-      `).join('');
-
-      select.innerHTML = listaPlacas.map(pl => `<option value="${pl.id}">${pl.nombre} (${pl.dimensiones})</option>`).join('');
-    }
-
-    function guardarPlacaColor() {
-      const nombre = document.getElementById('placaNombre').value.trim();
-      const colorClase = document.getElementById('placaColorClase').value;
-      const dimensiones = document.getElementById('placaDimensiones').value.trim() || '2750x1830';
-      const stock = parseInt(document.getElementById('placaStockCant').value) || 1;
-
-      if (!nombre) return mostrarToast('⚠️ Escribí el nombre de la placa.');
-
-      listaPlacas.push({ id: Date.now(), nombre, colorClase, dimensiones, stock });
-      localStorage.setItem('jl_v96_placas', JSON.stringify(listaPlacas));
-      document.getElementById('placaNombre').value = '';
-      renderizarPlacasColores();
+    /* 2. OPTIMIZADOR DE PLACAS CON ZOOM Y LISTADOS ORDENADOS */
+    let optimizadorEscalaZoom = 0.28;
+    function zoomOptimizador(delta) {
+      optimizadorEscalaZoom = Math.max(0.15, Math.min(0.65, optimizadorEscalaZoom + delta));
       simularCortePlaca();
-      mostrarToast('🎨 Placa guardada.');
-    }
-
-    function eliminarPlacaColor(id) {
-      if (listaPlacas.length <= 1) return mostrarToast('⚠️ Debe quedar al menos una placa.');
-      listaPlacas = listaPlacas.filter(p => p.id !== id);
-      localStorage.setItem('jl_v96_placas', JSON.stringify(listaPlacas));
-      renderizarPlacasColores();
-      simularCortePlaca();
-      mostrarToast('🗑️ Placa eliminada.');
-    }
-
-    function actualizarMedidasSugeridasCorte(etiqueta) {
-      const largoInput = document.getElementById('cutLargo');
-      const anchoInput = document.getElementById('cutAncho');
-      if (!largoInput || !anchoInput) return;
-
-      if (etiqueta.includes('Techo')) {
-        largoInput.value = 400; anchoInput.value = 335;
-      } else if (etiqueta.includes('Laterales')) {
-        largoInput.value = 335; anchoInput.value = 320;
-      } else if (etiqueta.includes('Tapa con Secador')) {
-        largoInput.value = 600; anchoInput.value = 335;
-      } else {
-        largoInput.value = 400; anchoInput.value = 150;
-      }
-      simularCortePlaca();
-    }
-
-    function toggleFullscreenOptimizador() {
-      const container = document.getElementById('cutCanvasContainer');
-      if (container) {
-        container.classList.toggle('fullscreen');
-        simularCortePlaca();
-      }
+      mostrarToast(`🔍 Zoom ajustado: ${Math.round(optimizadorEscalaZoom * 100)}%`);
     }
 
     function simularCortePlaca() {
@@ -1077,22 +984,25 @@
       const cant = parseInt(document.getElementById('cutCant').value) || 4;
       const etiqueta = document.getElementById('cutEtiqueta').value;
 
+      const PLACA_W = 2750; const PLACA_H = 1830; const ESC = optimizadorEscalaZoom;
+      canvas.width = PLACA_W * ESC + 60;
+      canvas.height = PLACA_H * ESC + 60;
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = '#14171f'; ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const PLACA_W = 2750; const PLACA_H = 1830; const ESC = 0.28;
-      ctx.strokeStyle = '#c89d66'; ctx.lineWidth = 2; ctx.strokeRect(20, 20, PLACA_W * ESC, PLACA_H * ESC);
+      ctx.strokeStyle = '#c89d66'; ctx.lineWidth = 2; ctx.strokeRect(30, 30, PLACA_W * ESC, PLACA_H * ESC);
 
       ctx.fillStyle = '#8e95a5'; ctx.font = '11px JetBrains Mono';
-      ctx.fillText(`2750 mm (Largo Placa)`, (PLACA_W * ESC) / 2 - 45, 14);
-      ctx.save(); ctx.translate(12, (PLACA_H * ESC) / 2); ctx.rotate(-Math.PI / 2);
-      ctx.fillText(`1830 mm (Ancho)`, -50, 0); ctx.restore();
+      ctx.fillText(`2750 mm (Largo Placa)`, (PLACA_W * ESC) / 2, 20);
+      ctx.save(); ctx.translate(15, (PLACA_H * ESC) / 2 + 30); ctx.rotate(-Math.PI / 2);
+      ctx.fillText(`1830 mm (Ancho)`, 0, 0); ctx.restore();
 
-      let x = 25, y = 25, maxH = 0, ubicadas = 0;
+      let x = 35, y = 35, maxH = 0, ubicadas = 0;
       let htmlCortes = '';
       for (let i = 0; i < cant; i++) {
-        if (x + (largo * ESC) > (20 + PLACA_W * ESC)) { x = 25; y += maxH + 6; maxH = 0; }
-        if (y + (ancho * ESC) > (20 + PLACA_H * ESC)) break;
+        if (x + (largo * ESC) > (30 + PLACA_W * ESC)) { x = 35; y += maxH + 6; maxH = 0; }
+        if (y + (ancho * ESC) > (30 + PLACA_H * ESC)) break;
 
         ctx.fillStyle = '#c89d66'; ctx.fillRect(x, y, largo * ESC, ancho * ESC);
         ctx.strokeStyle = '#090a0d'; ctx.lineWidth = 1.5; ctx.strokeRect(x, y, largo * ESC, ancho * ESC);
@@ -1112,7 +1022,7 @@
       document.getElementById('cutAprovechamiento').textContent = `${apro}% (${ubicadas} pzs)`;
       document.getElementById('cutMetrosFilo').textContent = `${filoM} m`;
 
-      // Renderizar listados debajo de la vista previa
+      // 1. Listado de Cortes Asignados y luego 2. Sobrantes Estimados
       const divCortes = document.getElementById('listaCortesDetalle');
       const divSobrantes = document.getElementById('listaSobrantesDetalle');
 
@@ -1123,14 +1033,369 @@
         const areaSobranteMm2 = areaTotal - areaUsada;
         const sobranteAproxM2 = (areaSobranteMm2 / 1000000).toFixed(2);
         divSobrantes.innerHTML = `
-          <div>• Área Restante Placa: <b>${sobranteAproxM2} m²</b></div>
-          <div>• Eficiencia de Corte: <b>${apro}%</b></div>
-          <div style="color:var(--text-muted); margin-top:4px; font-size:11px;">Desunte y mermas estimadas guardadas en stock.</div>
+          <div>• Área Remanente Placa: <b>${sobranteAproxM2} m²</b></div>
+          <div>• Eficiencia de Aprovechamiento: <b>${apro}%</b></div>
+          <div style="color:var(--text-muted); margin-top:4px; font-size:11px;">Mermas y desuntes calculados para inventario.</div>
         `;
       }
     }
 
-    function renderizarFinanzasYVentanasOcultas() {
+    /* 3. PLACAS & PRECIOS TEXTURAS */
+    function renderizarPlacasYPrecios() {
+      const cont = document.getElementById('contenedorPlacasTexturasPrecios');
+      const selectOpt = document.getElementById('selectPlacaActiva');
+      if (!cont) return;
+
+      cont.innerHTML = listaPlacasBase.map(pl => `
+        <div class="history-list-card" style="flex-wrap:wrap; gap:10px;">
+          <div>
+            <div style="font-weight:800; font-size:15px;">${pl.nombre}</div>
+            <div style="font-size:11px; color:var(--text-muted);">Textura Oficial: <b>${pl.textura}</b> • ${pl.dimensiones}mm</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="mono" style="text-align:right;">
+              <div style="font-size:11px; text-decoration:line-through; color:var(--danger);">Viejo: $${Number(pl.precioViejo).toLocaleString('es-AR')}</div>
+              <div style="font-size:15px; font-weight:800; color:var(--success);">Nuevo: $<input type="number" id="txtPrecioPlaca_${pl.id}" class="mono" value="${pl.precioNuevo}" style="width:90px; display:inline-block; padding:4px 8px;" onchange="actualizarPrecioPlaca(${pl.id}, this.value)"></div>
+            </div>
+            <button class="btn-secondary" onclick="mostrarToast('✅ Precio actualizado para ${pl.nombre}')">Guardar</button>
+          </div>
+        </div>
+      `).join('');
+
+      if (selectOpt) {
+        selectOpt.innerHTML = listaPlacasBase.map(pl => `<option value="${pl.id}">${pl.nombre} (${pl.textura})</option>`).join('');
+      }
+    }
+
+    function actualizarPrecioPlaca(id, nuevoPrecio) {
+      const pl = listaPlacasBase.find(p => p.id === id);
+      if (pl) {
+        pl.precioViejo = pl.precioNuevo;
+        pl.precioNuevo = parseFloat(nuevoPrecio) || pl.precioNuevo;
+        localStorage.setItem('jl_v10_placas', JSON.stringify(listaPlacasBase));
+        mostrarToast('✅ Precios actualizados (Viejo en rojo, Nuevo en verde).');
+        renderizarPlacasYPrecios();
+      }
+    }
+
+    /* 4. STOCK Y CATEGORÍAS (ABM Completo) */
+    function renderizarStockABM(catActiva = 'Todos') {
+      const cont = document.getElementById('contenedorInventarioABM');
+      if (!cont) return;
+
+      const categorias = ['Todos', ...new Set(listaStock.map(i => i.categoria))];
+      document.getElementById('badgeCriticosDrawer').textContent = listaStock.filter(i => Number(i.cantidad) <= Number(i.minimo)).length;
+
+      const filtrados = listaStock.filter(i => catActiva === 'Todos' ? true : i.categoria === catActiva);
+
+      cont.innerHTML = `
+        <div class="pills-bar" style="margin-bottom:12px;">
+          ${categorias.map(c => `<button class="pill-btn ${c===catActiva?'active':''}" onclick="renderizarStockABM('${c}')">${c}</button>`).join('')}
+        </div>
+        <div>
+          ${filtrados.map(i => `
+            <div class="history-list-card" style="${Number(i.cantidad) <= Number(i.minimo) ? 'border-color:var(--danger);' : ''}">
+              <div>
+                <div style="font-weight:800; font-size:15px;">${i.nombre}</div>
+                <div style="font-size:12px; color:var(--text-muted);">Categoría: <b>${i.categoria}</b> • Mínimo: ${i.minimo}</div>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="mono" style="font-weight:800; font-size:16px;">${i.cantidad} u.</span>
+                <button class="btn-danger" onclick="eliminarItemStock(${i.id})">🗑️</button>
+              </div>
+            </div>
+          `).join('') || '<div style="color:var(--text-muted); text-align:center; padding:10px;">Sin ítems en esta categoría.</div>'}
+        </div>
+      `;
+    }
+
+    function guardarItemStock() {
+      const nombre = document.getElementById('stockNombre').value.trim();
+      const categoria = document.getElementById('stockCategoria').value.trim() || 'General';
+      const cantidad = parseInt(document.getElementById('stockCant').value) || 0;
+      const minimo = parseInt(document.getElementById('stockMin').value) || 0;
+
+      if (!nombre) return mostrarToast('⚠️ Escribí el nombre del ítem.');
+
+      listaStock.push({ id: Date.now(), nombre, categoria, cantidad, minimo });
+      localStorage.setItem('jl_v10_stock', JSON.stringify(listaStock));
+      document.getElementById('stockNombre').value = '';
+      renderizarStockABM();
+      mostrarToast('📦 Ítem guardado en stock.');
+    }
+
+    function eliminarItemStock(id) {
+      listaStock = listaStock.filter(i => i.id !== id);
+      localStorage.setItem('jl_v10_stock', JSON.stringify(listaStock));
+      renderizarStockABM();
+      mostrarToast('🗑️ Ítem eliminado.');
+    }
+
+    /* 5 & 6. PEDIDOS DE CLIENTES (Ventas) Y ESTADOS */
+    function autocompletarMedidasPedido(modelo) {
+      if (modelo.includes('600')) {
+        document.getElementById('pedPrecio').value = 64500;
+      } else {
+        document.getElementById('pedPrecio').value = 48000;
+      }
+    }
+
+    function renderizarPedidosClientes() {
+      const cont = document.getElementById('contenedorListaPedidosVentas');
+      const badge = document.getElementById('badgePedidosDrawer');
+      const contador = document.getElementById('contadorPedidosActivos');
+      if (!cont) return;
+
+      if (badge) badge.textContent = listaPedidosClientes.length;
+      if (contador) contador.textContent = `${listaPedidosClientes.length} activos`;
+
+      if (listaPedidosClientes.length === 0) {
+        cont.innerHTML = `<div style="padding:14px; text-align:center; color:var(--text-muted);">Sin pedidos cargados.</div>`;
+        return;
+      }
+
+      cont.innerHTML = listaPedidosClientes.map(p => `
+        <div class="order-card">
+          <div class="order-header">
+            <div>
+              <span class="order-id">#${String(p.id).slice(-4)}</span>
+              <div style="font-weight:800; font-size:15px; margin-top:4px;">${p.cliente}</div>
+              <div style="color:var(--accent); font-weight:700; font-size:13px;">${p.mueble}</div>
+            </div>
+            <select class="order-status-badge ${p.estado.toLowerCase().replace(' ', '')}" style="width:auto; padding:4px 8px;" onchange="actualizarEstadoPedido(${p.id}, this.value)">
+              <option value="En proceso" ${p.estado==='En proceso'?'selected':''}>⏳ En proceso</option>
+              <option value="Terminado" ${p.estado==='Terminado'?'selected':''}>✅ Terminado</option>
+              <option value="Embalado" ${p.estado==='Embalado'?'selected':''}>📦 Embalado</option>
+              <option value="Entregado" ${p.estado==='Entregado'?'selected':''}>🚚 Entregado</option>
+            </select>
+          </div>
+          <div class="order-specs">
+            📥 Recepción: <b>${p.fechaRec || 'N/D'}</b> | 📅 Entrega: <b>${p.fechaEnt || 'N/D'}</b><br>
+            💰 Precio: <b>$${Number(p.precio).toLocaleString('es-AR')}</b>
+          </div>
+          <div class="order-actions">
+            <button class="btn-danger" onclick="eliminarPedidoCliente(${p.id})">🗑️ Eliminar</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function guardarPedidoCliente() {
+      const cliente = document.getElementById('pedCliente').value.trim();
+      const mueble = document.getElementById('pedMueble').value;
+      const fechaRec = document.getElementById('pedFechaRec').value || new Date().toISOString().split('T')[0];
+      const fechaEnt = document.getElementById('pedFechaEnt').value || new Date().toISOString().split('T')[0];
+      const precio = parseFloat(document.getElementById('pedPrecio').value) || 0;
+
+      if (!cliente) return mostrarToast('⚠️ Escribí el cliente.');
+
+      listaPedidosClientes.unshift({ id: Date.now(), cliente, mueble, fechaRec, fechaEnt, estado: 'En proceso', precio });
+      localStorage.setItem('jl_v10_pedidos', JSON.stringify(listaPedidosClientes));
+      document.getElementById('pedCliente').value = '';
+      renderizarPedidosClientes();
+      mostrarToast('📋 Pedido de cliente registrado.');
+    }
+
+    function actualizarEstadoPedido(id, nuevoEstado) {
+      const p = listaPedidosClientes.find(x => x.id === id);
+      if (p) {
+        p.estado = nuevoEstado;
+        localStorage.setItem('jl_v10_pedidos', JSON.stringify(listaPedidosClientes));
+        renderizarPedidosClientes();
+        mostrarToast(`✅ Estado actualizado a: ${nuevoEstado}`);
+      }
+    }
+
+    function eliminarPedidoCliente(id) {
+      listaPedidosClientes = listaPedidosClientes.filter(x => x.id !== id);
+      localStorage.setItem('jl_v10_pedidos', JSON.stringify(listaPedidosClientes));
+      renderizarPedidosClientes();
+      mostrarToast('🗑️ Pedido eliminado.');
+    }
+
+    /* 6. HISTORIAL DE PEDIDOS Y DESCARGA .TXT */
+    function renderizarHistorialPedidosTxt() {
+      const cont = document.getElementById('contenedorHistorialPedidosTxt');
+      if (!cont) return;
+
+      cont.innerHTML = listaPedidosClientes.map(p => `
+        <div class="history-list-card">
+          <div>
+            <div style="font-weight:800;">${p.cliente} — ${p.mueble}</div>
+            <div style="font-size:12px; color:var(--text-muted);">Recepción: ${p.fechaRec} | Entrega: ${p.fechaEnt} | Estado: <b>${p.estado}</b></div>
+          </div>
+          <span class="mono" style="font-weight:800; color:var(--success);">$${Number(p.precio).toLocaleString('es-AR')}</span>
+        </div>
+      `).join('') || '<div style="color:var(--text-muted); text-align:center; padding:14px;">Sin historial de pedidos.</div>';
+    }
+
+    function exportarHistorialPedidosTxt() {
+      let t = `REPORTE HISTORIAL DE PEDIDOS — MUEBLES J&L\n==========================================\n\n`;
+      listaPedidosClientes.forEach(p => {
+        t += `ID: #${p.id} | Cliente: ${p.cliente} | Mueble: ${p.mueble} | Recepción: ${p.fechaRec} | Entrega: ${p.fechaEnt} | Estado: ${p.estado} | Precio: $${p.precio}\n`;
+      });
+      const b = new Blob([t], { type: 'text/plain' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'Historial_Pedidos_JL.txt'; a.click();
+      mostrarToast('📄 Historial descargado en .txt');
+    }
+
+    /* 7 & 8. MUEBLES (Vista Previa) Y CATÁLOGO DE MUEBLES (ABM Piezas/Herrajes) */
+    function renderizarCatalogoMueblesVista() {
+      const grid = document.getElementById('gridCatalogoMueblesVista');
+      if (!grid) return;
+      grid.innerHTML = listaCatalogoMueblesABM.map(m => `
+        <div class="catalog-item-card">
+          <div class="catalog-thumb">
+            <svg width="100" height="75" viewBox="0 0 120 90">
+              <rect x="20" y="20" width="80" height="50" rx="3" fill="#ffffff" stroke="#000" stroke-width="2"/>
+            </svg>
+          </div>
+          <div style="font-weight:800; font-size:15px;">${m.nombre}</div>
+          <div style="font-size:12px; color:var(--accent); font-weight:700; margin:3px 0;">${m.medidas}</div>
+          <p style="font-size:12px; color:var(--text-muted);">${m.componentes}</p>
+          <div style="display:flex; justify-content:space-between; margin-top:10px; padding-top:8px; border-top:1px solid var(--border-light);" class="mono">
+            <span style="font-size:11px;">🛠️ J&L Taller</span>
+            <span style="font-size:15px; font-weight:800; color:var(--success);">$${Number(m.precio).toLocaleString('es-AR')}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderizarCatalogoMueblesABM() {
+      const cont = document.getElementById('listaCatalogoMueblesABM');
+      if (!cont) return;
+      cont.innerHTML = listaCatalogoMueblesABM.map(m => `
+        <div class="history-list-card" style="flex-wrap:wrap; gap:10px;">
+          <div>
+            <div style="font-weight:800; font-size:15px;">${m.nombre} (${m.medidas})</div>
+            <div style="font-size:12px; color:var(--text-muted);">Componentes: ${m.componentes}</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="mono" style="font-weight:800; color:var(--success);">$${Number(m.precio).toLocaleString('es-AR')}</span>
+            <button class="btn-danger" onclick="eliminarModeloCatalogoABM(${m.id})">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function guardarModeloCatalogoABM() {
+      const nombre = document.getElementById('catMuebleNombre').value.trim();
+      const medidas = document.getElementById('catMuebleMedidas').value.trim() || '400 x 335 x 320 mm';
+      const componentes = document.getElementById('catMuebleComponentes').value.trim() || 'Piso, techo, laterales, tornillos';
+      const precio = parseFloat(document.getElementById('catMueblePrecio').value) || 0;
+
+      if (!nombre) return mostrarToast('⚠️ Escribí el nombre del mueble.');
+
+      listaCatalogoMueblesABM.push({ id: Date.now(), nombre, medidas, componentes, precio });
+      localStorage.setItem('jl_v10_catalogo_muebles', JSON.stringify(listaCatalogoMueblesABM));
+      document.getElementById('catMuebleNombre').value = '';
+      document.getElementById('catMuebleComponentes').value = '';
+      renderizarCatalogoMueblesABM();
+      mostrarToast('📐 Mueble guardado en catálogo.');
+    }
+
+    function eliminarModeloCatalogoABM(id) {
+      listaCatalogoMueblesABM = listaCatalogoMueblesABM.filter(m => m.id !== id);
+      localStorage.setItem('jl_v10_catalogo_muebles', JSON.stringify(listaCatalogoMueblesABM));
+      renderizarCatalogoMueblesABM();
+      mostrarToast('🗑️ Mueble eliminado del catálogo.');
+    }
+
+    /* 9. VISOR 3D CON .GLB Y TEXTURAS .PNG OFICIALES DE GITHUB */
+    let modeloGlbActualActivo = 'assets/models/Mesita_blanca.glb';
+    let texturaPngActualActiva = 'Baltico.png';
+    let threeScene, threeCamera, threeRenderer, threeControls, currentLoadedMesh = null;
+
+    function cambiarModeloGlbActivo(rutaGlb, nombreGlb) {
+      modeloGlbActualActivo = rutaGlb;
+      document.getElementById('visorGlbNombreActivo').textContent = nombreGlb;
+      iniciarVisorThreeJS(rutaGlb, texturaPngActualActiva);
+      mostrarToast(`📂 Modelo ${nombreGlb} cargado.`);
+    }
+
+    function aplicarTexturaPngOficial(nombrePng) {
+      texturaPngActualActiva = nombrePng;
+      document.getElementById('visorPngNombreActivo').textContent = nombrePng;
+      iniciarVisorThreeJS(modeloGlbActualActivo, nombrePng);
+      mostrarToast(`🎨 Textura ${nombrePng} aplicada.`);
+    }
+
+    function iniciarVisorThreeJS(glbPath, pngTextureName) {
+      const container = document.getElementById('canvas-container-3d');
+      if (!container) return;
+      container.innerHTML = '';
+
+      threeScene = new THREE.Scene();
+      threeScene.background = new THREE.Color(0x0b0d11);
+
+      threeCamera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+      threeCamera.position.set(2, 1.5, 2.5);
+
+      threeRenderer = new THREE.WebGLRenderer({ antialias: true });
+      threeRenderer.setSize(container.clientWidth, container.clientHeight);
+      threeRenderer.outputEncoding = THREE.sRGBEncoding;
+      container.appendChild(threeRenderer.domElement);
+
+      threeControls = new THREE.OrbitControls(threeCamera, threeRenderer.domElement);
+      threeControls.enableDamping = true;
+
+      const ambientLight = new THREE.AmbientLight(0xffffff, 1.3);
+      threeScene.add(ambientLight);
+      const dirLight = new THREE.DirectionalLight(0xffffff, 1.6);
+      dirLight.position.set(5, 10, 7);
+      threeScene.add(dirLight);
+
+      const textureLoader = new THREE.TextureLoader();
+      const texturePath = `assets/Textures/${pngTextureName}`;
+      const loadedTexture = textureLoader.load(texturePath, (tex) => {
+        tex.encoding = THREE.sRGBEncoding;
+      }, undefined, () => {
+        mostrarToast(`⚠️ No se halló la textura en assets/Textures/${pngTextureName}`);
+      });
+
+      const gltfLoader = new THREE.GLTFLoader();
+      gltfLoader.load(glbPath, (gltf) => {
+        if (currentLoadedMesh) threeScene.remove(currentLoadedMesh);
+        currentLoadedMesh = gltf.scene;
+
+        currentLoadedMesh.traverse((child) => {
+          if (child.isMesh) {
+            child.material.map = loadedTexture;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        threeScene.add(currentLoadedMesh);
+      }, undefined, () => {
+        mostrarToast(`⚠️ No se halló el modelo en ${glbPath}`);
+      });
+
+      function animate() {
+        requestAnimationFrame(animate);
+        threeControls.update();
+        threeRenderer.render(threeScene, threeCamera);
+      }
+      animate();
+    }
+
+    /* 10. FINANZAS */
+    function registrarOperacionVC() {
+      const tipo = document.getElementById('vcTipo').value;
+      const metodo = document.getElementById('vcMetodo').value;
+      const concepto = document.getElementById('vcConcepto').value.trim();
+      const persona = document.getElementById('vcPersona').value.trim() || '-';
+      const monto = parseFloat(document.getElementById('vcMonto').value);
+
+      if (!concepto || isNaN(monto) || monto <= 0) return mostrarToast('⚠️ Completá concepto y monto.');
+
+      listaOperacionesVC.unshift({ id: Date.now(), tipo, fecha: new Date().toLocaleDateString('es-AR'), concepto, persona, metodo, monto });
+      localStorage.setItem('jl_v10_operaciones', JSON.stringify(listaOperacionesVC));
+      document.getElementById('vcConcepto').value = ''; document.getElementById('vcPersona').value = ''; document.getElementById('vcMonto').value = '';
+      renderizarFinanzas();
+      mostrarToast('✅ Movimiento registrado.');
+    }
+
+    function renderizarFinanzas() {
       const ventas = listaOperacionesVC.filter(o => o.tipo === 'VENTA');
       const compras = listaOperacionesVC.filter(o => o.tipo === 'COMPRA');
       const sumaV = ventas.reduce((a, b) => a + Number(b.monto), 0);
@@ -1142,162 +1407,10 @@
       if (kpiV) kpiV.textContent = `$${sumaV.toLocaleString('es-AR')}`;
       if (kpiC) kpiC.textContent = `$${sumaC.toLocaleString('es-AR')}`;
       if (kpiS) kpiS.textContent = `$${(APERTURA_CAJA_BASE + sumaV - sumaC).toLocaleString('es-AR')}`;
-
-      const cntV = document.getElementById('countBtnVentas');
-      const cntC = document.getElementById('countBtnCompras');
-      const sumV = document.getElementById('ventanaSumaVentas');
-      const sumC = document.getElementById('ventanaSumaCompras');
-      if (cntV) cntV.textContent = ventas.length;
-      if (cntC) cntC.textContent = compras.length;
-      if (sumV) sumV.textContent = `+$${sumaV.toLocaleString('es-AR')}`;
-      if (sumC) sumC.textContent = `-$${sumaC.toLocaleString('es-AR')}`;
-
-      const tVentas = document.getElementById('contenedorTarjetasVentas');
-      const tCompras = document.getElementById('contenedorTarjetasCompras');
-
-      if (tVentas) {
-        tVentas.innerHTML = ventas.map(v => `
-          <div class="history-list-card">
-            <div><div style="font-weight:800;">${v.concepto}</div><div style="font-size:12px; color:var(--text-muted);">${v.fecha} • ${v.persona}</div></div>
-            <span class="mono" style="color:var(--success); font-weight:800;">+$${Number(v.monto).toLocaleString('es-AR')}</span>
-          </div>
-        `).join('') || '<div style="color:var(--text-muted); text-align:center;">Sin ventas registradas.</div>';
-      }
-
-      if (tCompras) {
-        tCompras.innerHTML = compras.map(c => `
-          <div class="history-list-card">
-            <div><div style="font-weight:800;">${c.concepto}</div><div style="font-size:12px; color:var(--text-muted);">${c.fecha} • ${c.persona}</div></div>
-            <span class="mono" style="color:var(--danger); font-weight:800;">-$${Number(c.monto).toLocaleString('es-AR')}</span>
-          </div>
-        `).join('') || '<div style="color:var(--text-muted); text-align:center;">Sin compras registradas.</div>';
-      }
-
-      actualizarVectorMesita(sumaV);
     }
 
-    function registrarOperacionVC() {
-      const tipo = document.getElementById('vcTipo').value;
-      const metodo = document.getElementById('vcMetodo').value;
-      const concepto = document.getElementById('vcConcepto').value.trim();
-      const persona = document.getElementById('vcPersona').value.trim() || '-';
-      const monto = parseFloat(document.getElementById('vcMonto').value);
-
-      if (!concepto || isNaN(monto) || monto <= 0) return mostrarToast('⚠️ Completá concepto y monto.');
-
-      listaOperacionesVC.unshift({ id: Date.now(), tipo, fecha: new Date().toLocaleDateString('es-AR'), concepto, persona, metodo, monto });
-      localStorage.setItem('jl_v96_operaciones', JSON.stringify(listaOperacionesVC));
-      document.getElementById('vcConcepto').value = ''; document.getElementById('vcPersona').value = ''; document.getElementById('vcMonto').value = '';
-      renderizarFinanzasYVentanasOcultas();
-      mostrarToast('✅ Movimiento registrado.');
-    }
-
-    function actualizarVectorMesita(totV) {
-      const idx = Math.floor(totV / META_POR_CICLO);
-      const pct = Math.min(100, Math.round(((totV % META_POR_CICLO) / META_POR_CICLO) * 100));
-      const col = CICLOS_COLORES[idx % CICLOS_COLORES.length];
-
-      const vTxt = document.getElementById('ventasMesTotalTexto');
-      const pTxt = document.getElementById('porcentajeCicloTexto');
-      const cTxt = document.getElementById('cicloBadgeTexto');
-      if (vTxt) vTxt.textContent = `$${totV.toLocaleString('es-AR')}`;
-      if (pTxt) pTxt.textContent = `${pct}%`;
-      if (cTxt) cTxt.textContent = `Ciclo ${idx + 1} • ${col.nombre}`;
-
-      const barra = document.getElementById('barraCicloFill');
-      if (barra) {
-        barra.style.width = `${pct}%`;
-        barra.style.backgroundColor = col.hex;
-      }
-    }
-
-    function renderizarCatalogoBlenderEstable() {
-      const grid = document.getElementById('gridCatalogoMuebles');
-      if (!grid) return;
-      grid.innerHTML = catalogoModelosJLEstables.map((m, idx) => `
-        <div class="catalog-item-card" onclick="abrirModeloEnVisorEstable(${idx})">
-          <div class="catalog-thumb">
-            <svg width="100" height="75" viewBox="0 0 120 90">
-              <rect x="${m.tieneSecador?10:20}" y="20" width="${m.tieneSecador?100:80}" height="50" rx="3" fill="#ffffff" stroke="#000" stroke-width="2"/>
-              ${m.tieneSecador ? '<circle cx="92" cy="28" r="7" fill="#000" stroke="#fff" stroke-width="1.5"/>' : ''}
-            </svg>
-          </div>
-          <div style="font-weight:800; font-size:15px;">${m.nombre}</div>
-          <div style="font-size:12px; color:var(--accent); font-weight:700; margin:3px 0;">${m.medidas}</div>
-          <p style="font-size:12px; color:var(--text-muted);">${m.desc}</p>
-          <div style="display:flex; justify-content:space-between; margin-top:10px; padding-top:8px; border-top:1px solid var(--border-light);" class="mono">
-            <span style="font-size:11px;">${m.tieneSecador ? '⭕ C/ Secador' : '📏 Estándar'}</span>
-            <span style="font-size:15px; font-weight:800; color:var(--success);">${m.precio}</span>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function abrirModeloEnVisorEstable(idx) {
-      const m = catalogoModelosJLEstables[idx];
-      const nombre = document.getElementById('visor3dNombreMueble');
-      const medidas = document.getElementById('visor3dMedidas');
-      const acabado = document.getElementById('visor3dAcabado');
-      const precio = document.getElementById('visor3dPrecio');
-      const hole = document.getElementById('holeSecador3D');
-      const front = document.getElementById('panel3dFront');
-
-      if (nombre) nombre.textContent = `🧊 Visor 3D: ${m.nombre}`;
-      if (medidas) medidas.textContent = m.medidas;
-      if (acabado) acabado.textContent = m.acabado;
-      if (precio) precio.textContent = m.precio;
-      if (hole) hole.style.display = m.tieneSecador ? 'block' : 'none';
-      if (front) front.textContent = m.tieneSecador ? '600 x 335 x 32' : '400 x 335 x 32';
-
-      switchView('view-visor3d');
-    }
-
-    function cambiarColorSólido3D(claseCss, nombreColor) {
-      document.querySelectorAll('#assembly3d .panel-3d').forEach(p => {
-        p.className = `panel-3d ${claseCss} ${p.classList.contains('top')?'top':p.classList.contains('bottom')?'bottom':p.classList.contains('left')?'left':p.classList.contains('right')?'right':'front'}`;
-      });
-      const ac = document.getElementById('visor3dAcabado');
-      if (ac) ac.textContent = nombreColor;
-      mostrarToast(`🎨 Color ${nombreColor} aplicado.`);
-    }
-
-    let d3D = false, sx3D = 0, sy3D = 0, rx3D = -20, ry3D = 32;
-    const stg3D = document.getElementById('stage3d');
-    const asm3D = document.getElementById('assembly3d');
-    if (stg3D && asm3D) {
-      stg3D.addEventListener('pointerdown', e => { d3D = true; sx3D = e.clientX; sy3D = e.clientY; });
-      window.addEventListener('pointerup', () => { d3D = false; });
-      window.addEventListener('pointermove', e => {
-        if (!d3D) return;
-        ry3D += (e.clientX - sx3D) * 0.55;
-        rx3D -= (e.clientY - sy3D) * 0.55;
-        asm3D.style.transform = `rotateX(${rx3D}deg) rotateY(${ry3D}deg)`;
-        sx3D = e.clientX; sy3D = e.clientY;
-      });
-    }
-
-    function filtrarInventario(cat, btn = null) {
-      if (btn) { document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
-      const cr = listaStock.filter(i => i.cantidad <= i.minimo).length;
-      const bCrit = document.getElementById('badgeCriticosDrawer');
-      const aH = document.getElementById('alertaStockHeader');
-      if (bCrit) bCrit.textContent = cr;
-      if (aH) aH.textContent = cr ? `🚨 ${cr} en reposición` : '✅ Stock al día';
-
-      const f = listaStock.filter(i => cat === 'Todos' ? true : cat === 'Critico' ? i.cantidad <= i.minimo : i.categoria === cat);
-      const cont = document.getElementById('contenedorStockItems');
-      if (cont) {
-        cont.innerHTML = f.map(i => `
-          <div class="history-list-card">
-            <div><div style="font-weight:700;">${i.nombre}</div><div style="font-size:12px; color:var(--text-muted);">${i.categoria}</div></div>
-            <span class="mono" style="font-weight:800; font-size:16px;">${i.cantidad} u.</span>
-          </div>
-        `).join('') || '<div style="color:var(--text-muted); text-align:center;">Sin insumos.</div>';
-      }
-    }
-
+    /* 11. GPS FLETES */
     let gpsMap, gpsMarkerTaller, gpsMarkerDestino, gpsLine, kmActuales = 0;
-
     function initGPSProvincialEstable() {
       const container = document.getElementById('map-container');
       if (!container) return;
@@ -1309,10 +1422,7 @@
       gpsMarkerTaller.on('dragend', function() {
         const c = gpsMarkerTaller.getLatLng();
         tallerCoords = [c.lat, c.lng];
-        localStorage.setItem('jl_v96_taller_coords', JSON.stringify(tallerCoords));
-        const txt = document.getElementById('txtTallerAnclado');
-        if (txt) txt.textContent = `${tallerDireccionTexto} (${c.lat.toFixed(4)}, ${c.lng.toFixed(4)})`;
-        mostrarToast('📍 Taller reubicado.');
+        localStorage.setItem('jl_v10_taller_coords', JSON.stringify(tallerCoords));
       });
 
       const txt = document.getElementById('txtTallerAnclado');
@@ -1329,31 +1439,28 @@
           if (data && data.length > 0) {
             tallerCoords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
             tallerDireccionTexto = nuevaDir;
-            localStorage.setItem('jl_v96_taller_coords', JSON.stringify(tallerCoords));
-            localStorage.setItem('jl_v96_taller_dir', tallerDireccionTexto);
+            localStorage.setItem('jl_v10_taller_coords', JSON.stringify(tallerCoords));
+            localStorage.setItem('jl_v10_taller_dir', tallerDireccionTexto);
             if (gpsMarkerTaller) gpsMarkerTaller.setLatLng(tallerCoords);
             if (gpsMap) gpsMap.setView(tallerCoords, 14);
-            if (gpsMarkerTaller) gpsMarkerTaller.bindPopup(`<b>🏠 Taller J&L</b><br>${tallerDireccionTexto}`).openPopup();
             const txt = document.getElementById('txtTallerAnclado');
             if (txt) txt.textContent = tallerDireccionTexto;
-            mostrarToast('✅ Taller actualizado correctamente.');
+            mostrarToast('✅ Taller actualizado.');
           } else {
             mostrarToast('⚠️ No se encontró la dirección.');
           }
         })
-        .catch(() => mostrarToast('⚠️ Error de red al buscar dirección.'));
+        .catch(() => mostrarToast('⚠️ Error de red.'));
     }
 
     let _searchTimeout = null;
     function autocompletarDireccionBuenosAires(val) {
       const drop = document.getElementById('gpsDropdown');
       clearTimeout(_searchTimeout);
-
       if (!val || val.length < 3) { if (drop) drop.style.display = 'none'; return; }
 
       _searchTimeout = setTimeout(() => {
-        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val + ', Buenos Aires, Argentina')}&limit=6&addressdetails=1`;
-        fetch(url)
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val + ', Buenos Aires, Argentina')}&limit=6&addressdetails=1`)
           .then(res => res.json())
           .then(data => {
             if (!drop) return;
@@ -1362,7 +1469,6 @@
               drop.style.display = 'block';
               return;
             }
-
             drop.innerHTML = data.map(item => {
               const nombreLimpio = item.display_name.split(',')[0] || val;
               const ciudad = item.address.city || item.address.town || item.address.suburb || item.address.county || 'Buenos Aires';
@@ -1373,18 +1479,14 @@
               `;
             }).join('');
             drop.style.display = 'block';
-          })
-          .catch(() => { if (drop) drop.style.display = 'none'; });
+          }).catch(() => { if (drop) drop.style.display = 'none'; });
       }, 300);
     }
 
     function seleccionarRutaProvincial(lat, lng, calle, ciudad) {
-      const inputDir = document.getElementById('gpsInputDir');
-      const drop = document.getElementById('gpsDropdown');
-      const locDet = document.getElementById('gpsLocalidadDetectada');
-      if (inputDir) inputDir.value = `${calle}, ${ciudad}`;
-      if (drop) drop.style.display = 'none';
-      if (locDet) locDet.textContent = ciudad;
+      document.getElementById('gpsInputDir').value = `${calle}, ${ciudad}`;
+      document.getElementById('gpsDropdown').style.display = 'none';
+      document.getElementById('gpsLocalidadDetectada').textContent = ciudad;
       const destinoCoords = [lat, lng];
 
       if (gpsMarkerDestino && gpsMap) gpsMap.removeLayer(gpsMarkerDestino);
@@ -1402,15 +1504,8 @@
 
     function recalcularCostoFlete() {
       const t = parseFloat(document.getElementById('gpsTarifaKm').value) || 1850;
-      const kmTxt = document.getElementById('gpsKmTexto');
-      const costoTxt = document.getElementById('gpsCostoTexto');
-      if (kmTxt) kmTxt.textContent = `${kmActuales} km`;
-      if (costoTxt) costoTxt.textContent = `$${Math.round(4500 + kmActuales * t).toLocaleString('es-AR')}`;
-    }
-
-    function toggleVistaIsometricaMapa() {
-      const mapContainer = document.getElementById('map-container');
-      if (mapContainer) mapContainer.classList.toggle('isometric-3d');
+      document.getElementById('gpsKmTexto').textContent = `${kmActuales} km`;
+      document.getElementById('gpsCostoTexto').textContent = `$${Math.round(4500 + kmActuales * t).toLocaleString('es-AR')}`;
     }
 
     function abrirRutaEnGoogleMaps() {
@@ -1425,21 +1520,15 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      renderizarPedidos();
-      renderizarPlacasColores();
-      renderizarFinanzasYVentanasOcultas();
-      renderizarCatalogoBlenderEstable();
-      filtrarInventario('Todos');
+      renderizarPanelInicio();
+      renderizarPlacasYPrecios();
+      renderizarStockABM('Todos');
+      renderizarPedidosClientes();
+      renderizarCatalogoMueblesVista();
+      renderizarCatalogoMueblesABM();
+      renderizarFinanzas();
       simularCortePlaca();
       initGPSProvincialEstable();
-
-      const provOeste = document.getElementById('listaProveedoresOeste');
-      if (provOeste) {
-        provOeste.innerHTML = `
-          <div class="order-card"><b>Placacentro San Justo</b><br><span style="color:var(--accent);">Placas Melamina 2750x1830</span></div>
-          <div class="order-card"><b>Herrajes Ramos Mejía</b><br><span style="color:var(--accent);">Filos 0.15m y Correderas</span></div>
-        `;
-      }
     });
   </script>
 </body>
