@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Carpintería J&L Mobile — Enterprise Taller OS v8.5 GPS Fix</title>
+  <title>Carpintería J&L Mobile — Enterprise Taller OS v9.6 Optimizador Pro</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#090a0d">
   <link rel="apple-touch-icon" href="icon-192.png">
 
-  <!-- Tipografía Híbrida: Plus Jakarta Sans, Inter, JetBrains Mono -->
+  <!-- Tipografía Híbrida -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
 
-  <!-- Leaflet CSS para Mapa GPS -->
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <style>
@@ -38,7 +38,6 @@
       --danger-bg: rgba(239, 68, 68, 0.14);
       --warning: #f59e0b;
       --info: #3b82f6;
-      --info-bg: rgba(59, 130, 246, 0.14);
       --font-title: 'Plus Jakarta Sans', sans-serif;
       --font-body: 'Inter', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
@@ -144,13 +143,8 @@
     .drawer-badge.danger { background: var(--danger-bg); color: var(--danger); }
 
     main { padding: 16px; max-width: 1040px; margin: 0 auto; }
-    .view-section { display: none; animation: fadeIn 0.2s ease; }
-    .view-section.active { display: block; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .view-section { display: none !important; }
+    .view-section.active { display: block !important; }
 
     .card {
       background: var(--bg-card); border: 1px solid var(--border);
@@ -250,9 +244,34 @@
       border-radius: var(--radius-sm); margin-bottom: 12px; display: flex; align-items: center; justify-content: center;
     }
 
-    #canvas-container-3d {
-      width: 100%; height: 380px; border-radius: var(--radius-lg); background: #0b0d11;
-      border: 1px solid var(--border); overflow: hidden; position: relative;
+    .stage-3d {
+      width: 100%; height: 360px;
+      background: radial-gradient(circle at 50% 35%, #262b36 0%, #0b0d11 100%);
+      border: 1px solid var(--border); border-radius: var(--radius-lg);
+      display: flex; align-items: center; justify-content: center;
+      perspective: 1000px; overflow: hidden; position: relative; touch-action: none;
+    }
+    .assembly-3d {
+      width: 180px; height: 160px; position: relative; transform-style: preserve-3d;
+      transform: rotateX(-20deg) rotateY(32deg); transition: transform 0.06s linear;
+    }
+    .panel-3d {
+      position: absolute; border: 1.5px solid rgba(0,0,0,0.6);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+    }
+    .panel-3d.color-blanco { background-color: #ffffff; color: #111111; border-color: #cbd5e1; }
+    .panel-3d.color-negro { background-color: #111111; color: #ffffff; border-color: #334155; }
+
+    .panel-3d.top    { width: 180px; height: 130px; top: 0px; left: 0; transform: rotateX(90deg) translateZ(65px); }
+    .panel-3d.bottom { width: 180px; height: 130px; top: 60px; left: 0; transform: rotateX(-90deg) translateZ(65px); }
+    .panel-3d.left   { width: 130px; height: 125px; top: 0px; left: -65px; transform: rotateY(-90deg) translateZ(0px); }
+    .panel-3d.right  { width: 130px; height: 125px; top: 0px; left: 115px; transform: rotateY(90deg) translateZ(0px); }
+    .panel-3d.front  { width: 176px; height: 120px; top: 2px; left: 2px; transform: translateZ(65px); }
+
+    .secador-hole {
+      width: 34px; height: 34px; border-radius: 50%; background: #090a0d; border: 2px solid #fff;
+      position: absolute; right: 16px; top: 18px; display: none;
     }
 
     .pills-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 14px; }
@@ -265,20 +284,26 @@
     .search-wrap { position: relative; }
     .autocomplete-dropdown {
       position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-surface);
-      border: 1px solid var(--accent); border-radius: var(--radius-md); margin-top: 4px; max-height: 210px; overflow-y: auto; z-index: 1200; display: none;
+      border: 1px solid var(--accent); border-radius: var(--radius-md); margin-top: 4px; max-height: 240px; overflow-y: auto; z-index: 1200; display: none;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.8);
     }
     .autocomplete-option {
-      padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 13.5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 8px;
     }
-    .locality-badge { background: var(--accent-glow); color: var(--accent); font-family: var(--font-mono); font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; }
+    .autocomplete-option:hover { background: var(--bg-elevated); }
+    .locality-badge { background: var(--accent-glow); color: var(--accent); font-family: var(--font-mono); font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; white-space: nowrap; }
 
     #map-container {
-      width: 100%; height: 320px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); margin-top: 14px; transition: transform 0.45s ease;
+      width: 100%; height: 340px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); margin-top: 14px;
     }
-    #map-container.isometric-3d {
-      transform: perspective(750px) rotateX(40deg) scale(0.95);
-      box-shadow: 0 24px 40px rgba(0,0,0,0.8), 0 0 0 2px var(--accent);
+
+    /* Estilo para Pantalla Completa del Optimizador */
+    #cutCanvasContainer { position: relative; width: 100%; background: #12151c; border: 1px solid var(--border); border-radius: 12px; margin-top: 12px; overflow: hidden; }
+    #cutCanvasContainer.fullscreen {
+      position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important;
+      z-index: 99999 !important; border-radius: 0 !important; background: #090a0d !important; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center;
     }
+    #cutCanvasContainer.fullscreen canvas { max-width: 100% !important; max-height: 80vh !important; width: auto !important; height: auto !important; }
 
     .thumb-zone-bar {
       position: fixed; bottom: 0; left: 0; right: 0; background: rgba(18, 20, 26, 0.96); backdrop-filter: blur(16px);
@@ -334,10 +359,10 @@
       <span>📐 Optimizador de Placas</span>
     </button>
     <button class="drawer-item" data-view="view-catalogo" onclick="switchView('view-catalogo')">
-      <span>🪑 Catálogo Blender GLB</span>
+      <span>🪑 Catálogo de Muebles</span>
     </button>
     <button class="drawer-item" data-view="view-visor3d" onclick="switchView('view-visor3d')">
-      <span>🧊 Visor GLB + PNG</span>
+      <span>🧊 Visor 3D Sólido</span>
     </button>
 
     <div class="drawer-cat">INVENTARIO</div>
@@ -360,29 +385,21 @@
 
   <main>
 
-    <!-- 1. VISTA: PEDIDOS Y ESTADO DE PRODUCCIÓN -->
+    <!-- 1. VISTA: PEDIDOS -->
     <section id="view-produccion" class="view-section active">
       <div class="card">
         <div class="card-title">
           <span>📈 Ventas del Mes — Vector por Ciclos</span>
-          <span class="cycle-pill" id="cicloBadgeTexto">Ciclo 1 • Nogal Cálido</span>
+          <span class="cycle-pill" id="cicloBadgeTexto">Ciclo 1 • Sólido</span>
         </div>
         <div class="goal-container">
           <div class="mesita-vector-card">
             <svg width="92" height="92" viewBox="0 0 100 100">
-              <defs>
-                <linearGradient id="mesitaFillGrad" x1="0" y1="1" x2="0" y2="0">
-                  <stop offset="0%" id="gradStop1" stop-color="#c89d66"/>
-                  <stop offset="50%" id="gradStop2" stop-color="#c89d66"/>
-                  <stop offset="50%" id="gradStop3" stop-color="#222631"/>
-                  <stop offset="100%" stop-color="#222631"/>
-                </linearGradient>
-              </defs>
-              <rect x="12" y="20" width="76" height="8" rx="2" fill="url(#mesitaFillGrad)" stroke="#fff" stroke-width="2"/>
-              <rect x="16" y="28" width="68" height="44" rx="2" fill="url(#mesitaFillGrad)" stroke="#fff" stroke-width="2"/>
-              <line x1="16" y1="50" x2="84" y2="50" stroke="#fff" stroke-width="2"/>
-              <rect x="42" y="37" width="16" height="3" fill="#fff"/>
-              <rect x="42" y="59" width="16" height="3" fill="#fff"/>
+              <rect x="12" y="20" width="76" height="8" rx="2" fill="#fff" stroke="#000" stroke-width="2"/>
+              <rect x="16" y="28" width="68" height="44" rx="2" fill="#fff" stroke="#000" stroke-width="2"/>
+              <line x1="16" y1="50" x2="84" y2="50" stroke="#000" stroke-width="2"/>
+              <rect x="42" y="37" width="16" height="3" fill="#000"/>
+              <rect x="42" y="59" width="16" height="3" fill="#000"/>
             </svg>
           </div>
           <div style="flex: 1; min-width: 220px;">
@@ -412,9 +429,9 @@
             <input type="text" id="pedCliente" placeholder="Ej: Martín — Ramos Mejía">
           </div>
           <div>
-            <label>Mueble Blender GLB</label>
+            <label>Mueble J&L</label>
             <select id="pedMueble" onchange="autocompletarMedidasPedido(this.value)">
-              <option value="Mesita Estándar J&L">Mesita Estándar J&L (400 x 335 x 320 mm)</option>
+              <option value="Mesita Estándar J&L">Mesita Estándar (400 x 335 x 320 mm)</option>
               <option value="Mesita con Agujero Secador J&L">Mesita con Agujero Secador (600 x 335 x 320 mm)</option>
             </select>
           </div>
@@ -438,12 +455,12 @@
             <input type="number" id="pedPrecio" class="mono" value="48000">
           </div>
         </div>
-        <button class="btn-primary" id="btnGuardarPedido" onclick="guardarPedido()">💾 Guardar Orden de Producción</button>
+        <button class="btn-primary" onclick="guardarPedido()">💾 Guardar Orden de Producción</button>
       </div>
 
       <div class="card">
         <div class="card-title">
-          <span>📋 Órdenes Activas (Con Opción Eliminar)</span>
+          <span>📋 Órdenes Activas</span>
           <span class="mono" style="font-size:12px; color:var(--text-muted);" id="resumenOrdenesActivas">0 órdenes</span>
         </div>
         <div id="contenedorListaPedidos"></div>
@@ -545,25 +562,22 @@
       </div>
     </section>
 
-    <!-- 3. VISTA: OPTIMIZADOR -->
+    <!-- 3. VISTA: OPTIMIZADOR CON PANTALLA COMPLETA/ZOOM Y LISTADOS DE CORTES Y SOBRANTES -->
     <section id="view-optimizador" class="view-section">
       <div class="card">
         <div class="card-title">
           <span>🎨 Gestión de Placas de Melamina</span>
         </div>
-        <input type="hidden" id="placaEditId" value="">
         <div class="grid-4">
           <div>
             <label>Nombre / Color</label>
-            <input type="text" id="placaNombre" placeholder="Ej: Blanco Nature">
+            <input type="text" id="placaNombre" placeholder="Ej: Blanco Puro">
           </div>
           <div>
-            <label>Textura PNG Asociada</label>
-            <select id="placaTexturaPng">
-              <option value="blanco-nature.png">blanco-nature.png</option>
-              <option value="roble-dakar.png">roble-dakar.png</option>
-              <option value="grafito-mate.png">grafito-mate.png</option>
-              <option value="nogal-habano.png">nogal-habano.png</option>
+            <label>Color Sólido Base</label>
+            <select id="placaColorClase">
+              <option value="color-blanco">⬜ Blanco Sólido</option>
+              <option value="color-negro">⬛ Negro Sólido</option>
             </select>
           </div>
           <div>
@@ -581,7 +595,8 @@
 
       <div class="card">
         <div class="card-title">
-          <span>📐 Optimizador con Medidas de Placa y Etiquetas</span>
+          <span>📐 Optimizador con Zoom y Listado de Cortes / Sobrantes</span>
+          <button class="btn-secondary" onclick="toggleFullscreenOptimizador()">🔍 Pantalla Completa / Zoom</button>
         </div>
         <div class="grid-3">
           <div>
@@ -599,21 +614,26 @@
           </div>
           <div>
             <label>Cantidad</label>
-            <input type="number" id="cutCant" class="mono" value="4">
+            <input type="number" id="cutCant" class="mono" value="4" oninput="simularCortePlaca()">
           </div>
         </div>
         <div class="grid-2" style="margin-top:10px;">
           <div>
             <label>Largo Pieza (mm)</label>
-            <input type="number" id="cutLargo" class="mono" value="400">
+            <input type="number" id="cutLargo" class="mono" value="400" oninput="simularCortePlaca()">
           </div>
           <div>
             <label>Ancho Pieza (mm)</label>
-            <input type="number" id="cutAncho" class="mono" value="335">
+            <input type="number" id="cutAncho" class="mono" value="335" oninput="simularCortePlaca()">
           </div>
         </div>
-        <button class="btn-primary" onclick="simularCortePlaca()">🪚 Trazar Placa y Ver Etiquetas</button>
-        <canvas id="cutCanvas" width="900" height="600" style="width:100%; height:auto; background:#12151c; border:1px solid var(--border); border-radius:12px; margin-top:12px;"></canvas>
+        
+        <!-- Contenedor del Canvas con Soporte Fullscreen -->
+        <div id="cutCanvasContainer">
+          <button class="btn-secondary" style="position:absolute; top:10px; right:10px; z-index:10; font-size:11px; padding:6px 10px;" onclick="toggleFullscreenOptimizador()">⛶ Maximizar</button>
+          <canvas id="cutCanvas" width="900" height="600" style="width:100%; height:auto; background:#12151c; border-radius:12px; display:block;"></canvas>
+        </div>
+
         <div class="kpi-row" style="margin-top:12px;">
           <div class="kpi-box">
             <div class="kpi-label">Aprovechamiento</div>
@@ -624,53 +644,78 @@
             <div class="kpi-value" style="color:var(--accent);" id="cutMetrosFilo">0.0 m</div>
           </div>
         </div>
+
+        <!-- LISTADOS DE CORTES Y SOBRANTES DEBAJO DE LA VISTA PREVIA -->
+        <div style="margin-top:16px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div class="kpi-box" style="padding:14px; background:var(--bg-input);">
+            <div class="kpi-label" style="color:var(--success); margin-bottom:8px;">📋 Listado de Cortes Asignados</div>
+            <div id="listaCortesDetalle" style="font-family:var(--font-mono); font-size:12.5px; max-height:160px; overflow-y:auto; color:var(--text-secondary);">
+              Sin cortes trazados.
+            </div>
+          </div>
+          <div class="kpi-box" style="padding:14px; background:var(--bg-input);">
+            <div class="kpi-label" style="color:var(--warning); margin-bottom:8px;">📦 Listado de Sobrantes Estimados</div>
+            <div id="listaSobrantesDetalle" style="font-family:var(--font-mono); font-size:12.5px; max-height:160px; overflow-y:auto; color:var(--text-secondary);">
+              Sin sobrantes calculados.
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
 
-    <!-- 4. VISTA: CATÁLOGO DE MODELOS GLB -->
+    <!-- 4. VISTA: CATÁLOGO DE MODELOS -->
     <section id="view-catalogo" class="view-section">
       <div class="card">
         <div class="card-title">
-          <span>🪑 Catálogo Oficial Blender (.glb + .png)</span>
-          <span class="mono" style="font-size:12px; color:var(--accent);">Carga directa desde assets/models/</span>
+          <span>🪑 Catálogo Oficial J&L (Medidas Blender)</span>
+          <span class="mono" style="font-size:12px; color:var(--accent);">400x335 y 600x335 mm</span>
         </div>
-        <div class="catalog-grid" id="gridCatalogoBlenderGLB"></div>
+        <div class="catalog-grid" id="gridCatalogoMuebles"></div>
       </div>
     </section>
 
-    <!-- 5. VISTA: VISOR 3D REAL (THREE.JS CARGANDO GLB Y TEXTURAS PNG) -->
+    <!-- 5. VISTA: VISOR 3D SÓLIDO -->
     <section id="view-visor3d" class="view-section">
       <div class="card">
         <div class="card-title">
-          <span id="visor3dNombreMueble">🧊 Visor 3D: Modelo Blender (.glb)</span>
+          <span id="visor3dNombreMueble">🧊 Visor 3D: Mesita Estándar J&L</span>
           <button class="btn-secondary" onclick="switchView('view-catalogo')">← Volver al Catálogo</button>
         </div>
 
         <div style="margin-bottom:12px;">
-          <label>Aplicar Textura PNG (.png desde assets/textures/)</label>
+          <label>Elegir Color Sólido (Blanco o Negro)</label>
           <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
-            <button class="btn-secondary" onclick="aplicarTexturaPNG('blanco-nature.png')">⬜ Blanco Nature</button>
-            <button class="btn-secondary" onclick="aplicarTexturaPNG('grafito-mate.png')">⬛ Grafito Mate</button>
-            <button class="btn-secondary" onclick="aplicarTexturaPNG('roble-dakar.png')">🪵 Roble Dakar</button>
-            <button class="btn-secondary" onclick="aplicarTexturaPNG('nogal-habano.png')">🟫 Nogal Habano</button>
+            <button class="btn-secondary" onclick="cambiarColorSólido3D('color-blanco', 'Blanco Sólido')">⬜ Blanco Sólido</button>
+            <button class="btn-secondary" onclick="cambiarColorSólido3D('color-negro', 'Negro Sólido')">⬛ Negro Sólido</button>
           </div>
         </div>
 
-        <!-- Contenedor WebGL para Three.js -->
-        <div id="canvas-container-3d"></div>
+        <div class="stage-3d" id="stage3d">
+          <div class="assembly-3d" id="assembly3d">
+            <div class="panel-3d top color-blanco" id="panel3dTop">
+              TAPA
+              <div class="secador-hole" id="holeSecador3D"></div>
+            </div>
+            <div class="panel-3d bottom color-blanco">BASE</div>
+            <div class="panel-3d left color-blanco">335 mm</div>
+            <div class="panel-3d right color-blanco">335 mm</div>
+            <div class="panel-3d front color-blanco" id="panel3dFront">400 x 335 x 32</div>
+          </div>
+        </div>
 
         <div class="grid-3" style="margin-top:14px;">
           <div class="kpi-box">
-            <div class="kpi-label">Archivo GLB</div>
-            <div class="kpi-value" style="font-size:14px;" id="visorGlbNombreArchivo">mesita_400.glb</div>
+            <div class="kpi-label">Medidas Blender</div>
+            <div class="kpi-value" style="font-size:15px;" id="visor3dMedidas">400 x 335 x 320 mm</div>
           </div>
           <div class="kpi-box">
-            <div class="kpi-label">Textura Activa PNG</div>
-            <div class="kpi-value" style="font-size:14px; color:var(--accent);" id="visorGlbTexturaActiva">roble-dakar.png</div>
+            <div class="kpi-label">Color Activo</div>
+            <div class="kpi-value" style="font-size:15px;" id="visor3dAcabado">Blanco Sólido</div>
           </div>
           <div class="kpi-box">
             <div class="kpi-label">Valor</div>
-            <div class="kpi-value" style="font-size:17px; color:var(--success);" id="visorGlbPrecio">$48.000</div>
+            <div class="kpi-value" style="font-size:17px; color:var(--accent);" id="visor3dPrecio">$48.000</div>
           </div>
         </div>
       </div>
@@ -702,25 +747,22 @@
       </div>
     </section>
 
-    <!-- 8. VISTA: GPS CON ANCLAJE DE TALLER FIJO Y AUTOCOMPLETADO DE ENTREGA -->
+    <!-- 8. VISTA: GPS CON ANCLAJE EDITABLE POR TEXTO LIBRE Y AUTOCOMPLETADO BUENOS AIRES -->
     <section id="view-fletes" class="view-section">
       <div class="card">
         <div class="card-title">
-          <span>🚚 Ruteador GPS y Fletes — Zona Oeste (Taller Anclable)</span>
-          <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button class="btn-secondary" onclick="anclarTallerEnMiUbicacionCurrent()">📍 Anclar Taller Aquí</button>
-            <button class="btn-secondary" onclick="toggleVistaIsometricaMapa()">🧊 Vista 3D</button>
-          </div>
+          <span>🚚 Ruteador GPS y Fletes — Provincia de Buenos Aires</span>
+          <button class="btn-secondary" onclick="anclarTallerPersonalizadoPrompt()">📍 Configurar Taller (Dirección)</button>
         </div>
 
         <div style="background:var(--bg-input); padding:10px 14px; border-radius:8px; margin-bottom:12px; font-size:12.5px; border:1px solid var(--border);">
-          🏠 Ubicación actual del Taller J&L: <b id="txtTallerAnclado" style="color:var(--accent);">Villa Luzuriaga (-34.6685, -58.5914)</b>
+          🏠 Ubicación actual del Taller J&L: <b id="txtTallerAnclado" style="color:var(--accent);">Ariadna 2400, Villa Luzuriaga</b>
         </div>
 
         <div class="grid-2">
           <div class="search-wrap">
-            <label>Dirección de Entrega (Autocompletado Oeste)</label>
-            <input type="text" id="gpsInputDir" placeholder="Ej: Rivadavia 14000, Ariadna, Morón..." oninput="autocompletarDireccionOeste(this.value)">
+            <label>Dirección de Entrega (Autocompletado Provincia BS.AS.)</label>
+            <input type="text" id="gpsInputDir" placeholder="Ej: Mitre 500, Quilmes / Rivadavia 14000..." oninput="autocompletarDireccionBuenosAires(this.value)">
             <div class="autocomplete-dropdown" id="gpsDropdown"></div>
           </div>
           <div>
@@ -733,8 +775,8 @@
 
         <div class="kpi-row" style="margin-top:14px;">
           <div class="kpi-box">
-            <div class="kpi-label">Localidad</div>
-            <div class="kpi-value" style="font-size:15px;" id="gpsLocalidadDetectada">Villa Luzuriaga</div>
+            <div class="kpi-label">Destino Detectado</div>
+            <div class="kpi-value" style="font-size:15px;" id="gpsLocalidadDetectada">Esperando destino...</div>
           </div>
           <div class="kpi-box">
             <div class="kpi-label">Distancia</div>
@@ -751,7 +793,7 @@
 
   </main>
 
-  <!-- BARRA FLOTANTE INFERIOR ("THUMB-ZONE") -->
+  <!-- BARRA FLOTANTE INFERIOR -->
   <nav class="thumb-zone-bar">
     <button class="thumb-tab active" data-view="view-produccion" onclick="switchView('view-produccion')">
       <span>🛠️</span><span>Pedidos</span>
@@ -772,17 +814,13 @@
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- Three.js y GLTFLoader -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
   <script>
     const META_POR_CICLO = 300000;
     const APERTURA_CAJA_BASE = 125000;
 
-    let tallerCoords = JSON.parse(localStorage.getItem('jl_v8_taller_coords')) || [-34.6685, -58.5914];
-    let tallerNombreDir = localStorage.getItem('jl_v8_taller_nombre') || 'Villa Luzuriaga (Base)';
+    let tallerCoords = JSON.parse(localStorage.getItem('jl_v96_taller_coords')) || [-34.6685, -58.5914];
+    let tallerDireccionTexto = localStorage.getItem('jl_v96_taller_dir') || 'Ariadna 2400, Villa Luzuriaga';
 
     const CICLOS_COLORES = [
       { nivel: 1, nombre: 'Nogal Cálido', hex: '#c89d66' },
@@ -792,25 +830,25 @@
       { nivel: 5, nombre: 'Púrpura Imperial', hex: '#8b5cf6' }
     ];
 
-    const catalogoModelosGLB = [
-      { id: 'mesita-400', nombre: 'Mesita Estándar 400x335x32', archivoGlb: 'assets/models/mesita_400.glb', medidas: '400 x 335 x 320 mm', precio: '$48.000', desc: 'Modelo Blender 400x335.' },
-      { id: 'mesita-600-secador', nombre: 'Mesita 600x335 con Agujero Secador', archivoGlb: 'assets/models/mesita_600_secador.glb', medidas: '600 x 335 x 320 mm (C/ Secador)', precio: '$64.500', desc: 'Modelo Blender 600x335.' },
-      { id: 'mueble-habitacion', nombre: 'Mueble Modular Habitación', archivoGlb: 'assets/models/mueble_habitacion.glb', medidas: '1600 x 350 x 500 mm', precio: '$128.000', desc: 'Organizador adaptable.' },
-      { id: 'escritorio-jl', nombre: 'Escritorio de Estudio / Taller', archivoGlb: 'assets/models/escritorio_jl.glb', medidas: '1200 x 600 x 750 mm', precio: '$115.000', desc: 'Escritorio robusto.' }
+    const catalogoModelosJLEstables = [
+      { id: 'blender-400', nombre: 'Mesita Estándar J&L', medidas: '400 x 335 x 320 mm', tieneSecador: false, acabado: 'Melamina Sólida 15mm', precio: '$48.000', colorClase: 'color-blanco', desc: 'Modelo Blender original.' },
+      { id: 'blender-600-secador', nombre: 'Mesita con Agujero Secador J&L', medidas: '600 x 335 x 320 mm (C/ Secador)', tieneSecador: true, acabado: 'Melamina Sólida 15mm', precio: '$64.500', colorClase: 'color-blanco', desc: 'Modelo con perforación para secador.' }
     ];
 
-    let listaPlacas = JSON.parse(localStorage.getItem('jl_v8_placas')) || [
-      { id: 1, nombre: 'Blanco Nature 15mm', texturaPng: 'blanco-nature.png', dimensiones: '2750x1830', stock: 5 },
-      { id: 2, nombre: 'Roble Dakar 15mm', texturaPng: 'roble-dakar.png', dimensiones: '2750x1830', stock: 3 },
-      { id: 3, nombre: 'Grafito Mate 15mm', texturaPng: 'grafito-mate.png', dimensiones: '2750x1830', stock: 2 }
+    let listaPlacas = JSON.parse(localStorage.getItem('jl_v96_placas')) || [
+      { id: 1, nombre: 'Blanco Sólido 15mm', colorClase: 'color-blanco', dimensiones: '2750x1830', stock: 5 },
+      { id: 2, nombre: 'Negro Sólido 15mm', colorClase: 'color-negro', dimensiones: '2750x1830', stock: 3 }
     ];
 
-    let listaPedidos = JSON.parse(localStorage.getItem('jl_v8_pedidos')) || [];
-    let listaOperacionesVC = JSON.parse(localStorage.getItem('jl_v8_operaciones')) || [];
-    let listaStock = JSON.parse(localStorage.getItem('jl_v8_stock')) || [];
+    let listaPedidos = JSON.parse(localStorage.getItem('jl_v96_pedidos')) || [];
+    let listaOperacionesVC = JSON.parse(localStorage.getItem('jl_v96_operaciones')) || [];
+    let listaStock = JSON.parse(localStorage.getItem('jl_v96_stock')) || [
+      { id: 301, nombre: 'Laterales Cortados 335x320mm', categoria: 'Piezas Cortadas', cantidad: 14, minimo: 6 }
+    ];
 
     function mostrarToast(msg) {
       const box = document.getElementById('toastBox');
+      if (!box) return;
       box.textContent = msg;
       box.style.display = 'block';
       clearTimeout(window._tTimer);
@@ -818,8 +856,10 @@
     }
 
     function toggleDrawer() {
-      document.getElementById('drawer').classList.toggle('open');
-      document.getElementById('drawerOverlay').classList.toggle('open');
+      const drawer = document.getElementById('drawer');
+      const overlay = document.getElementById('drawerOverlay');
+      if (drawer) drawer.classList.toggle('open');
+      if (overlay) overlay.classList.toggle('open');
     }
 
     function toggleTallerPro() {
@@ -841,8 +881,10 @@
         tab.classList.toggle('active', tab.getAttribute('data-view') === equivalenciaMenu);
       });
 
-      document.getElementById('drawer').classList.remove('open');
-      document.getElementById('drawerOverlay').classList.remove('open');
+      const drawer = document.getElementById('drawer');
+      const overlay = document.getElementById('drawerOverlay');
+      if (drawer) drawer.classList.remove('open');
+      if (overlay) overlay.classList.remove('open');
 
       if (viewId === 'view-fletes' && gpsMap) {
         setTimeout(() => gpsMap.invalidateSize(), 200);
@@ -850,26 +892,31 @@
       if (viewId === 'view-optimizador') {
         simularCortePlaca();
       }
-      if (viewId === 'view-visor3d') {
-        setTimeout(() => iniciarVisorThreeJS(modeloActualGlbActivo, texturaActualPngActiva), 100);
-      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function autocompletarMedidasPedido(modelo) {
+      const inputMedidas = document.getElementById('pedMedidas');
+      const inputPrecio = document.getElementById('pedPrecio');
+      if (!inputMedidas || !inputPrecio) return;
+
       if (modelo.includes('600')) {
-        document.getElementById('pedMedidas').value = '600 x 335 x 320 mm (Agujero Secador)';
-        document.getElementById('pedPrecio').value = 64500;
+        inputMedidas.value = '600 x 335 x 320 mm (Agujero Secador)';
+        inputPrecio.value = 64500;
       } else {
-        document.getElementById('pedMedidas').value = '400 x 335 x 320 mm';
-        document.getElementById('pedPrecio').value = 48000;
+        inputMedidas.value = '400 x 335 x 320 mm';
+        inputPrecio.value = 48000;
       }
     }
 
     function renderizarPedidos() {
       const cont = document.getElementById('contenedorListaPedidos');
-      document.getElementById('resumenOrdenesActivas').textContent = `${listaPedidos.length} órdenes`;
-      document.getElementById('badgePedidosDrawer').textContent = listaPedidos.length;
+      const badgeDrawer = document.getElementById('badgePedidosDrawer');
+      const resumen = document.getElementById('resumenOrdenesActivas');
+      if (!cont) return;
+
+      if (resumen) resumen.textContent = `${listaPedidos.length} órdenes`;
+      if (badgeDrawer) badgeDrawer.textContent = listaPedidos.length;
 
       if (listaPedidos.length === 0) {
         cont.innerHTML = `<div style="padding:14px; text-align:center; color:var(--text-muted);">Sin pedidos activos.</div>`;
@@ -914,7 +961,7 @@
         listaPedidos.unshift({ id: Date.now(), cliente, mueble, medidas, estado, precio });
         mostrarToast('🛠️ Pedido cargado.');
       }
-      localStorage.setItem('jl_v8_pedidos', JSON.stringify(listaPedidos));
+      localStorage.setItem('jl_v96_pedidos', JSON.stringify(listaPedidos));
       document.getElementById('pedCliente').value = '';
       renderizarPedidos();
     }
@@ -927,20 +974,24 @@
       document.getElementById('pedMedidas').value = p.medidas;
       document.getElementById('pedEstado').value = p.estado;
       document.getElementById('pedPrecio').value = p.precio;
-      document.getElementById('formPedidoTitulo').textContent = '✏️ Corrigiendo Pedido';
-      document.getElementById('btnCancelarEdicionPedido').style.display = 'inline-flex';
+      const formTitulo = document.getElementById('formPedidoTitulo');
+      const btnCancelar = document.getElementById('btnCancelarEdicionPedido');
+      if (formTitulo) formTitulo.textContent = '✏️ Corrigiendo Pedido';
+      if (btnCancelar) btnCancelar.style.display = 'inline-flex';
     }
 
     function cancelarEdicionPedido() {
       document.getElementById('pedEditId').value = '';
       document.getElementById('pedCliente').value = '';
-      document.getElementById('formPedidoTitulo').textContent = '➕ Cargar Pedido a Producción';
-      document.getElementById('btnCancelarEdicionPedido').style.display = 'none';
+      const formTitulo = document.getElementById('formPedidoTitulo');
+      const btnCancelar = document.getElementById('btnCancelarEdicionPedido');
+      if (formTitulo) formTitulo.textContent = '➕ Cargar Pedido a Producción';
+      if (btnCancelar) btnCancelar.style.display = 'none';
     }
 
     function eliminarPedido(id) {
       listaPedidos = listaPedidos.filter(x => x.id !== id);
-      localStorage.setItem('jl_v8_pedidos', JSON.stringify(listaPedidos));
+      localStorage.setItem('jl_v96_pedidos', JSON.stringify(listaPedidos));
       renderizarPedidos();
       mostrarToast('🗑️ Pedido eliminado.');
     }
@@ -948,12 +999,16 @@
     function renderizarPlacasColores() {
       const cont = document.getElementById('listaPlacasColores');
       const select = document.getElementById('selectPlacaActiva');
+      if (!cont || !select) return;
 
       cont.innerHTML = listaPlacas.map(pl => `
         <div class="history-list-card">
-          <div>
-            <div style="font-weight:800;">${pl.nombre}</div>
-            <div class="mono" style="font-size:11px; color:var(--text-muted);">Textura: ${pl.texturaPng} • Stock: ${pl.stock}</div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="width:22px; height:22px; border-radius:6px;" class="${pl.colorClase}"></span>
+            <div>
+              <div style="font-weight:800;">${pl.nombre}</div>
+              <div class="mono" style="font-size:11px; color:var(--text-muted);">${pl.dimensiones}mm • Stock: ${pl.stock}</div>
+            </div>
           </div>
           <button class="btn-danger" onclick="eliminarPlacaColor(${pl.id})">🗑️</button>
         </div>
@@ -964,14 +1019,14 @@
 
     function guardarPlacaColor() {
       const nombre = document.getElementById('placaNombre').value.trim();
-      const texturaPng = document.getElementById('placaTexturaPng').value;
+      const colorClase = document.getElementById('placaColorClase').value;
       const dimensiones = document.getElementById('placaDimensiones').value.trim() || '2750x1830';
       const stock = parseInt(document.getElementById('placaStockCant').value) || 1;
 
       if (!nombre) return mostrarToast('⚠️ Escribí el nombre de la placa.');
 
-      listaPlacas.push({ id: Date.now(), nombre, texturaPng, dimensiones, stock });
-      localStorage.setItem('jl_v8_placas', JSON.stringify(listaPlacas));
+      listaPlacas.push({ id: Date.now(), nombre, colorClase, dimensiones, stock });
+      localStorage.setItem('jl_v96_placas', JSON.stringify(listaPlacas));
       document.getElementById('placaNombre').value = '';
       renderizarPlacasColores();
       simularCortePlaca();
@@ -981,25 +1036,34 @@
     function eliminarPlacaColor(id) {
       if (listaPlacas.length <= 1) return mostrarToast('⚠️ Debe quedar al menos una placa.');
       listaPlacas = listaPlacas.filter(p => p.id !== id);
-      localStorage.setItem('jl_v8_placas', JSON.stringify(listaPlacas));
+      localStorage.setItem('jl_v96_placas', JSON.stringify(listaPlacas));
       renderizarPlacasColores();
       simularCortePlaca();
       mostrarToast('🗑️ Placa eliminada.');
     }
 
     function actualizarMedidasSugeridasCorte(etiqueta) {
+      const largoInput = document.getElementById('cutLargo');
+      const anchoInput = document.getElementById('cutAncho');
+      if (!largoInput || !anchoInput) return;
+
       if (etiqueta.includes('Techo')) {
-        document.getElementById('cutLargo').value = 400;
-        document.getElementById('cutAncho').value = 335;
+        largoInput.value = 400; anchoInput.value = 335;
       } else if (etiqueta.includes('Laterales')) {
-        document.getElementById('cutLargo').value = 335;
-        document.getElementById('cutAncho').value = 320;
+        largoInput.value = 335; anchoInput.value = 320;
       } else if (etiqueta.includes('Tapa con Secador')) {
-        document.getElementById('cutLargo').value = 600;
-        document.getElementById('cutAncho').value = 335;
+        largoInput.value = 600; anchoInput.value = 335;
       } else {
-        document.getElementById('cutLargo').value = 400;
-        document.getElementById('cutAncho').value = 150;
+        largoInput.value = 400; anchoInput.value = 150;
+      }
+      simularCortePlaca();
+    }
+
+    function toggleFullscreenOptimizador() {
+      const container = document.getElementById('cutCanvasContainer');
+      if (container) {
+        container.classList.toggle('fullscreen');
+        simularCortePlaca();
       }
     }
 
@@ -1025,6 +1089,7 @@
       ctx.fillText(`1830 mm (Ancho)`, -50, 0); ctx.restore();
 
       let x = 25, y = 25, maxH = 0, ubicadas = 0;
+      let htmlCortes = '';
       for (let i = 0; i < cant; i++) {
         if (x + (largo * ESC) > (20 + PLACA_W * ESC)) { x = 25; y += maxH + 6; maxH = 0; }
         if (y + (ancho * ESC) > (20 + PLACA_H * ESC)) break;
@@ -1036,12 +1101,33 @@
         ctx.font = '10px JetBrains Mono'; ctx.fillText(`${largo}x${ancho}mm`, x + 6, y + 32);
 
         x += (largo * ESC) + 6; if ((ancho * ESC) > maxH) maxH = (ancho * ESC); ubicadas++;
+        htmlCortes += `<div>• ${etiqueta}: <b>${largo} x ${ancho} mm</b> (Unid. #${ubicadas})</div>`;
       }
 
-      const apro = (((ubicadas * largo * ancho) / (PLACA_W * PLACA_H)) * 100).toFixed(1);
+      const areaTotal = PLACA_W * PLACA_H;
+      const areaUsada = ubicadas * largo * ancho;
+      const apro = ((areaUsada / areaTotal) * 100).toFixed(1);
       const filoM = ((ubicadas * (largo * 2 + ancho * 2)) / 1000).toFixed(1);
+
       document.getElementById('cutAprovechamiento').textContent = `${apro}% (${ubicadas} pzs)`;
       document.getElementById('cutMetrosFilo').textContent = `${filoM} m`;
+
+      // Renderizar listados debajo de la vista previa
+      const divCortes = document.getElementById('listaCortesDetalle');
+      const divSobrantes = document.getElementById('listaSobrantesDetalle');
+
+      if (divCortes) {
+        divCortes.innerHTML = htmlCortes || 'Sin cortes asignados.';
+      }
+      if (divSobrantes) {
+        const areaSobranteMm2 = areaTotal - areaUsada;
+        const sobranteAproxM2 = (areaSobranteMm2 / 1000000).toFixed(2);
+        divSobrantes.innerHTML = `
+          <div>• Área Restante Placa: <b>${sobranteAproxM2} m²</b></div>
+          <div>• Eficiencia de Corte: <b>${apro}%</b></div>
+          <div style="color:var(--text-muted); margin-top:4px; font-size:11px;">Desunte y mermas estimadas guardadas en stock.</div>
+        `;
+      }
     }
 
     function renderizarFinanzasYVentanasOcultas() {
@@ -1050,28 +1136,42 @@
       const sumaV = ventas.reduce((a, b) => a + Number(b.monto), 0);
       const sumaC = compras.reduce((a, b) => a + Number(b.monto), 0);
 
-      document.getElementById('kpiTotalVentas').textContent = `$${sumaV.toLocaleString('es-AR')}`;
-      document.getElementById('kpiTotalCompras').textContent = `$${sumaC.toLocaleString('es-AR')}`;
-      document.getElementById('kpiSaldoCaja').textContent = `$${(APERTURA_CAJA_BASE + sumaV - sumaC).toLocaleString('es-AR')}`;
+      const kpiV = document.getElementById('kpiTotalVentas');
+      const kpiC = document.getElementById('kpiTotalCompras');
+      const kpiS = document.getElementById('kpiSaldoCaja');
+      if (kpiV) kpiV.textContent = `$${sumaV.toLocaleString('es-AR')}`;
+      if (kpiC) kpiC.textContent = `$${sumaC.toLocaleString('es-AR')}`;
+      if (kpiS) kpiS.textContent = `$${(APERTURA_CAJA_BASE + sumaV - sumaC).toLocaleString('es-AR')}`;
 
-      document.getElementById('countBtnVentas').textContent = ventas.length;
-      document.getElementById('countBtnCompras').textContent = compras.length;
-      document.getElementById('ventanaSumaVentas').textContent = `+$${sumaV.toLocaleString('es-AR')}`;
-      document.getElementById('ventanaSumaCompras').textContent = `-$${sumaC.toLocaleString('es-AR')}`;
+      const cntV = document.getElementById('countBtnVentas');
+      const cntC = document.getElementById('countBtnCompras');
+      const sumV = document.getElementById('ventanaSumaVentas');
+      const sumC = document.getElementById('ventanaSumaCompras');
+      if (cntV) cntV.textContent = ventas.length;
+      if (cntC) cntC.textContent = compras.length;
+      if (sumV) sumV.textContent = `+$${sumaV.toLocaleString('es-AR')}`;
+      if (sumC) sumC.textContent = `-$${sumaC.toLocaleString('es-AR')}`;
 
-      document.getElementById('contenedorTarjetasVentas').innerHTML = ventas.map(v => `
-        <div class="history-list-card">
-          <div><div style="font-weight:800;">${v.concepto}</div><div style="font-size:12px; color:var(--text-muted);">${v.fecha} • ${v.persona}</div></div>
-          <span class="mono" style="color:var(--success); font-weight:800;">+$${Number(v.monto).toLocaleString('es-AR')}</span>
-        </div>
-      `).join('');
+      const tVentas = document.getElementById('contenedorTarjetasVentas');
+      const tCompras = document.getElementById('contenedorTarjetasCompras');
 
-      document.getElementById('contenedorTarjetasCompras').innerHTML = compras.map(c => `
-        <div class="history-list-card">
-          <div><div style="font-weight:800;">${c.concepto}</div><div style="font-size:12px; color:var(--text-muted);">${c.fecha} • ${c.persona}</div></div>
-          <span class="mono" style="color:var(--danger); font-weight:800;">-$${Number(c.monto).toLocaleString('es-AR')}</span>
-        </div>
-      `).join('');
+      if (tVentas) {
+        tVentas.innerHTML = ventas.map(v => `
+          <div class="history-list-card">
+            <div><div style="font-weight:800;">${v.concepto}</div><div style="font-size:12px; color:var(--text-muted);">${v.fecha} • ${v.persona}</div></div>
+            <span class="mono" style="color:var(--success); font-weight:800;">+$${Number(v.monto).toLocaleString('es-AR')}</span>
+          </div>
+        `).join('') || '<div style="color:var(--text-muted); text-align:center;">Sin ventas registradas.</div>';
+      }
+
+      if (tCompras) {
+        tCompras.innerHTML = compras.map(c => `
+          <div class="history-list-card">
+            <div><div style="font-weight:800;">${c.concepto}</div><div style="font-size:12px; color:var(--text-muted);">${c.fecha} • ${c.persona}</div></div>
+            <span class="mono" style="color:var(--danger); font-weight:800;">-$${Number(c.monto).toLocaleString('es-AR')}</span>
+          </div>
+        `).join('') || '<div style="color:var(--text-muted); text-align:center;">Sin compras registradas.</div>';
+      }
 
       actualizarVectorMesita(sumaV);
     }
@@ -1086,7 +1186,7 @@
       if (!concepto || isNaN(monto) || monto <= 0) return mostrarToast('⚠️ Completá concepto y monto.');
 
       listaOperacionesVC.unshift({ id: Date.now(), tipo, fecha: new Date().toLocaleDateString('es-AR'), concepto, persona, metodo, monto });
-      localStorage.setItem('jl_v8_operaciones', JSON.stringify(listaOperacionesVC));
+      localStorage.setItem('jl_v96_operaciones', JSON.stringify(listaOperacionesVC));
       document.getElementById('vcConcepto').value = ''; document.getElementById('vcPersona').value = ''; document.getElementById('vcMonto').value = '';
       renderizarFinanzasYVentanasOcultas();
       mostrarToast('✅ Movimiento registrado.');
@@ -1097,209 +1197,225 @@
       const pct = Math.min(100, Math.round(((totV % META_POR_CICLO) / META_POR_CICLO) * 100));
       const col = CICLOS_COLORES[idx % CICLOS_COLORES.length];
 
-      document.getElementById('ventasMesTotalTexto').textContent = `$${totV.toLocaleString('es-AR')}`;
-      document.getElementById('porcentajeCicloTexto').textContent = `${pct}%`;
-      document.getElementById('cicloBadgeTexto').textContent = `Ciclo ${idx + 1} • ${col.nombre}`;
+      const vTxt = document.getElementById('ventasMesTotalTexto');
+      const pTxt = document.getElementById('porcentajeCicloTexto');
+      const cTxt = document.getElementById('cicloBadgeTexto');
+      if (vTxt) vTxt.textContent = `$${totV.toLocaleString('es-AR')}`;
+      if (pTxt) pTxt.textContent = `${pct}%`;
+      if (cTxt) cTxt.textContent = `Ciclo ${idx + 1} • ${col.nombre}`;
 
       const barra = document.getElementById('barraCicloFill');
-      barra.style.width = `${pct}%`; barra.style.backgroundColor = col.hex;
-
-      document.getElementById('gradStop1').setAttribute('stop-color', col.hex);
-      document.getElementById('gradStop2').setAttribute('stop-color', col.hex);
-      document.getElementById('gradStop2').setAttribute('offset', `${pct}%`);
-      document.getElementById('gradStop3').setAttribute('offset', `${pct}%`);
+      if (barra) {
+        barra.style.width = `${pct}%`;
+        barra.style.backgroundColor = col.hex;
+      }
     }
 
-    function renderizarCatalogoBlenderGLB() {
-      document.getElementById('gridCatalogoBlenderGLB').innerHTML = catalogoModelosGLB.map((m, idx) => `
-        <div class="catalog-item-card" onclick="cargarModeloGlbEnVisor(${idx})">
+    function renderizarCatalogoBlenderEstable() {
+      const grid = document.getElementById('gridCatalogoMuebles');
+      if (!grid) return;
+      grid.innerHTML = catalogoModelosJLEstables.map((m, idx) => `
+        <div class="catalog-item-card" onclick="abrirModeloEnVisorEstable(${idx})">
           <div class="catalog-thumb">
             <svg width="100" height="75" viewBox="0 0 120 90">
-              <rect x="20" y="20" width="80" height="50" rx="3" fill="#c89d66" stroke="#fff" stroke-width="2"/>
+              <rect x="${m.tieneSecador?10:20}" y="20" width="${m.tieneSecador?100:80}" height="50" rx="3" fill="#ffffff" stroke="#000" stroke-width="2"/>
+              ${m.tieneSecador ? '<circle cx="92" cy="28" r="7" fill="#000" stroke="#fff" stroke-width="1.5"/>' : ''}
             </svg>
           </div>
           <div style="font-weight:800; font-size:15px;">${m.nombre}</div>
           <div style="font-size:12px; color:var(--accent); font-weight:700; margin:3px 0;">${m.medidas}</div>
           <p style="font-size:12px; color:var(--text-muted);">${m.desc}</p>
           <div style="display:flex; justify-content:space-between; margin-top:10px; padding-top:8px; border-top:1px solid var(--border-light);" class="mono">
-            <span style="font-size:11px;">📂 .GLB Blender</span>
+            <span style="font-size:11px;">${m.tieneSecador ? '⭕ C/ Secador' : '📏 Estándar'}</span>
             <span style="font-size:15px; font-weight:800; color:var(--success);">${m.precio}</span>
           </div>
         </div>
       `).join('');
     }
 
-    function cargarModeloGlbEnVisor(idx) {
-      const m = catalogoModelosGLB[idx];
-      modeloActualGlbActivo = m.archivoGlb;
-      document.getElementById('visor3dNombreMueble').textContent = `🧊 Visor 3D: ${m.nombre}`;
-      document.getElementById('visorGlbNombreArchivo').textContent = m.archivoGlb.split('/').pop();
+    function abrirModeloEnVisorEstable(idx) {
+      const m = catalogoModelosJLEstables[idx];
+      const nombre = document.getElementById('visor3dNombreMueble');
+      const medidas = document.getElementById('visor3dMedidas');
+      const acabado = document.getElementById('visor3dAcabado');
+      const precio = document.getElementById('visor3dPrecio');
+      const hole = document.getElementById('holeSecador3D');
+      const front = document.getElementById('panel3dFront');
+
+      if (nombre) nombre.textContent = `🧊 Visor 3D: ${m.nombre}`;
+      if (medidas) medidas.textContent = m.medidas;
+      if (acabado) acabado.textContent = m.acabado;
+      if (precio) precio.textContent = m.precio;
+      if (hole) hole.style.display = m.tieneSecador ? 'block' : 'none';
+      if (front) front.textContent = m.tieneSecador ? '600 x 335 x 32' : '400 x 335 x 32';
+
       switchView('view-visor3d');
     }
 
-    function iniciarVisorThreeJS(glbPath, pngTextureName) {
-      const container = document.getElementById('canvas-container-3d');
-      if (!container) return;
-      container.innerHTML = '';
-
-      threeScene = new THREE.Scene();
-      threeScene.background = new THREE.Color(0x0b0d11);
-
-      threeCamera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-      threeCamera.position.set(2, 1.5, 2.5);
-
-      threeRenderer = new THREE.WebGLRenderer({ antialias: true });
-      threeRenderer.setSize(container.clientWidth, container.clientHeight);
-      threeRenderer.outputEncoding = THREE.sRGBEncoding;
-      container.appendChild(threeRenderer.domElement);
-
-      threeControls = new THREE.OrbitControls(threeCamera, threeRenderer.domElement);
-      threeControls.enableDamping = true;
-
-      const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
-      threeScene.add(ambientLight);
-      const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
-      dirLight.position.set(5, 10, 7);
-      threeScene.add(dirLight);
-
-      const textureLoader = new THREE.TextureLoader();
-      const texturePath = `assets/textures/${pngTextureName}`;
-      const loadedTexture = textureLoader.load(texturePath, (tex) => {
-        tex.encoding = THREE.sRGBEncoding;
+    function cambiarColorSólido3D(claseCss, nombreColor) {
+      document.querySelectorAll('#assembly3d .panel-3d').forEach(p => {
+        p.className = `panel-3d ${claseCss} ${p.classList.contains('top')?'top':p.classList.contains('bottom')?'bottom':p.classList.contains('left')?'left':p.classList.contains('right')?'right':'front'}`;
       });
-
-      const gltfLoader = new THREE.GLTFLoader();
-      gltfLoader.load(glbPath, (gltf) => {
-        if (currentLoadedMesh) threeScene.remove(currentLoadedMesh);
-        currentLoadedMesh = gltf.scene;
-
-        currentLoadedMesh.traverse((child) => {
-          if (child.isMesh) {
-            child.material.map = loadedTexture;
-            child.material.needsUpdate = true;
-          }
-        });
-
-        threeScene.add(currentLoadedMesh);
-      }, undefined, (error) => {
-        mostrarToast('⚠️ Asegurate de tener el archivo .glb en assets/models/');
-      });
-
-      function animate() {
-        requestAnimationFrame(animate);
-        threeControls.update();
-        threeRenderer.render(threeScene, threeCamera);
-      }
-      animate();
+      const ac = document.getElementById('visor3dAcabado');
+      if (ac) ac.textContent = nombreColor;
+      mostrarToast(`🎨 Color ${nombreColor} aplicado.`);
     }
 
-    function aplicarTexturaPNG(pngName) {
-      texturaActualPngActiva = pngName;
-      document.getElementById('visorGlbTexturaActiva').textContent = pngName;
-      iniciarVisorThreeJS(modeloActualGlbActivo, pngName);
-      mostrarToast(`🎨 Textura ${pngName} aplicada.`);
+    let d3D = false, sx3D = 0, sy3D = 0, rx3D = -20, ry3D = 32;
+    const stg3D = document.getElementById('stage3d');
+    const asm3D = document.getElementById('assembly3d');
+    if (stg3D && asm3D) {
+      stg3D.addEventListener('pointerdown', e => { d3D = true; sx3D = e.clientX; sy3D = e.clientY; });
+      window.addEventListener('pointerup', () => { d3D = false; });
+      window.addEventListener('pointermove', e => {
+        if (!d3D) return;
+        ry3D += (e.clientX - sx3D) * 0.55;
+        rx3D -= (e.clientY - sy3D) * 0.55;
+        asm3D.style.transform = `rotateX(${rx3D}deg) rotateY(${ry3D}deg)`;
+        sx3D = e.clientX; sy3D = e.clientY;
+      });
     }
 
     function filtrarInventario(cat, btn = null) {
       if (btn) { document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
       const cr = listaStock.filter(i => i.cantidad <= i.minimo).length;
-      document.getElementById('badgeCriticosDrawer').textContent = cr;
-      document.getElementById('alertaStockHeader').textContent = cr ? `🚨 ${cr} en reposición` : '✅ Stock al día';
+      const bCrit = document.getElementById('badgeCriticosDrawer');
+      const aH = document.getElementById('alertaStockHeader');
+      if (bCrit) bCrit.textContent = cr;
+      if (aH) aH.textContent = cr ? `🚨 ${cr} en reposición` : '✅ Stock al día';
 
       const f = listaStock.filter(i => cat === 'Todos' ? true : cat === 'Critico' ? i.cantidad <= i.minimo : i.categoria === cat);
-      document.getElementById('contenedorStockItems').innerHTML = f.map(i => `
-        <div class="history-list-card">
-          <div><div style="font-weight:700;">${i.nombre}</div><div style="font-size:12px; color:var(--text-muted);">${i.categoria}</div></div>
-          <span class="mono" style="font-weight:800; font-size:16px;">${i.cantidad} u.</span>
-        </div>
-      `).join('');
+      const cont = document.getElementById('contenedorStockItems');
+      if (cont) {
+        cont.innerHTML = f.map(i => `
+          <div class="history-list-card">
+            <div><div style="font-weight:700;">${i.nombre}</div><div style="font-size:12px; color:var(--text-muted);">${i.categoria}</div></div>
+            <span class="mono" style="font-weight:800; font-size:16px;">${i.cantidad} u.</span>
+          </div>
+        `).join('') || '<div style="color:var(--text-muted); text-align:center;">Sin insumos.</div>';
+      }
     }
 
-    /* GPS Corregido: Anclaje real de taller editable y Autocompletado Oeste Operativo */
     let gpsMap, gpsMarkerTaller, gpsMarkerDestino, gpsLine, kmActuales = 0;
-    const padronCallesOeste = [
-      { calle: 'Av. Rivadavia 14000', loc: 'Ramos Mejía', coords: [-34.6405, -58.5648] },
-      { calle: 'Ariadna 2400', loc: 'Villa Luzuriaga', coords: [-34.6745, -58.5965] },
-      { calle: 'Dr. Ignacio Arieta 3200', loc: 'San Justo', coords: [-34.6812, -58.5612] },
-      { calle: 'Av. Pte. Perón 2100', loc: 'Haedo', coords: [-34.6410, -58.5988] },
-      { calle: 'Av. Rivadavia 18100', loc: 'Morón', coords: [-34.6492, -58.6205] },
-      { calle: 'Garibaldi 1200', loc: 'Villa Luzuriaga', coords: [-34.6700, -58.5800] }
-    ];
 
-    function initGPSConAnclaje() {
+    function initGPSProvincialEstable() {
+      const container = document.getElementById('map-container');
+      if (!container) return;
       gpsMap = L.map('map-container').setView(tallerCoords, 13);
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(gpsMap);
 
-      gpsMarkerTaller = L.marker(tallerCoords, { draggable: true }).addTo(gpsMap).bindPopup(`<b>🏠 Taller J&L (Anclado)</b><br>${tallerNombreDir}`).openPopup();
+      gpsMarkerTaller = L.marker(tallerCoords, { draggable: true }).addTo(gpsMap).bindPopup(`<b>🏠 Taller J&L</b><br>${tallerDireccionTexto}`).openPopup();
 
       gpsMarkerTaller.on('dragend', function() {
         const c = gpsMarkerTaller.getLatLng();
         tallerCoords = [c.lat, c.lng];
-        localStorage.setItem('jl_v8_taller_coords', JSON.stringify(tallerCoords));
-        document.getElementById('txtTallerAnclado').textContent = `Personalizado (${c.lat.toFixed(4)}, ${c.lng.toFixed(4)})`;
-        mostrarToast('📍 Taller anclado en nueva ubicación.');
+        localStorage.setItem('jl_v96_taller_coords', JSON.stringify(tallerCoords));
+        const txt = document.getElementById('txtTallerAnclado');
+        if (txt) txt.textContent = `${tallerDireccionTexto} (${c.lat.toFixed(4)}, ${c.lng.toFixed(4)})`;
+        mostrarToast('📍 Taller reubicado.');
       });
 
-      document.getElementById('txtTallerAnclado').textContent = `${tallerNombreDir} (${tallerCoords[0]}, ${tallerCoords[1]})`;
+      const txt = document.getElementById('txtTallerAnclado');
+      if (txt) txt.textContent = tallerDireccionTexto;
     }
 
-    function anclarTallerEnMiUbicacionCurrent() {
-      tallerCoords = [-34.6685, -58.5914];
-      tallerNombreDir = 'Villa Luzuriaga (Base)';
-      localStorage.setItem('jl_v8_taller_coords', JSON.stringify(tallerCoords));
-      localStorage.setItem('jl_v8_taller_nombre', tallerNombreDir);
-      gpsMarkerTaller.setLatLng(tallerCoords);
-      gpsMap.setView(tallerCoords, 14);
-      document.getElementById('txtTallerAnclado').textContent = `${tallerNombreDir} (${tallerCoords[0]}, ${tallerCoords[1]})`;
-      mostrarToast('📍 Taller fijado en Villa Luzuriaga.');
+    function anclarTallerPersonalizadoPrompt() {
+      const nuevaDir = prompt('Escribí la dirección exacta de tu taller (ej: Ariadna 2400, Villa Luzuriaga):', tallerDireccionTexto);
+      if (!nuevaDir) return;
+
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(nuevaDir + ', Buenos Aires, Argentina')}&limit=1`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.length > 0) {
+            tallerCoords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+            tallerDireccionTexto = nuevaDir;
+            localStorage.setItem('jl_v96_taller_coords', JSON.stringify(tallerCoords));
+            localStorage.setItem('jl_v96_taller_dir', tallerDireccionTexto);
+            if (gpsMarkerTaller) gpsMarkerTaller.setLatLng(tallerCoords);
+            if (gpsMap) gpsMap.setView(tallerCoords, 14);
+            if (gpsMarkerTaller) gpsMarkerTaller.bindPopup(`<b>🏠 Taller J&L</b><br>${tallerDireccionTexto}`).openPopup();
+            const txt = document.getElementById('txtTallerAnclado');
+            if (txt) txt.textContent = tallerDireccionTexto;
+            mostrarToast('✅ Taller actualizado correctamente.');
+          } else {
+            mostrarToast('⚠️ No se encontró la dirección.');
+          }
+        })
+        .catch(() => mostrarToast('⚠️ Error de red al buscar dirección.'));
     }
 
-    function autocompletarDireccionOeste(val) {
+    let _searchTimeout = null;
+    function autocompletarDireccionBuenosAires(val) {
       const drop = document.getElementById('gpsDropdown');
-      if (!val || val.length < 2) { drop.style.display = 'none'; return; }
-      const q = val.toLowerCase();
-      const matches = padronCallesOeste.filter(d => d.calle.toLowerCase().includes(q) || d.loc.toLowerCase().includes(q));
+      clearTimeout(_searchTimeout);
 
-      if (matches.length === 0) {
-        drop.innerHTML = `<div class="autocomplete-option"><span>Sin resultados en Zona Oeste</span></div>`;
-        drop.style.display = 'block';
-        return;
-      }
+      if (!val || val.length < 3) { if (drop) drop.style.display = 'none'; return; }
 
-      drop.innerHTML = matches.map(d => `
-        <div class="autocomplete-option" onclick="seleccionarRutaEntrega(${d.coords[0]}, ${d.coords[1]}, '${d.calle}', '${d.loc}')">
-          <span>📍 ${d.calle}</span><span class="locality-badge">${d.loc}</span>
-        </div>
-      `).join('');
-      drop.style.display = 'block';
+      _searchTimeout = setTimeout(() => {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val + ', Buenos Aires, Argentina')}&limit=6&addressdetails=1`;
+        fetch(url)
+          .then(res => res.json())
+          .then(data => {
+            if (!drop) return;
+            if (!data || data.length === 0) {
+              drop.innerHTML = `<div class="autocomplete-option"><span>Sin resultados</span></div>`;
+              drop.style.display = 'block';
+              return;
+            }
+
+            drop.innerHTML = data.map(item => {
+              const nombreLimpio = item.display_name.split(',')[0] || val;
+              const ciudad = item.address.city || item.address.town || item.address.suburb || item.address.county || 'Buenos Aires';
+              return `
+                <div class="autocomplete-option" onclick="seleccionarRutaProvincial(${item.lat}, ${item.lon}, '${nombreLimpio.replace(/'/g, "")}', '${ciudad.replace(/'/g, "")}')">
+                  <span>📍 ${nombreLimpio}</span><span class="locality-badge">${ciudad}</span>
+                </div>
+              `;
+            }).join('');
+            drop.style.display = 'block';
+          })
+          .catch(() => { if (drop) drop.style.display = 'none'; });
+      }, 300);
     }
 
-    function seleccionarRutaEntrega(lat, lng, c, loc) {
-      document.getElementById('gpsInputDir').value = `${c}, ${loc}`;
-      document.getElementById('gpsDropdown').style.display = 'none';
-      document.getElementById('gpsLocalidadDetectada').textContent = loc;
+    function seleccionarRutaProvincial(lat, lng, calle, ciudad) {
+      const inputDir = document.getElementById('gpsInputDir');
+      const drop = document.getElementById('gpsDropdown');
+      const locDet = document.getElementById('gpsLocalidadDetectada');
+      if (inputDir) inputDir.value = `${calle}, ${ciudad}`;
+      if (drop) drop.style.display = 'none';
+      if (locDet) locDet.textContent = ciudad;
       const destinoCoords = [lat, lng];
 
-      if (gpsMarkerDestino) gpsMap.removeLayer(gpsMarkerDestino);
-      if (gpsLine) gpsMap.removeLayer(gpsLine);
+      if (gpsMarkerDestino && gpsMap) gpsMap.removeLayer(gpsMarkerDestino);
+      if (gpsLine && gpsMap) gpsMap.removeLayer(gpsLine);
 
-      gpsMarkerDestino = L.marker(destinoCoords).addTo(gpsMap).bindPopup(`Entrega: ${c} (${loc})`).openPopup();
-      gpsLine = L.polyline([tallerCoords, destinoCoords], { color: '#c89d66', weight: 4 }).addTo(gpsMap);
-      gpsMap.fitBounds(gpsLine.getBounds(), { padding: [30, 30] });
+      if (gpsMap) {
+        gpsMarkerDestino = L.marker(destinoCoords).addTo(gpsMap).bindPopup(`Entrega: ${calle} (${ciudad})`).openPopup();
+        gpsLine = L.polyline([tallerCoords, destinoCoords], { color: '#c89d66', weight: 4 }).addTo(gpsMap);
+        gpsMap.fitBounds(gpsLine.getBounds(), { padding: [30, 30] });
+      }
 
-      kmActuales = Number(((gpsMap.distance(tallerCoords, destinoCoords) / 1000) * 1.25).toFixed(1));
+      kmActuales = Number(((L.latLng(tallerCoords).distanceTo(L.latLng(destinoCoords)) / 1000) * 1.25).toFixed(1));
       recalcularCostoFlete();
     }
 
     function recalcularCostoFlete() {
       const t = parseFloat(document.getElementById('gpsTarifaKm').value) || 1850;
-      document.getElementById('gpsKmTexto').textContent = `${kmActuales} km`;
-      document.getElementById('gpsCostoTexto').textContent = `$${Math.round(4500 + kmActuales * t).toLocaleString('es-AR')}`;
+      const kmTxt = document.getElementById('gpsKmTexto');
+      const costoTxt = document.getElementById('gpsCostoTexto');
+      if (kmTxt) kmTxt.textContent = `${kmActuales} km`;
+      if (costoTxt) costoTxt.textContent = `$${Math.round(4500 + kmActuales * t).toLocaleString('es-AR')}`;
     }
 
-    function toggleVistaIsometricaMapa() { document.getElementById('map-container').classList.toggle('isometric-3d'); }
-    function centrarEnTaller() { gpsMap.setView(tallerCoords, 14); }
-    function abrirRutaEnGoogleMaps() { window.open(`https://www.google.com/maps/dir/?api=1&origin=${tallerCoords[0]},${tallerCoords[1]}&destination=${tallerCoords[0]},${tallerCoords[1]}`, '_blank'); }
+    function toggleVistaIsometricaMapa() {
+      const mapContainer = document.getElementById('map-container');
+      if (mapContainer) mapContainer.classList.toggle('isometric-3d');
+    }
+
+    function abrirRutaEnGoogleMaps() {
+      window.open(`https://www.google.com/maps/dir/?api=1&origin=${tallerCoords[0]},${tallerCoords[1]}&destination=${tallerCoords[0]},${tallerCoords[1]}`, '_blank');
+    }
 
     function exportarCerrarMesTxt() {
       let t = `REPORTE MUEBLES J&L\n`;
@@ -1312,14 +1428,18 @@
       renderizarPedidos();
       renderizarPlacasColores();
       renderizarFinanzasYVentanasOcultas();
-      renderizarCatalogoBlenderGLB();
+      renderizarCatalogoBlenderEstable();
       filtrarInventario('Todos');
       simularCortePlaca();
-      initGPSConAnclaje();
-      document.getElementById('listaProveedoresOeste').innerHTML = `
-        <div class="order-card"><b>Placacentro San Justo</b><br><span style="color:var(--accent);">Placas Melamina 2750x1830</span></div>
-        <div class="order-card"><b>Herrajes Ramos Mejía</b><br><span style="color:var(--accent);">Filos 0.15m y Correderas</span></div>
-      `;
+      initGPSProvincialEstable();
+
+      const provOeste = document.getElementById('listaProveedoresOeste');
+      if (provOeste) {
+        provOeste.innerHTML = `
+          <div class="order-card"><b>Placacentro San Justo</b><br><span style="color:var(--accent);">Placas Melamina 2750x1830</span></div>
+          <div class="order-card"><b>Herrajes Ramos Mejía</b><br><span style="color:var(--accent);">Filos 0.15m y Correderas</span></div>
+        `;
+      }
     });
   </script>
 </body>
