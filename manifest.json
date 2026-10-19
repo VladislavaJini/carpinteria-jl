@@ -1,20 +1,18 @@
 {
-  "name": "Carpintería JL Mobile — Work Suite",
-  "short_name": "Carpintería JL",
-  "description": "Gestión integral de taller de melamina, optimizador de cortes con veta, inventario y visor 3D.",
+  "name": "Carpintería J&L Mobile",
+  "short_name": "J&L Taller",
   "start_url": "./index.html",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#0B1E1E",
-  "theme_color": "#0B1E1E",
+  "background_color": "#090a0d",
+  "theme_color": "#090a0d",
   "icons": [
     {
-      "src": "assets/icons/icon-192.png",
+      "src": "./icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "assets/icons/icon-512.png",
+      "src": "./icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
