@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Muebles J&L — Modern UI Pro v13.0 Stock Selector</title>
+  <title>Muebles J&L — Modern UI Pro v14.0 Hi-Res</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f8fafc">
   <link rel="apple-touch-icon" href="icon-192.png">
@@ -277,22 +277,28 @@
       width: 100%; height: 360px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border); margin-top: 16px;
     }
 
+    /* BARRA INFERIOR DOCK DESPLAZABLE HORIZONTALMENTE */
     .thumb-zone-bar {
-      position: fixed; bottom: 16px; left: 16px; right: 16px; max-width: 480px; margin: 0 auto;
-      background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(24px);
-      border: 1px solid var(--border); border-radius: 36px; display: flex; justify-content: space-around; padding: 10px 16px; z-index: 1500;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      position: fixed; bottom: 12px; left: 12px; right: 12px; max-width: 540px; margin: 0 auto;
+      background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(24px);
+      border: 1px solid var(--border); border-radius: 32px; display: flex; gap: 6px; overflow-x: auto; padding: 10px 14px; z-index: 1500;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+      white-space: nowrap;
+      scrollbar-width: none; /* Ocultar scrollbar en Firefox */
     }
-    body.taller-pro .thumb-zone-bar { background: rgba(18, 20, 26, 0.9); }
+    .thumb-zone-bar::-webkit-scrollbar { display: none; /* Ocultar scrollbar en Chrome/Safari */ }
+    
+    body.taller-pro .thumb-zone-bar { background: rgba(18, 20, 26, 0.94); }
 
     .thumb-tab {
       background: none; border: none; color: var(--text-muted); font-family: var(--font-body); font-size: 11px; font-weight: 700;
-      display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 8px 12px; border-radius: 24px; transition: 0.2s;
+      display: inline-flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; padding: 6px 14px; border-radius: 20px; transition: 0.2s;
+      flex-shrink: 0;
     }
     .thumb-tab.active { color: var(--accent); background: var(--accent-glow); }
 
     #toastBox {
-      position: fixed; bottom: 100px; right: 20px; z-index: 3000; background: var(--bg-surface); border: 1px solid var(--accent);
+      position: fixed; bottom: 92px; right: 20px; z-index: 3000; background: var(--bg-surface); border: 1px solid var(--accent);
       color: var(--text-main); padding: 14px 20px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 700; display: none;
       box-shadow: 0 15px 35px rgba(0,0,0,0.15);
     }
@@ -449,12 +455,11 @@
       </div>
     </section>
 
-    <!-- 2. VISTA: OPTIMIZADOR -->
+    <!-- 2. VISTA: OPTIMIZADOR HI-RES LIMPIO (Medidas por fuera, sin textos internos) -->
     <section id="view-optimizador" class="view-section">
       <div class="card">
         <div class="card-title">
-          <span>📐 Optimizador de Placas (Zoom Táctil)</span>
-          <span style="font-size:11px; color:var(--accent);">Desliza o pellizca para zoom</span>
+          <span>📐 Optimizador de Placas (Alta Resolución)</span>
         </div>
         <div class="grid-3">
           <div>
@@ -486,11 +491,16 @@
           </div>
         </div>
         
-        <div id="canvasZoomWrapper" style="width:100%; height:260px; background:#0b0d11; border:1px solid var(--border); border-radius:var(--radius-sm); margin-top:14px; overflow:hidden; touch-action:none; position:relative; display:flex; align-items:center; justify-content:center;">
-          <canvas id="cutCanvas" style="display:block; transform-origin:center center; cursor:grab;"></canvas>
+        <!-- Contenedor Limpio sin Pan/Zoom forzado y con Alta Definición -->
+        <div style="width:100%; background:#0b0d11; border:1px solid var(--border); border-radius:var(--radius-sm); margin-top:16px; padding:16px; text-align:center; overflow-x:auto;">
+          <div style="font-family:var(--font-mono); font-size:12px; color:var(--accent); margin-bottom:8px;">2750 mm (Largo Placa Base)</div>
+          <div style="display:flex; justify-content:center; align-items:center;">
+            <canvas id="cutCanvas" style="display:inline-block; border-radius:6px; box-shadow:0 10px 30px rgba(0,0,0,0.5);"></canvas>
+          </div>
+          <div style="font-family:var(--font-mono); font-size:12px; color:var(--text-muted); margin-top:8px;">1830 mm (Ancho Placa Base)</div>
         </div>
 
-        <div class="kpi-row" style="margin-top:14px;">
+        <div class="kpi-row" style="margin-top:16px;">
           <div class="kpi-box">
             <div class="kpi-label">Aprovechamiento</div>
             <div class="kpi-value" id="cutAprovechamiento">0%</div>
@@ -501,6 +511,7 @@
           </div>
         </div>
 
+        <!-- LISTADOS ORDENADOS: 1. CORTES ASIGNADOS, 2. SOBRANTES ESTIMADOS -->
         <div style="margin-top:18px; display:flex; flex-direction:column; gap:14px;">
           <div class="kpi-box" style="padding:16px; background:var(--bg-input);">
             <div class="kpi-label" style="color:var(--success); margin-bottom:8px;">📋 1. Listado de Cortes Asignados</div>
@@ -620,7 +631,7 @@
       </div>
     </section>
 
-    <!-- 8. VISTA: CATÁLOGO DE MUEBLES (ABM con Selector de Stock y Botones +/- de a 1, 5 y 10) -->
+    <!-- 8. VISTA: CATÁLOGO DE MUEBLES (ABM con selector de stock +/-) -->
     <section id="view-catalogo-muebles" class="view-section">
       <div class="card">
         <div class="card-title">📐 Catálogo de Muebles (Gestión Interna e Insumos)</div>
@@ -637,9 +648,8 @@
 
         <div style="margin-top:14px;">
           <label>Seleccionar Insumos del Stock y Cantidades Requeridas</label>
-          <div style="font-size:11.5px; color:var(--text-muted); margin-bottom:8px;">Usa los botones para ajustar las cantidades de cada material que usa este mueble:</div>
+          <div style="font-size:11.5px; color:var(--text-muted); margin-bottom:8px;">Ajusta los materiales que usa este mueble:</div>
           <div id="selectorStockParaMueble" style="background:var(--bg-input); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; max-height:220px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
-            <!-- Se carga automáticamente con el stock -->
           </div>
         </div>
 
@@ -802,10 +812,13 @@
 
   </main>
 
-  <!-- BARRA DE NAVEGACIÓN DOCK FLOTANTE -->
+  <!-- BARRA DE NAVEGACIÓN DOCK HORIZONTAL DESPLAZABLE -->
   <nav class="thumb-zone-bar">
     <button class="thumb-tab active" data-view="view-inicio" onclick="switchView('view-inicio')">
       <span>🏠</span><span>Inicio</span>
+    </button>
+    <button class="thumb-tab" data-view="view-produccion" onclick="switchView('view-produccion')">
+      <span>🛠️</span><span>Producción</span>
     </button>
     <button class="thumb-tab" data-view="view-ventas-pedidos" onclick="switchView('view-ventas-pedidos')">
       <span>📋</span><span>Pedidos</span>
@@ -813,8 +826,20 @@
     <button class="thumb-tab" data-view="view-optimizador" onclick="switchView('view-optimizador')">
       <span>📐</span><span>Optimizador</span>
     </button>
+    <button class="thumb-tab" data-view="view-placas" onclick="switchView('view-placas')">
+      <span>🎨</span><span>Placas</span>
+    </button>
+    <button class="thumb-tab" data-view="view-inventario" onclick="switchView('view-inventario')">
+      <span>📦</span><span>Stock</span>
+    </button>
     <button class="thumb-tab" data-view="view-muebles" onclick="switchView('view-muebles')">
       <span>🪑</span><span>Muebles</span>
+    </button>
+    <button class="thumb-tab" data-view="view-catalogo-muebles" onclick="switchView('view-catalogo-muebles')">
+      <span>📐</span><span>Catálogo</span>
+    </button>
+    <button class="thumb-tab" data-view="view-finanzas" onclick="switchView('view-finanzas')">
+      <span>💵</span><span>Finanzas</span>
     </button>
     <button class="thumb-tab" data-view="view-fletes" onclick="switchView('view-fletes')">
       <span>🚚</span><span>Fletes</span>
@@ -832,8 +857,8 @@
     const META_POR_CICLO = 300000;
     const APERTURA_CAJA_BASE = 125000;
 
-    let tallerCoords = JSON.parse(localStorage.getItem('jl_v13_taller_coords')) || [-34.6685, -58.5914];
-    let tallerDireccionTexto = localStorage.getItem('jl_v13_taller_dir') || 'Ariadna 2400, Villa Luzuriaga';
+    let tallerCoords = JSON.parse(localStorage.getItem('jl_v14_taller_coords')) || [-34.6685, -58.5914];
+    let tallerDireccionTexto = localStorage.getItem('jl_v14_taller_dir') || 'Ariadna 2400, Villa Luzuriaga';
 
     const CICLOS_COLORES = [
       { nivel: 1, nombre: 'Nogal Cálido', hex: '#f97316' },
@@ -843,7 +868,7 @@
       { nivel: 5, nombre: 'Púrpura Imperial', hex: '#8b5cf6' }
     ];
 
-    let listaPlacasBase = JSON.parse(localStorage.getItem('jl_v13_placas')) || [
+    let listaPlacasBase = JSON.parse(localStorage.getItem('jl_v14_placas')) || [
       { id: 1, nombre: 'Baltico 15mm', textura: 'Baltico.png', dimensiones: '2750x1830', precioViejo: 45000, precioNuevo: 48000, stock: 5 },
       { id: 2, nombre: 'Carvalho Mezzo 15mm', textura: 'Carvalho Mezzo.png', dimensiones: '2750x1830', precioViejo: 46000, precioNuevo: 49500, stock: 4 },
       { id: 3, nombre: 'Gaudi 15mm', textura: 'Gaudi.png', dimensiones: '2750x1830', precioViejo: 44000, precioNuevo: 47000, stock: 3 },
@@ -852,24 +877,24 @@
       { id: 6, nombre: 'Teka artico 15mm', textura: 'Teka artico.png', dimensiones: '2750x1830', precioViejo: 47000, precioNuevo: 51000, stock: 4 }
     ];
 
-    let listaStock = JSON.parse(localStorage.getItem('jl_v13_stock')) || [
+    let listaStock = JSON.parse(localStorage.getItem('jl_v14_stock')) || [
       { id: 301, nombre: 'Laterales Cortados 335x320mm', categoria: 'Piezas Cortadas', cantidad: 14, minimo: 6 },
       { id: 302, nombre: 'Tornillos 2x25', categoria: 'Herrajes', cantidad: 120, minimo: 30 },
       { id: 303, nombre: 'Escuadras Metálicas', categoria: 'Herrajes', cantidad: 40, minimo: 10 }
     ];
 
-    let listaPedidosClientes = JSON.parse(localStorage.getItem('jl_v13_pedidos')) || [
+    let listaPedidosClientes = JSON.parse(localStorage.getItem('jl_v14_pedidos')) || [
       { id: 1001, cliente: 'Carlos Gomez — Ramos Mejía', mueble: 'Mesita Estándar J&L', fechaRec: '2026-10-15', fechaEnt: '2026-10-22', estado: 'En proceso', precio: 48000 }
     ];
 
-    let listaCatalogoMueblesABM = JSON.parse(localStorage.getItem('jl_v13_catalogo_muebles')) || [
+    let listaCatalogoMueblesABM = JSON.parse(localStorage.getItem('jl_v14_catalogo_muebles')) || [
       { id: 501, nombre: 'Mesita Estándar J&L', medidas: '400 x 335 x 320 mm', componentes: '2 Laterales 335x320, 16 Tornillos, 4 Escuadras', precio: 48000, glb: 'assets/models/Mesita_blanca.glb' },
       { id: 502, nombre: 'Mesita con Agujero Secador J&L', medidas: '600 x 335 x 320 mm', componentes: '2 Laterales 335x320, 20 Tornillos, 4 Escuadras', precio: 64500, glb: 'assets/models/Mesita_Secador_blanco.glb' }
     ];
 
-    let listaProduccionTaller = JSON.parse(localStorage.getItem('jl_v13_produccion')) || [];
+    let listaProduccionTaller = JSON.parse(localStorage.getItem('jl_v14_produccion')) || [];
 
-    let listaOperacionesVC = JSON.parse(localStorage.getItem('jl_v13_operaciones')) || [
+    let listaOperacionesVC = JSON.parse(localStorage.getItem('jl_v14_operaciones')) || [
       { id: 201, tipo: 'VENTA', fecha: '18/10/2026', concepto: 'Mesita Estándar J&L', persona: 'Cliente Ramos', metodo: 'Transferencia', monto: 48000 }
     ];
 
@@ -999,10 +1024,10 @@
           item.cantidad = Math.max(0, item.cantidad - 1);
         }
       });
-      localStorage.setItem('jl_v13_stock', JSON.stringify(listaStock));
+      localStorage.setItem('jl_v14_stock', JSON.stringify(listaStock));
 
       listaProduccionTaller.unshift({ id: Date.now(), mueble: muebleNombre, cliente, componentes: muebleObj.componentes, estado: 'En Corte de Placa' });
-      localStorage.setItem('jl_v13_produccion', JSON.stringify(listaProduccionTaller));
+      localStorage.setItem('jl_v14_produccion', JSON.stringify(listaProduccionTaller));
       
       document.getElementById('prodCliente').value = '';
       renderizarListaProduccionTaller();
@@ -1037,12 +1062,11 @@
 
     function eliminarOrdenProduccion(id) {
       listaProduccionTaller = listaProduccionTaller.filter(x => x.id !== id);
-      localStorage.setItem('jl_v13_produccion', JSON.stringify(listaProduccionTaller));
+      localStorage.setItem('jl_v14_produccion', JSON.stringify(listaProduccionTaller));
       renderizarListaProduccionTaller();
       mostrarToast('🗑️ Orden retirada del taller.');
     }
 
-    /* SELECTOR DE STOCK CON BOTONES DE + / - PARA EL CATÁLOGO DE MUEBLES */
     let cantidadesInsumosMuebleTemp = {};
 
     function renderizarSelectorStockParaMueble() {
@@ -1050,7 +1074,7 @@
       if (!cont) return;
 
       if (listaStock.length === 0) {
-        cont.innerHTML = `<div style="color:var(--text-muted); font-size:12px; text-align:center;">No hay ítems en el stock para asignar. Cargalos primero en la sección Stock.</div>`;
+        cont.innerHTML = `<div style="color:var(--text-muted); font-size:12px; text-align:center;">No hay ítems en el stock.</div>`;
         return;
       }
 
@@ -1060,7 +1084,7 @@
           <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-surface); padding:8px 12px; border-radius:8px; border:1px solid var(--border);">
             <div>
               <div style="font-weight:700; font-size:13px;">${item.nombre}</div>
-              <div style="font-size:10px; color:var(--text-muted);">Stock disponible: ${item.cantidad} u.</div>
+              <div style="font-size:10px; color:var(--text-muted);">Disponible: ${item.cantidad} u.</div>
             </div>
             <div style="display:flex; align-items:center; gap:6px;">
               <button class="btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="ajustarCantInsumoMueble(${item.id}, -10)">-10</button>
@@ -1080,33 +1104,7 @@
       if (span) span.textContent = cantidadesInsumosMuebleTemp[idStock];
     }
 
-    let zoomScale = 1, panX = 0, panY = 0, isDragging = false, startX = 0, startY = 0;
-    const wrapper = document.getElementById('canvasZoomWrapper');
-
-    if (wrapper) {
-      wrapper.addEventListener('pointerdown', e => {
-        isDragging = true; startX = e.clientX - panX; startY = e.clientY - panY;
-        wrapper.setPointerCapture(e.pointerId);
-      });
-      wrapper.addEventListener('pointermove', e => {
-        if (!isDragging) return;
-        panX = e.clientX - startX; panY = e.clientY - startY;
-        actualizarTransformCanvas();
-      });
-      wrapper.addEventListener('pointerup', e => { isDragging = false; wrapper.releasePointerCapture(e.pointerId); });
-      wrapper.addEventListener('wheel', e => {
-        e.preventDefault();
-        const delta = e.deltaY < 0 ? 0.15 : -0.15;
-        zoomScale = Math.max(0.5, Math.min(4, zoomScale + delta));
-        actualizarTransformCanvas();
-      }, { passive: false });
-    }
-
-    function actualizarTransformCanvas() {
-      const cv = document.getElementById('cutCanvas');
-      if (cv) cv.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomScale})`;
-    }
-
+    /* OPTIMIZADOR HI-RES LIMPIO (Sin textos internos en los cortes, alta definición) */
     function simularCortePlaca() {
       const canvas = document.getElementById('cutCanvas');
       if (!canvas) return;
@@ -1121,35 +1119,37 @@
       const etiqueta = document.getElementById('cutEtiqueta').value;
 
       const PLACA_W = 2750; const PLACA_H = 1830;
-      const ESC = 0.085;
+      const ESC = 0.12; // Tamaño limpio y proporcionado
 
-      canvas.width = PLACA_W * ESC + 40;
-      canvas.height = PLACA_H * ESC + 40;
+      const dpr = window.devicePixelRatio || 1;
+      const cssW = PLACA_W * ESC;
+      const cssH = PLACA_H * ESC;
+
+      canvas.width = cssW * dpr;
+      canvas.height = cssH * dpr;
+      canvas.style.width = cssW + 'px';
+      canvas.style.height = cssH + 'px';
+
+      ctx.scale(dpr, dpr);
 
       const renderCanvasContent = (pattern = null) => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, cssW, cssH);
         ctx.fillStyle = pattern || '#b45309';
-        ctx.fillRect(20, 20, PLACA_W * ESC, PLACA_H * ESC);
+        ctx.fillRect(0, 0, cssW, cssH);
 
-        ctx.strokeStyle = '#000'; ctx.lineWidth = 2; ctx.strokeRect(20, 20, PLACA_W * ESC, PLACA_H * ESC);
+        ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5; ctx.strokeRect(0, 0, cssW, cssH);
 
-        ctx.fillStyle = '#fff'; ctx.font = '10px JetBrains Mono';
-        ctx.fillText(`2750 mm`, (PLACA_W * ESC) / 2, 14);
-
-        let x = 25, y = 25, maxH = 0, ubicadas = 0;
+        let x = 0, y = 0, maxH = 0, ubicadas = 0;
         let htmlCortes = '';
         for (let i = 0; i < cant; i++) {
-          if (x + (largo * ESC) > (20 + PLACA_W * ESC)) { x = 25; y += maxH + 4; maxH = 0; }
-          if (y + (ancho * ESC) > (20 + PLACA_H * ESC)) break;
+          if (x + (largo * ESC) > cssW) { x = 0; y += maxH + 3; maxH = 0; }
+          if (y + (ancho * ESC) > cssH) break;
 
           ctx.fillStyle = pattern ? pattern : '#92400e';
           ctx.fillRect(x, y, largo * ESC, ancho * ESC);
-          ctx.strokeStyle = '#000'; ctx.lineWidth = 1; ctx.strokeRect(x, y, largo * ESC, ancho * ESC);
+          ctx.strokeStyle = '#000'; ctx.lineWidth = 1.5; ctx.strokeRect(x, y, largo * ESC, ancho * ESC);
 
-          ctx.fillStyle = '#fff'; ctx.font = 'bold 9px Inter'; ctx.fillText(etiqueta, x + 4, y + 12);
-          ctx.font = '8px JetBrains Mono'; ctx.fillText(`${largo}x${ancho}`, x + 4, y + 24);
-
-          x += (largo * ESC) + 4; if ((ancho * ESC) > maxH) maxH = (ancho * ESC); ubicadas++;
+          x += (largo * ESC) + 3; if ((ancho * ESC) > maxH) maxH = (ancho * ESC); ubicadas++;
           htmlCortes += `<div>• ${etiqueta}: <b>${largo} x ${ancho} mm</b> (Unid. #${ubicadas})</div>`;
         }
 
@@ -1224,7 +1224,7 @@
       if (p) {
         p.precioViejo = p.precioNuevo;
         p.precioNuevo = parseFloat(val) || p.precioNuevo;
-        localStorage.setItem('jl_v13_placas', JSON.stringify(listaPlacasBase));
+        localStorage.setItem('jl_v14_placas', JSON.stringify(listaPlacasBase));
         mostrarToast('✅ Precio guardado.');
         renderizarPlacasYPrecios();
       }
@@ -1266,7 +1266,7 @@
       if (!nombre) return mostrarToast('⚠️ Escribí el nombre.');
 
       listaStock.push({ id: Date.now(), nombre, categoria, cantidad, minimo });
-      localStorage.setItem('jl_v13_stock', JSON.stringify(listaStock));
+      localStorage.setItem('jl_v14_stock', JSON.stringify(listaStock));
       document.getElementById('stockNombre').value = '';
       renderizarStockABM();
       renderizarSelectorStockParaMueble();
@@ -1275,7 +1275,7 @@
 
     function eliminarItemStock(id) {
       listaStock = listaStock.filter(i => i.id !== id);
-      localStorage.setItem('jl_v13_stock', JSON.stringify(listaStock));
+      localStorage.setItem('jl_v14_stock', JSON.stringify(listaStock));
       renderizarStockABM();
       renderizarSelectorStockParaMueble();
       mostrarToast('🗑️ Ítem eliminado.');
@@ -1334,7 +1334,7 @@
       if (!cliente) return mostrarToast('⚠️ Escribí el cliente.');
 
       listaPedidosClientes.unshift({ id: Date.now(), cliente, mueble, fechaRec, fechaEnt, estado: 'En proceso', precio });
-      localStorage.setItem('jl_v13_pedidos', JSON.stringify(listaPedidosClientes));
+      localStorage.setItem('jl_v14_pedidos', JSON.stringify(listaPedidosClientes));
       document.getElementById('pedCliente').value = '';
       renderizarPedidosClientes();
       mostrarToast('📋 Pedido guardado.');
@@ -1344,7 +1344,7 @@
       const p = listaPedidosClientes.find(x => x.id === id);
       if (p) {
         p.estado = nuevoEstado;
-        localStorage.setItem('jl_v13_pedidos', JSON.stringify(listaPedidosClientes));
+        localStorage.setItem('jl_v14_pedidos', JSON.stringify(listaPedidosClientes));
         renderizarPedidosClientes();
         mostrarToast(`✅ Estado: ${nuevoEstado}`);
       }
@@ -1352,7 +1352,7 @@
 
     function eliminarPedidoCliente(id) {
       listaPedidosClientes = listaPedidosClientes.filter(x => x.id !== id);
-      localStorage.setItem('jl_v13_pedidos', JSON.stringify(listaPedidosClientes));
+      localStorage.setItem('jl_v14_pedidos', JSON.stringify(listaPedidosClientes));
       renderizarPedidosClientes();
       mostrarToast('🗑️ Pedido eliminado.');
     }
@@ -1435,7 +1435,6 @@
       const precio = parseFloat(document.getElementById('catMueblePrecio').value) || 0;
       if (!nombre) return mostrarToast('⚠️ Escribí el nombre del mueble.');
 
-      // Compilar los componentes seleccionados mediante los botones +/-
       let compsArr = [];
       for (let idStock in cantidadesInsumosMuebleTemp) {
         const cant = cantidadesInsumosMuebleTemp[idStock];
@@ -1447,7 +1446,7 @@
       const componentes = compsArr.join(', ') || 'Piezas estándar';
 
       listaCatalogoMueblesABM.push({ id: Date.now(), nombre, medidas, componentes, precio, glb: 'assets/models/Mesita_blanca.glb' });
-      localStorage.setItem('jl_v13_catalogo_muebles', JSON.stringify(listaCatalogoMueblesABM));
+      localStorage.setItem('jl_v14_catalogo_muebles', JSON.stringify(listaCatalogoMueblesABM));
       
       document.getElementById('catMuebleNombre').value = '';
       cantidadesInsumosMuebleTemp = {};
@@ -1458,7 +1457,7 @@
 
     function eliminarModeloCatalogoABM(id) {
       listaCatalogoMueblesABM = listaCatalogoMueblesABM.filter(m => m.id !== id);
-      localStorage.setItem('jl_v13_catalogo_muebles', JSON.stringify(listaCatalogoMueblesABM));
+      localStorage.setItem('jl_v14_catalogo_muebles', JSON.stringify(listaCatalogoMueblesABM));
       renderizarCatalogoMueblesABM();
       renderizarSelectProduccionYTaller();
       mostrarToast('🗑️ Mueble eliminado.');
@@ -1548,7 +1547,7 @@
       if (!concepto || isNaN(monto) || monto <= 0) return mostrarToast('⚠️ Completá concepto y monto.');
 
       listaOperacionesVC.unshift({ id: Date.now(), tipo, fecha: new Date().toLocaleDateString('es-AR'), concepto, persona, metodo, monto });
-      localStorage.setItem('jl_v13_operaciones', JSON.stringify(listaOperacionesVC));
+      localStorage.setItem('jl_v14_operaciones', JSON.stringify(listaOperacionesVC));
       document.getElementById('vcConcepto').value = ''; document.getElementById('vcPersona').value = ''; document.getElementById('vcMonto').value = '';
       renderizarFinanzas();
       mostrarToast('✅ Movimiento registrado.');
@@ -1579,7 +1578,7 @@
       gpsMarkerTaller.on('dragend', function() {
         const c = gpsMarkerTaller.getLatLng();
         tallerCoords = [c.lat, c.lng];
-        localStorage.setItem('jl_v13_taller_coords', JSON.stringify(tallerCoords));
+        localStorage.setItem('jl_v14_taller_coords', JSON.stringify(tallerCoords));
       });
       const txt = document.getElementById('txtTallerAnclado');
       if (txt) txt.textContent = tallerDireccionTexto;
@@ -1595,8 +1594,8 @@
           if (data && data.length > 0) {
             tallerCoords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
             tallerDireccionTexto = nuevaDir;
-            localStorage.setItem('jl_v13_taller_coords', JSON.stringify(tallerCoords));
-            localStorage.setItem('jl_v13_taller_dir', tallerDireccionTexto);
+            localStorage.setItem('jl_v14_taller_coords', JSON.stringify(tallerCoords));
+            localStorage.setItem('jl_v14_taller_dir', tallerDireccionTexto);
             if (gpsMarkerTaller) gpsMarkerTaller.setLatLng(tallerCoords);
             if (gpsMap) gpsMap.setView(tallerCoords, 14);
             const txt = document.getElementById('txtTallerAnclado');
@@ -1664,7 +1663,7 @@
       document.getElementById('gpsCostoTexto').textContent = `$${Math.round(4500 + kmActuales * t).toLocaleString('es-AR')}`;
     }
 
-    function abrirRutaInGoogleMaps() {
+    function abrirRutaEnGoogleMaps() {
       const destinoQuery = encodeURIComponent(destinoNombreActual || tallerDireccionTexto);
       const origenQuery = encodeURIComponent(tallerDireccionTexto);
       window.open(`https://www.google.com/maps/dir/?api=1&origin=${origenQuery}&destination=${destinoQuery}`, '_blank');
