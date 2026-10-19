@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Muebles J&L — Modern UI Pro v14.0 Hi-Res</title>
+  <title>Muebles J&L — PanelCraft & 3D Pro v15.0</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f8fafc">
   <link rel="apple-touch-icon" href="icon-192.png">
@@ -18,20 +18,20 @@
 
   <style>
     :root {
-      --bg-main: #f8fafc;
-      --bg-surface: #ffffff;
-      --bg-card: #ffffff;
-      --bg-elevated: #f1f5f9;
-      --bg-input: #f8fafc;
-      --border: #e2e8f0;
-      --border-light: rgba(0, 0, 0, 0.04);
+      --bg-main: #090a0d;
+      --bg-surface: #12141a;
+      --bg-card: #161920;
+      --bg-elevated: #1e222b;
+      --bg-input: #1b1f27;
+      --border: #2a2f3a;
+      --border-light: rgba(255, 255, 255, 0.06);
       --border-focus: #f97316;
-      --text-main: #0f172a;
-      --text-secondary: #334155;
-      --text-muted: #64748b;
-      --accent: #f97316;
+      --text-main: #f3f4f6;
+      --text-secondary: #d1d5db;
+      --text-muted: #8e95a5;
+      --accent: #f97316; /* Naranja vibrante PanelCraft */
       --accent-hover: #ea580c;
-      --accent-glow: rgba(249, 115, 22, 0.15);
+      --accent-glow: rgba(249, 115, 22, 0.2);
       --success: #10b981;
       --success-bg: rgba(16, 185, 129, 0.12);
       --danger: #ef4444;
@@ -47,18 +47,8 @@
     }
 
     body.taller-pro {
-      --bg-main: #090a0d;
-      --bg-surface: #12141a;
-      --bg-card: #161920;
-      --bg-elevated: #1e222b;
-      --bg-input: #1b1f27;
-      --border: #2a2f3a;
-      --border-focus: #facc15;
-      --text-main: #f3f4f6;
-      --text-secondary: #d1d5db;
-      --text-muted: #8e95a5;
       --accent: #facc15;
-      --accent-glow: rgba(250, 204, 21, 0.2);
+      --accent-glow: rgba(250, 204, 21, 0.25);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -71,16 +61,14 @@
       line-height: 1.5;
       padding-bottom: 120px;
       overflow-x: hidden;
-      transition: background 0.3s, color 0.3s;
     }
 
     header {
       position: sticky; top: 0; z-index: 1100;
-      background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
+      background: rgba(18, 20, 26, 0.88); backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border); padding: 16px 20px;
       display: flex; align-items: center; justify-content: space-between; gap: 12px;
     }
-    body.taller-pro header { background: rgba(18, 20, 26, 0.85); }
 
     .brand-group { display: flex; align-items: center; gap: 14px; }
 
@@ -99,14 +87,14 @@
     }
 
     .drawer-overlay {
-      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(6px); z-index: 2000; display: none;
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(6px); z-index: 2000; display: none;
     }
 
     .drawer {
       position: fixed; top: 0; left: -320px; width: 310px; height: 100vh;
       background: var(--bg-surface); border-right: 1px solid var(--border); z-index: 2001;
       padding: 24px 18px; transition: left 0.35s cubic-bezier(0.16, 1, 0.3, 1); overflow-y: auto;
-      box-shadow: 10px 0 40px rgba(0,0,0,0.1);
+      box-shadow: 10px 0 40px rgba(0,0,0,0.3);
     }
 
     .drawer.open { left: 0; }
@@ -147,7 +135,7 @@
     .card {
       background: var(--bg-card); border: 1px solid var(--border);
       border-radius: var(--radius-md); padding: 22px; margin-bottom: 20px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
 
     .card-title {
@@ -222,11 +210,11 @@
     .order-status-badge { font-family: var(--font-mono); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; background: var(--info-bg); color: var(--info); }
     .order-status-badge.terminado { background: var(--success-bg); color: var(--success); }
     .order-status-badge.embalado { background: var(--accent-glow); color: var(--accent); }
-    .order-status-badge.entregado { background: #cbd5e1; color: #475569; }
+    .order-status-badge.entregado { background: #334155; color: #94a3b8; }
 
     .order-specs {
       font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary);
-      background: var(--bg-surface); padding: 12px; border-radius: 8px; margin: 12px 0; border-left: 3px solid var(--accent);
+      background: rgba(0,0,0,0.25); padding: 12px; border-radius: 8px; margin: 12px 0; border-left: 3px solid var(--accent);
       border: 1px solid var(--border);
     }
     .order-actions {
@@ -242,12 +230,11 @@
     .catalog-item-card {
       background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 18px; cursor: pointer; transition: 0.2s;
     }
-    .catalog-item-card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 10px 25px rgba(0,0,0,0.06); }
+    .catalog-item-card:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
     .catalog-thumb {
-      width: 100%; height: 140px; background: radial-gradient(circle, #e2e8f0 0%, #cbd5e1 100%);
+      width: 100%; height: 140px; background: radial-gradient(circle, #252a34 0%, #12141a 100%);
       border-radius: 8px; margin-bottom: 14px; display: flex; align-items: center; justify-content: center;
     }
-    body.taller-pro .catalog-thumb { background: radial-gradient(circle, #252a34 0%, #12141a 100%); }
 
     #canvas-container-3d {
       width: 100%; height: 420px; border-radius: var(--radius-sm); background: #0b0d11;
@@ -265,7 +252,7 @@
     .autocomplete-dropdown {
       position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-surface);
       border: 1px solid var(--accent); border-radius: var(--radius-sm); margin-top: 4px; max-height: 240px; overflow-y: auto; z-index: 1200; display: none;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.8);
     }
     .autocomplete-option {
       padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 14px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 10px;
@@ -277,18 +264,16 @@
       width: 100%; height: 360px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border); margin-top: 16px;
     }
 
-    /* BARRA INFERIOR DOCK DESPLAZABLE HORIZONTALMENTE */
+    /* BARRA INFERIOR DOCK HORIZONTAL DESPLAZABLE */
     .thumb-zone-bar {
       position: fixed; bottom: 12px; left: 12px; right: 12px; max-width: 540px; margin: 0 auto;
-      background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(24px);
+      background: rgba(18, 20, 26, 0.94); backdrop-filter: blur(24px);
       border: 1px solid var(--border); border-radius: 32px; display: flex; gap: 6px; overflow-x: auto; padding: 10px 14px; z-index: 1500;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
       white-space: nowrap;
-      scrollbar-width: none; /* Ocultar scrollbar en Firefox */
+      scrollbar-width: none;
     }
-    .thumb-zone-bar::-webkit-scrollbar { display: none; /* Ocultar scrollbar en Chrome/Safari */ }
-    
-    body.taller-pro .thumb-zone-bar { background: rgba(18, 20, 26, 0.94); }
+    .thumb-zone-bar::-webkit-scrollbar { display: none; }
 
     .thumb-tab {
       background: none; border: none; color: var(--text-muted); font-family: var(--font-body); font-size: 11px; font-weight: 700;
@@ -298,9 +283,9 @@
     .thumb-tab.active { color: var(--accent); background: var(--accent-glow); }
 
     #toastBox {
-      position: fixed; bottom: 92px; right: 20px; z-index: 3000; background: var(--bg-surface); border: 1px solid var(--accent);
+      position: fixed; bottom: 92px; right: 20px; z-index: 3000; background: var(--bg-elevated); border: 1px solid var(--accent);
       color: var(--text-main); padding: 14px 20px; border-radius: var(--radius-sm); font-size: 13.5px; font-weight: 700; display: none;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.8);
     }
   </style>
 </head>
@@ -455,24 +440,51 @@
       </div>
     </section>
 
-    <!-- 2. VISTA: OPTIMIZADOR HI-RES LIMPIO (Medidas por fuera, sin textos internos) -->
+    <!-- 2. VISTA: OPTIMIZADOR ESTILO PANELCRAFT -->
     <section id="view-optimizador" class="view-section">
+      <!-- Tarjeta Superior de Rendimiento PanelCraft -->
+      <div class="card" style="background:linear-gradient(135deg, #161920 0%, #1e222b 100%); border:1px solid var(--border);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+          <div style="display:flex; align-items:center; gap:18px;">
+            <div style="position:relative; width:85px; height:85px; display:flex; align-items:center; justify-content:center;">
+              <svg width="85" height="85" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="#2a2f3a" stroke-width="10"/>
+                <circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent)" stroke-width="10" stroke-dasharray="264" stroke-dashoffset="30" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+              </svg>
+              <div style="position:absolute; font-family:var(--font-mono); font-size:15px; font-weight:800;" id="panelYieldText">88.6%</div>
+            </div>
+            <div>
+              <div style="font-family:var(--font-title); font-size:16px; font-weight:800; display:flex; align-items:center; gap:8px;">
+                Material Yield <span style="background:var(--success-bg); color:var(--success); font-size:10.5px; font-family:var(--font-mono); padding:2px 8px; border-radius:12px;">● Excellent</span>
+              </div>
+              <div style="font-family:var(--font-mono); font-size:11.5px; color:var(--text-muted); margin-top:4px;" id="panelUsedText">Used: 5,028,150 mm²</div>
+              <div style="font-family:var(--font-mono); font-size:11.5px; color:var(--text-muted);" id="panelWasteText">Waste: 646,850 mm²</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <span class="cycle-pill">Top View ▾</span>
+          </div>
+        </div>
+      </div>
+
       <div class="card">
         <div class="card-title">
-          <span>📐 Optimizador de Placas (Alta Resolución)</span>
+          <span>📐 Panel Layout Preview</span>
+          <span style="font-size:11.5px; font-family:var(--font-mono); color:var(--accent);">2750 x 1830 mm (15mm)</span>
         </div>
+
         <div class="grid-3">
           <div>
             <label>Placa Activa</label>
             <select id="selectPlacaActiva" onchange="simularCortePlaca()"></select>
           </div>
           <div>
-            <label>Etiqueta de Corte</label>
+            <label>Etiqueta de Pieza</label>
             <select id="cutEtiqueta" onchange="actualizarMedidasSugeridasCorte(this.value)">
-              <option value="Techo y Piso">Techo y Piso (400x335)</option>
-              <option value="Laterales">Laterales (335x320)</option>
-              <option value="Frente de Cajón">Frente de Cajón / Estante</option>
-              <option value="Tapa con Secador">Tapa con Secador (600x335)</option>
+              <option value="Side Panel">Side Panel (550x1830)</option>
+              <option value="Shelf">Shelf (800x350)</option>
+              <option value="Drawer Front">Drawer Front (800x550)</option>
+              <option value="Bottom Panel">Bottom Panel (800x550)</option>
             </select>
           </div>
           <div>
@@ -483,44 +495,33 @@
         <div class="grid-2" style="margin-top:12px;">
           <div>
             <label>Largo Pieza (mm)</label>
-            <input type="number" id="cutLargo" class="mono" value="400" oninput="simularCortePlaca()">
+            <input type="number" id="cutLargo" class="mono" value="550" oninput="simularCortePlaca()">
           </div>
           <div>
             <label>Ancho Pieza (mm)</label>
-            <input type="number" id="cutAncho" class="mono" value="335" oninput="simularCortePlaca()">
+            <input type="number" id="cutAncho" class="mono" value="350" oninput="simularCortePlaca()">
           </div>
         </div>
-        
-        <!-- Contenedor Limpio sin Pan/Zoom forzado y con Alta Definición -->
-        <div style="width:100%; background:#0b0d11; border:1px solid var(--border); border-radius:var(--radius-sm); margin-top:16px; padding:16px; text-align:center; overflow-x:auto;">
-          <div style="font-family:var(--font-mono); font-size:12px; color:var(--accent); margin-bottom:8px;">2750 mm (Largo Placa Base)</div>
+
+        <!-- PanelCraft Visualizador con Cotas Externas y Sin Textos Internos -->
+        <div style="background:#0b0d11; border:1px solid var(--border); border-radius:var(--radius-sm); margin-top:16px; padding:20px; text-align:center; overflow-x:auto;">
+          <div style="font-family:var(--font-mono); font-size:12px; color:var(--accent); margin-bottom:10px;">◄ ———————— 2750 mm ———————— ►</div>
           <div style="display:flex; justify-content:center; align-items:center;">
-            <canvas id="cutCanvas" style="display:inline-block; border-radius:6px; box-shadow:0 10px 30px rgba(0,0,0,0.5);"></canvas>
+            <canvas id="cutCanvas" style="display:inline-block; border-radius:6px; box-shadow:0 10px 30px rgba(0,0,0,0.6);"></canvas>
           </div>
-          <div style="font-family:var(--font-mono); font-size:12px; color:var(--text-muted); margin-top:8px;">1830 mm (Ancho Placa Base)</div>
+          <div style="font-family:var(--font-mono); font-size:12px; color:var(--text-muted); margin-top:10px;">▲ 1830 mm ▼</div>
         </div>
 
-        <div class="kpi-row" style="margin-top:16px;">
-          <div class="kpi-box">
-            <div class="kpi-label">Aprovechamiento</div>
-            <div class="kpi-value" id="cutAprovechamiento">0%</div>
-          </div>
-          <div class="kpi-box">
-            <div class="kpi-label">Filo 0.15m Requerido</div>
-            <div class="kpi-value" style="color:var(--accent);" id="cutMetrosFilo">0.0 m</div>
-          </div>
-        </div>
-
-        <!-- LISTADOS ORDENADOS: 1. CORTES ASIGNADOS, 2. SOBRANTES ESTIMADOS -->
+        <!-- Listados Inferiores ordenados al detalle -->
         <div style="margin-top:18px; display:flex; flex-direction:column; gap:14px;">
           <div class="kpi-box" style="padding:16px; background:var(--bg-input);">
-            <div class="kpi-label" style="color:var(--success); margin-bottom:8px;">📋 1. Listado de Cortes Asignados</div>
+            <div class="kpi-label" style="color:var(--success); margin-bottom:8px;">📋 Parts to Cut (Cortes Asignados)</div>
             <div id="listaCortesDetalle" style="font-family:var(--font-mono); font-size:12.5px; max-height:180px; overflow-y:auto; color:var(--text-secondary);">
               Sin cortes trazados.
             </div>
           </div>
           <div class="kpi-box" style="padding:16px; background:var(--bg-input);">
-            <div class="kpi-label" style="color:var(--warning); margin-bottom:8px;">📦 2. Listado de Sobrantes Estimados</div>
+            <div class="kpi-label" style="color:var(--warning); margin-bottom:8px;">📦 Waste / Sobrantes Estimados</div>
             <div id="listaSobrantesDetalle" style="font-family:var(--font-mono); font-size:12.5px; max-height:180px; overflow-y:auto; color:var(--text-secondary);">
               Sin sobrantes calculados.
             </div>
@@ -666,11 +667,11 @@
       </div>
     </section>
 
-    <!-- 9. VISTA: VISOR 3D -->
+    <!-- 9. VISTA: VISOR 3D (Con texturas procedurales base y frente intercambiable) -->
     <section id="view-visor3d" class="view-section">
       <div class="card">
         <div class="card-title">
-          <span id="visor3dNombreMueble">🧊 Visor 3D: Modelos .glb con Texturas .png</span>
+          <span id="visor3dNombreMueble">🧊 Visor 3D: Modelos .glb con Frente Intercambiable</span>
           <button class="btn-secondary" onclick="switchView('view-muebles')">← Volver a Muebles</button>
         </div>
 
@@ -683,14 +684,14 @@
             <button class="btn-secondary" onclick="cambiarModeloGlbActivo('assets/models/Mesita_Secador_negra.glb', 'Mesita_Secador_negra.glb')">Secador Negro</button>
           </div>
 
-          <label>Textura Oficial de la Veta (.png)</label>
+          <label>Aplicar Textura solo en el Frente del Mueble (.png)</label>
           <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;">
-            <button class="btn-secondary" onclick="aplicarTexturaPngOficial('Baltico.png')">Baltico.png</button>
-            <button class="btn-secondary" onclick="aplicarTexturaPngOficial('Carvalho Mezzo.png')">Carvalho Mezzo.png</button>
-            <button class="btn-secondary" onclick="aplicarTexturaPngOficial('Gaudi.png')">Gaudi.png</button>
-            <button class="btn-secondary" onclick="aplicarTexturaPngOficial('Helsinki.png')">Helsinki.png</button>
-            <button class="btn-secondary" onclick="aplicarTexturaPngOficial('Kiri.png')">Kiri.png</button>
-            <button class="btn-secondary" onclick="aplicarTexturaPngOficial('Teka artico.png')">Teka artico.png</button>
+            <button class="btn-secondary" onclick="aplicarTexturaFrenteOficial('Baltico.png')">Baltico.png</button>
+            <button class="btn-secondary" onclick="aplicarTexturaFrenteOficial('Carvalho Mezzo.png')">Carvalho Mezzo.png</button>
+            <button class="btn-secondary" onclick="aplicarTexturaFrenteOficial('Gaudi.png')">Gaudi.png</button>
+            <button class="btn-secondary" onclick="aplicarTexturaFrenteOficial('Helsinki.png')">Helsinki.png</button>
+            <button class="btn-secondary" onclick="aplicarTexturaFrenteOficial('Kiri.png')">Kiri.png</button>
+            <button class="btn-secondary" onclick="aplicarTexturaFrenteOficial('Teka artico.png')">Teka artico.png</button>
           </div>
         </div>
 
@@ -702,7 +703,7 @@
             <div class="kpi-value" style="font-size:12px;" id="visorGlbNombreActivo">Mesita_blanca.glb</div>
           </div>
           <div class="kpi-box">
-            <div class="kpi-label">Textura Activa PNG</div>
+            <div class="kpi-label">Frente Texturizado PNG</div>
             <div class="kpi-value" style="font-size:12px; color:var(--accent);" id="visorPngNombreActivo">Baltico.png</div>
           </div>
           <div class="kpi-box">
@@ -857,8 +858,8 @@
     const META_POR_CICLO = 300000;
     const APERTURA_CAJA_BASE = 125000;
 
-    let tallerCoords = JSON.parse(localStorage.getItem('jl_v14_taller_coords')) || [-34.6685, -58.5914];
-    let tallerDireccionTexto = localStorage.getItem('jl_v14_taller_dir') || 'Ariadna 2400, Villa Luzuriaga';
+    let tallerCoords = JSON.parse(localStorage.getItem('jl_v15_taller_coords')) || [-34.6685, -58.5914];
+    let tallerDireccionTexto = localStorage.getItem('jl_v15_taller_dir') || 'Ariadna 2400, Villa Luzuriaga';
 
     const CICLOS_COLORES = [
       { nivel: 1, nombre: 'Nogal Cálido', hex: '#f97316' },
@@ -868,7 +869,7 @@
       { nivel: 5, nombre: 'Púrpura Imperial', hex: '#8b5cf6' }
     ];
 
-    let listaPlacasBase = JSON.parse(localStorage.getItem('jl_v14_placas')) || [
+    let listaPlacasBase = JSON.parse(localStorage.getItem('jl_v15_placas')) || [
       { id: 1, nombre: 'Baltico 15mm', textura: 'Baltico.png', dimensiones: '2750x1830', precioViejo: 45000, precioNuevo: 48000, stock: 5 },
       { id: 2, nombre: 'Carvalho Mezzo 15mm', textura: 'Carvalho Mezzo.png', dimensiones: '2750x1830', precioViejo: 46000, precioNuevo: 49500, stock: 4 },
       { id: 3, nombre: 'Gaudi 15mm', textura: 'Gaudi.png', dimensiones: '2750x1830', precioViejo: 44000, precioNuevo: 47000, stock: 3 },
@@ -877,24 +878,24 @@
       { id: 6, nombre: 'Teka artico 15mm', textura: 'Teka artico.png', dimensiones: '2750x1830', precioViejo: 47000, precioNuevo: 51000, stock: 4 }
     ];
 
-    let listaStock = JSON.parse(localStorage.getItem('jl_v14_stock')) || [
+    let listaStock = JSON.parse(localStorage.getItem('jl_v15_stock')) || [
       { id: 301, nombre: 'Laterales Cortados 335x320mm', categoria: 'Piezas Cortadas', cantidad: 14, minimo: 6 },
       { id: 302, nombre: 'Tornillos 2x25', categoria: 'Herrajes', cantidad: 120, minimo: 30 },
       { id: 303, nombre: 'Escuadras Metálicas', categoria: 'Herrajes', cantidad: 40, minimo: 10 }
     ];
 
-    let listaPedidosClientes = JSON.parse(localStorage.getItem('jl_v14_pedidos')) || [
+    let listaPedidosClientes = JSON.parse(localStorage.getItem('jl_v15_pedidos')) || [
       { id: 1001, cliente: 'Carlos Gomez — Ramos Mejía', mueble: 'Mesita Estándar J&L', fechaRec: '2026-10-15', fechaEnt: '2026-10-22', estado: 'En proceso', precio: 48000 }
     ];
 
-    let listaCatalogoMueblesABM = JSON.parse(localStorage.getItem('jl_v14_catalogo_muebles')) || [
+    let listaCatalogoMueblesABM = JSON.parse(localStorage.getItem('jl_v15_catalogo_muebles')) || [
       { id: 501, nombre: 'Mesita Estándar J&L', medidas: '400 x 335 x 320 mm', componentes: '2 Laterales 335x320, 16 Tornillos, 4 Escuadras', precio: 48000, glb: 'assets/models/Mesita_blanca.glb' },
       { id: 502, nombre: 'Mesita con Agujero Secador J&L', medidas: '600 x 335 x 320 mm', componentes: '2 Laterales 335x320, 20 Tornillos, 4 Escuadras', precio: 64500, glb: 'assets/models/Mesita_Secador_blanco.glb' }
     ];
 
-    let listaProduccionTaller = JSON.parse(localStorage.getItem('jl_v14_produccion')) || [];
+    let listaProduccionTaller = JSON.parse(localStorage.getItem('jl_v15_produccion')) || [];
 
-    let listaOperacionesVC = JSON.parse(localStorage.getItem('jl_v14_operaciones')) || [
+    let listaOperacionesVC = JSON.parse(localStorage.getItem('jl_v15_operaciones')) || [
       { id: 201, tipo: 'VENTA', fecha: '18/10/2026', concepto: 'Mesita Estándar J&L', persona: 'Cliente Ramos', metodo: 'Transferencia', monto: 48000 }
     ];
 
@@ -1024,10 +1025,10 @@
           item.cantidad = Math.max(0, item.cantidad - 1);
         }
       });
-      localStorage.setItem('jl_v14_stock', JSON.stringify(listaStock));
+      localStorage.setItem('jl_v15_stock', JSON.stringify(listaStock));
 
       listaProduccionTaller.unshift({ id: Date.now(), mueble: muebleNombre, cliente, componentes: muebleObj.componentes, estado: 'En Corte de Placa' });
-      localStorage.setItem('jl_v14_produccion', JSON.stringify(listaProduccionTaller));
+      localStorage.setItem('jl_v15_produccion', JSON.stringify(listaProduccionTaller));
       
       document.getElementById('prodCliente').value = '';
       renderizarListaProduccionTaller();
@@ -1062,7 +1063,7 @@
 
     function eliminarOrdenProduccion(id) {
       listaProduccionTaller = listaProduccionTaller.filter(x => x.id !== id);
-      localStorage.setItem('jl_v14_produccion', JSON.stringify(listaProduccionTaller));
+      localStorage.setItem('jl_v15_produccion', JSON.stringify(listaProduccionTaller));
       renderizarListaProduccionTaller();
       mostrarToast('🗑️ Orden retirada del taller.');
     }
@@ -1104,7 +1105,7 @@
       if (span) span.textContent = cantidadesInsumosMuebleTemp[idStock];
     }
 
-    /* OPTIMIZADOR HI-RES LIMPIO (Sin textos internos en los cortes, alta definición) */
+    /* OPTIMIZADOR ESTILO PANELCRAFT LIMPIO */
     function simularCortePlaca() {
       const canvas = document.getElementById('cutCanvas');
       if (!canvas) return;
@@ -1113,13 +1114,13 @@
       const placaId = document.getElementById('selectPlacaActiva').value;
       const placaObj = listaPlacasBase.find(p => String(p.id) === String(placaId)) || listaPlacasBase[0];
 
-      const largo = parseInt(document.getElementById('cutLargo').value) || 400;
-      const ancho = parseInt(document.getElementById('cutAncho').value) || 335;
+      const largo = parseInt(document.getElementById('cutLargo').value) || 550;
+      const ancho = parseInt(document.getElementById('cutAncho').value) || 350;
       const cant = parseInt(document.getElementById('cutCant').value) || 4;
       const etiqueta = document.getElementById('cutEtiqueta').value;
 
       const PLACA_W = 2750; const PLACA_H = 1830;
-      const ESC = 0.12; // Tamaño limpio y proporcionado
+      const ESC = 0.11;
 
       const dpr = window.devicePixelRatio || 1;
       const cssW = PLACA_W * ESC;
@@ -1134,32 +1135,33 @@
 
       const renderCanvasContent = (pattern = null) => {
         ctx.clearRect(0, 0, cssW, cssH);
-        ctx.fillStyle = pattern || '#b45309';
+        ctx.fillStyle = pattern || '#1e293b';
         ctx.fillRect(0, 0, cssW, cssH);
 
-        ctx.strokeStyle = '#000'; ctx.lineWidth = 2.5; ctx.strokeRect(0, 0, cssW, cssH);
+        ctx.strokeStyle = '#f97316'; ctx.lineWidth = 2; ctx.strokeRect(0, 0, cssW, cssH);
 
         let x = 0, y = 0, maxH = 0, ubicadas = 0;
         let htmlCortes = '';
         for (let i = 0; i < cant; i++) {
-          if (x + (largo * ESC) > cssW) { x = 0; y += maxH + 3; maxH = 0; }
+          if (x + (largo * ESC) > cssW) { x = 0; y += maxH + 4; maxH = 0; }
           if (y + (ancho * ESC) > cssH) break;
 
-          ctx.fillStyle = pattern ? pattern : '#92400e';
+          ctx.fillStyle = pattern ? pattern : '#334155';
           ctx.fillRect(x, y, largo * ESC, ancho * ESC);
-          ctx.strokeStyle = '#000'; ctx.lineWidth = 1.5; ctx.strokeRect(x, y, largo * ESC, ancho * ESC);
+          ctx.strokeStyle = '#f97316'; ctx.lineWidth = 1; ctx.strokeRect(x, y, largo * ESC, ancho * ESC);
 
-          x += (largo * ESC) + 3; if ((ancho * ESC) > maxH) maxH = (ancho * ESC); ubicadas++;
+          x += (largo * ESC) + 4; if ((ancho * ESC) > maxH) maxH = (ancho * ESC); ubicadas++;
           htmlCortes += `<div>• ${etiqueta}: <b>${largo} x ${ancho} mm</b> (Unid. #${ubicadas})</div>`;
         }
 
         const areaTotal = PLACA_W * PLACA_H;
         const areaUsada = ubicadas * largo * ancho;
         const apro = ((areaUsada / areaTotal) * 100).toFixed(1);
-        const filoM = ((ubicadas * (largo * 2 + ancho * 2)) / 1000).toFixed(1);
 
         document.getElementById('cutAprovechamiento').textContent = `${apro}% (${ubicadas} pzs)`;
-        document.getElementById('cutMetrosFilo').textContent = `${filoM} m`;
+        document.getElementById('panelYieldText').textContent = `${apro}%`;
+        document.getElementById('panelUsedText').textContent = `Used: ${areaUsada.toLocaleString()} mm²`;
+        document.getElementById('panelWasteText').textContent = `Waste: ${(areaTotal - areaUsada).toLocaleString()} mm²`;
 
         document.getElementById('listaCortesDetalle').innerHTML = htmlCortes || 'Sin cortes trazados.';
         const areaSobranteMm2 = areaTotal - areaUsada;
@@ -1187,10 +1189,10 @@
       const l = document.getElementById('cutLargo');
       const a = document.getElementById('cutAncho');
       if (!l || !a) return;
-      if (etiqueta.includes('Techo')) { l.value = 400; a.value = 335; }
-      else if (etiqueta.includes('Laterales')) { l.value = 335; a.value = 320; }
-      else if (etiqueta.includes('Tapa con Secador')) { l.value = 600; a.value = 335; }
-      else { l.value = 400; a.value = 150; }
+      if (etiqueta.includes('Side')) { l.value = 550; a.value = 1830; }
+      else if (etiqueta.includes('Shelf')) { l.value = 800; a.value = 350; }
+      else if (etiqueta.includes('Drawer')) { l.value = 800; a.value = 550; }
+      else { l.value = 800; a.value = 550; }
       simularCortePlaca();
     }
 
@@ -1224,7 +1226,7 @@
       if (p) {
         p.precioViejo = p.precioNuevo;
         p.precioNuevo = parseFloat(val) || p.precioNuevo;
-        localStorage.setItem('jl_v14_placas', JSON.stringify(listaPlacasBase));
+        localStorage.setItem('jl_v15_placas', JSON.stringify(listaPlacasBase));
         mostrarToast('✅ Precio guardado.');
         renderizarPlacasYPrecios();
       }
@@ -1266,7 +1268,7 @@
       if (!nombre) return mostrarToast('⚠️ Escribí el nombre.');
 
       listaStock.push({ id: Date.now(), nombre, categoria, cantidad, minimo });
-      localStorage.setItem('jl_v14_stock', JSON.stringify(listaStock));
+      localStorage.setItem('jl_v15_stock', JSON.stringify(listaStock));
       document.getElementById('stockNombre').value = '';
       renderizarStockABM();
       renderizarSelectorStockParaMueble();
@@ -1275,7 +1277,7 @@
 
     function eliminarItemStock(id) {
       listaStock = listaStock.filter(i => i.id !== id);
-      localStorage.setItem('jl_v14_stock', JSON.stringify(listaStock));
+      localStorage.setItem('jl_v15_stock', JSON.stringify(listaStock));
       renderizarStockABM();
       renderizarSelectorStockParaMueble();
       mostrarToast('🗑️ Ítem eliminado.');
@@ -1334,7 +1336,7 @@
       if (!cliente) return mostrarToast('⚠️ Escribí el cliente.');
 
       listaPedidosClientes.unshift({ id: Date.now(), cliente, mueble, fechaRec, fechaEnt, estado: 'En proceso', precio });
-      localStorage.setItem('jl_v14_pedidos', JSON.stringify(listaPedidosClientes));
+      localStorage.setItem('jl_v15_pedidos', JSON.stringify(listaPedidosClientes));
       document.getElementById('pedCliente').value = '';
       renderizarPedidosClientes();
       mostrarToast('📋 Pedido guardado.');
@@ -1344,7 +1346,7 @@
       const p = listaPedidosClientes.find(x => x.id === id);
       if (p) {
         p.estado = nuevoEstado;
-        localStorage.setItem('jl_v14_pedidos', JSON.stringify(listaPedidosClientes));
+        localStorage.setItem('jl_v15_pedidos', JSON.stringify(listaPedidosClientes));
         renderizarPedidosClientes();
         mostrarToast(`✅ Estado: ${nuevoEstado}`);
       }
@@ -1352,7 +1354,7 @@
 
     function eliminarPedidoCliente(id) {
       listaPedidosClientes = listaPedidosClientes.filter(x => x.id !== id);
-      localStorage.setItem('jl_v14_pedidos', JSON.stringify(listaPedidosClientes));
+      localStorage.setItem('jl_v15_pedidos', JSON.stringify(listaPedidosClientes));
       renderizarPedidosClientes();
       mostrarToast('🗑️ Pedido eliminado.');
     }
@@ -1446,7 +1448,7 @@
       const componentes = compsArr.join(', ') || 'Piezas estándar';
 
       listaCatalogoMueblesABM.push({ id: Date.now(), nombre, medidas, componentes, precio, glb: 'assets/models/Mesita_blanca.glb' });
-      localStorage.setItem('jl_v14_catalogo_muebles', JSON.stringify(listaCatalogoMueblesABM));
+      localStorage.setItem('jl_v15_catalogo_muebles', JSON.stringify(listaCatalogoMueblesABM));
       
       document.getElementById('catMuebleNombre').value = '';
       cantidadesInsumosMuebleTemp = {};
@@ -1457,13 +1459,16 @@
 
     function eliminarModeloCatalogoABM(id) {
       listaCatalogoMueblesABM = listaCatalogoMueblesABM.filter(m => m.id !== id);
-      localStorage.setItem('jl_v14_catalogo_muebles', JSON.stringify(listaCatalogoMueblesABM));
+      localStorage.setItem('jl_v15_catalogo_muebles', JSON.stringify(listaCatalogoMueblesABM));
       renderizarCatalogoMueblesABM();
       renderizarSelectProduccionYTaller();
       mostrarToast('🗑️ Mueble eliminado.');
     }
 
+    /* VISOR 3D CORREGIDO: MESA BLANCA/NEGRA BASE Y FRENTE INTERCAMBIABLE */
     let threeScene, threeCamera, threeRenderer, threeControls, currentLoadedMesh = null;
+    let baseMeshMaterialWhite = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
+    let baseMeshMaterialBlack = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.3 });
 
     function cambiarModeloGlbActivo(rutaGlb, nombreGlb) {
       modeloGlbActualActivo = rutaGlb;
@@ -1472,11 +1477,11 @@
       mostrarToast(`📂 ${nombreGlb} cargado.`);
     }
 
-    function aplicarTexturaPngOficial(nombrePng) {
+    function aplicarTexturaFrenteOficial(nombrePng) {
       texturaPngActualActiva = nombrePng;
       document.getElementById('visorPngNombreActivo').textContent = nombrePng;
       iniciarVisorThreeJS(modeloGlbActualActivo, nombrePng);
-      mostrarToast(`🎨 ${nombrePng} aplicado.`);
+      mostrarToast(`🎨 Frente actualizado con ${nombrePng}.`);
     }
 
     function iniciarVisorThreeJS(glbPath, pngTextureName) {
@@ -1512,14 +1517,25 @@
         mostrarToast(`⚠️ Textura no hallada en assets/Textures/${pngTextureName}`);
       });
 
+      const isBlackModel = glbPath.includes('negra') || glbPath.includes('negro');
+      const baseMat = isBlackModel ? baseMeshMaterialBlack : baseMeshMaterialWhite;
+      const frontMat = new THREE.MeshStandardMaterial({ map: loadedTexture, roughness: 0.4 });
+
       const gltfLoader = new THREE.GLTFLoader();
       gltfLoader.load(glbPath, (gltf) => {
         if (currentLoadedMesh) threeScene.remove(currentLoadedMesh);
         currentLoadedMesh = gltf.scene;
 
+        let meshCount = 0;
         currentLoadedMesh.traverse((child) => {
           if (child.isMesh) {
-            child.material.map = loadedTexture;
+            meshCount++;
+            // El frente o cajón suele ser el último mesh o el de mayor relieve frontal
+            if (meshCount === 2 || child.name.toLowerCase().includes('front') || child.name.toLowerCase().includes('cajon')) {
+              child.material = frontMat;
+            } else {
+              child.material = baseMat;
+            }
             child.material.needsUpdate = true;
           }
         });
@@ -1547,7 +1563,7 @@
       if (!concepto || isNaN(monto) || monto <= 0) return mostrarToast('⚠️ Completá concepto y monto.');
 
       listaOperacionesVC.unshift({ id: Date.now(), tipo, fecha: new Date().toLocaleDateString('es-AR'), concepto, persona, metodo, monto });
-      localStorage.setItem('jl_v14_operaciones', JSON.stringify(listaOperacionesVC));
+      localStorage.setItem('jl_v15_operaciones', JSON.stringify(listaOperacionesVC));
       document.getElementById('vcConcepto').value = ''; document.getElementById('vcPersona').value = ''; document.getElementById('vcMonto').value = '';
       renderizarFinanzas();
       mostrarToast('✅ Movimiento registrado.');
@@ -1578,7 +1594,7 @@
       gpsMarkerTaller.on('dragend', function() {
         const c = gpsMarkerTaller.getLatLng();
         tallerCoords = [c.lat, c.lng];
-        localStorage.setItem('jl_v14_taller_coords', JSON.stringify(tallerCoords));
+        localStorage.setItem('jl_v15_taller_coords', JSON.stringify(tallerCoords));
       });
       const txt = document.getElementById('txtTallerAnclado');
       if (txt) txt.textContent = tallerDireccionTexto;
@@ -1594,8 +1610,8 @@
           if (data && data.length > 0) {
             tallerCoords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
             tallerDireccionTexto = nuevaDir;
-            localStorage.setItem('jl_v14_taller_coords', JSON.stringify(tallerCoords));
-            localStorage.setItem('jl_v14_taller_dir', tallerDireccionTexto);
+            localStorage.setItem('jl_v15_taller_coords', JSON.stringify(tallerCoords));
+            localStorage.setItem('jl_v15_taller_dir', tallerDireccionTexto);
             if (gpsMarkerTaller) gpsMarkerTaller.setLatLng(tallerCoords);
             if (gpsMap) gpsMap.setView(tallerCoords, 14);
             const txt = document.getElementById('txtTallerAnclado');
