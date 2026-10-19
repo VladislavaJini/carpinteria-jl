@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Carpintería J&L Mobile — Enterprise Taller OS v8.0 GLB</title>
+  <title>Carpintería J&L Mobile — Enterprise Taller OS v9.0 Maps Style</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#090a0d">
   <link rel="apple-touch-icon" href="icon-192.png">
 
-  <!-- Tipografía Híbrida: Plus Jakarta Sans, Inter, JetBrains Mono -->
+  <!-- Tipografía Híbrida -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
 
-  <!-- Leaflet CSS para Mapa GPS -->
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <style>
@@ -38,7 +38,6 @@
       --danger-bg: rgba(239, 68, 68, 0.14);
       --warning: #f59e0b;
       --info: #3b82f6;
-      --info-bg: rgba(59, 130, 246, 0.14);
       --font-title: 'Plus Jakarta Sans', sans-serif;
       --font-body: 'Inter', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
@@ -250,7 +249,6 @@
       border-radius: var(--radius-sm); margin-bottom: 12px; display: flex; align-items: center; justify-content: center;
     }
 
-    /* Contenedor del Visor 3D Real (Three.js) */
     #canvas-container-3d {
       width: 100%; height: 380px; border-radius: var(--radius-lg); background: #0b0d11;
       border: 1px solid var(--border); overflow: hidden; position: relative;
@@ -266,15 +264,17 @@
     .search-wrap { position: relative; }
     .autocomplete-dropdown {
       position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-surface);
-      border: 1px solid var(--accent); border-radius: var(--radius-md); margin-top: 4px; max-height: 210px; overflow-y: auto; z-index: 1200; display: none;
+      border: 1px solid var(--accent); border-radius: var(--radius-md); margin-top: 4px; max-height: 240px; overflow-y: auto; z-index: 1200; display: none;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.8);
     }
     .autocomplete-option {
-      padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 14px; border-bottom: 1px solid var(--border); font-size: 13.5px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 8px;
     }
-    .locality-badge { background: var(--accent-glow); color: var(--accent); font-family: var(--font-mono); font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; }
+    .autocomplete-option:hover { background: var(--bg-elevated); }
+    .locality-badge { background: var(--accent-glow); color: var(--accent); font-family: var(--font-mono); font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; white-space: nowrap; }
 
     #map-container {
-      width: 100%; height: 320px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); margin-top: 14px; transition: transform 0.45s ease;
+      width: 100%; height: 340px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); margin-top: 14px; transition: transform 0.45s ease;
     }
     #map-container.isometric-3d {
       transform: perspective(750px) rotateX(40deg) scale(0.95);
@@ -546,7 +546,7 @@
       </div>
     </section>
 
-    <!-- 3. VISTA: OPTIMIZADOR CON MEDIDAS EXTERIORES DE PLACA Y ETIQUETAS -->
+    <!-- 3. VISTA: OPTIMIZADOR -->
     <section id="view-optimizador" class="view-section">
       <div class="card">
         <div class="card-title">
@@ -703,13 +703,13 @@
       </div>
     </section>
 
-    <!-- 8. VISTA: GPS CON ANCLAJE DE TALLER Y AUTOCOMPLETADO DE ENTREGA -->
+    <!-- 8. VISTA: GPS CON ANCLAJE DE TALLER EDITABLE Y BÚSQUEDA GLOBAL BUENOS AIRES -->
     <section id="view-fletes" class="view-section">
       <div class="card">
         <div class="card-title">
-          <span>🚚 Ruteador GPS y Fletes — Zona Oeste (Taller Anclable)</span>
+          <span>🚚 Ruteador GPS y Fletes — Provincia de Buenos Aires</span>
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button class="btn-secondary" onclick="anclarTallerEnMiUbicacionCurrent()">📍 Anclar Taller Aquí</button>
+            <button class="btn-secondary" onclick="anclarTallerPersonalizadoPrompt()">📍 Configurar Taller (Dirección)</button>
             <button class="btn-secondary" onclick="toggleVistaIsometricaMapa()">🧊 Vista 3D</button>
           </div>
         </div>
@@ -720,8 +720,8 @@
 
         <div class="grid-2">
           <div class="search-wrap">
-            <label>Dirección de Entrega (Autocompletado Oeste)</label>
-            <input type="text" id="gpsInputDir" placeholder="Ej: Rivadavia 14000, Ariadna, Morón..." oninput="autocompletarDireccionOeste(this.value)">
+            <label>Dirección de Entrega (Autocompletado Provincia BS.AS.)</label>
+            <input type="text" id="gpsInputDir" placeholder="Ej: Mitre 500, Quilmes / Rivadavia 14000..." oninput="autocompletarDireccionBuenosAires(this.value)">
             <div class="autocomplete-dropdown" id="gpsDropdown"></div>
           </div>
           <div>
@@ -734,8 +734,8 @@
 
         <div class="kpi-row" style="margin-top:14px;">
           <div class="kpi-box">
-            <div class="kpi-label">Localidad</div>
-            <div class="kpi-value" style="font-size:15px;" id="gpsLocalidadDetectada">Villa Luzuriaga</div>
+            <div class="kpi-label">Destino Detectado</div>
+            <div class="kpi-value" style="font-size:15px;" id="gpsLocalidadDetectada">Esperando destino...</div>
           </div>
           <div class="kpi-box">
             <div class="kpi-label">Distancia</div>
@@ -773,7 +773,7 @@
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- Three.js y GLTFLoader para renderizar tus archivos .glb y texturas .png reales -->
+  <!-- Three.js y GLTFLoader -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -782,8 +782,8 @@
     const META_POR_CICLO = 300000;
     const APERTURA_CAJA_BASE = 125000;
 
-    let tallerCoords = JSON.parse(localStorage.getItem('jl_v8_taller_coords')) || [-34.6685, -58.5914];
-    let tallerNombreDir = localStorage.getItem('jl_v8_taller_nombre') || 'Villa Luzuriaga';
+    let tallerCoords = JSON.parse(localStorage.getItem('jl_v9_taller_coords')) || [-34.6685, -58.5914];
+    let tallerNombreDir = localStorage.getItem('jl_v9_taller_nombre') || 'Villa Luzuriaga (Base)';
 
     const CICLOS_COLORES = [
       { nivel: 1, nombre: 'Nogal Cálido', hex: '#c89d66' },
@@ -793,59 +793,22 @@
       { nivel: 5, nombre: 'Púrpura Imperial', hex: '#8b5cf6' }
     ];
 
-    /* Tus 4 modelos reales en assets/models/ y texturas en assets/textures/ */
     const catalogoModelosGLB = [
-      {
-        id: 'mesita-400',
-        nombre: 'Mesita Estándar 400x335x32',
-        archivoGlb: 'assets/models/mesita_400.glb',
-        medidas: '400 x 335 x 320 mm',
-        precio: '$48.000',
-        desc: 'Modelo base modelado en Blender.'
-      },
-      {
-        id: 'mesita-600-secador',
-        nombre: 'Mesita 600x335 con Agujero Secador',
-        archivoGlb: 'assets/models/mesita_600_secador.glb',
-        medidas: '600 x 335 x 320 mm (C/ Secador)',
-        precio: '$64.500',
-        desc: 'Modelo Blender con perforación superior.'
-      },
-      {
-        id: 'mueble-habitacion',
-        nombre: 'Mueble Modular Habitación',
-        archivoGlb: 'assets/models/mueble_habitacion.glb',
-        medidas: '1600 x 350 x 500 mm',
-        precio: '$128.000',
-        desc: 'Organizador adaptable a dormitorio.'
-      },
-      {
-        id: 'escritorio-jl',
-        nombre: 'Escritorio de Estudio / Taller',
-        archivoGlb: 'assets/models/escritorio_jl.glb',
-        medidas: '1200 x 600 x 750 mm',
-        precio: '$115.000',
-        desc: 'Escritorio robusto con melamina 15mm.'
-      }
+      { id: 'mesita-400', nombre: 'Mesita Estándar 400x335x32', archivoGlb: 'assets/models/mesita_400.glb', medidas: '400 x 335 x 320 mm', precio: '$48.000', desc: 'Modelo Blender 400x335.' },
+      { id: 'mesita-600-secador', nombre: 'Mesita 600x335 con Agujero Secador', archivoGlb: 'assets/models/mesita_600_secador.glb', medidas: '600 x 335 x 320 mm (C/ Secador)', precio: '$64.500', desc: 'Modelo Blender 600x335.' },
+      { id: 'mueble-habitacion', nombre: 'Mueble Modular Habitación', archivoGlb: 'assets/models/mueble_habitacion.glb', medidas: '1600 x 350 x 500 mm', precio: '$128.000', desc: 'Organizador adaptable.' },
+      { id: 'escritorio-jl', nombre: 'Escritorio de Estudio / Taller', archivoGlb: 'assets/models/escritorio_jl.glb', medidas: '1200 x 600 x 750 mm', precio: '$115.000', desc: 'Escritorio robusto.' }
     ];
 
-    let listaPlacas = JSON.parse(localStorage.getItem('jl_v8_placas')) || [
+    let listaPlacas = JSON.parse(localStorage.getItem('jl_v9_placas')) || [
       { id: 1, nombre: 'Blanco Nature 15mm', texturaPng: 'blanco-nature.png', dimensiones: '2750x1830', stock: 5 },
       { id: 2, nombre: 'Roble Dakar 15mm', texturaPng: 'roble-dakar.png', dimensiones: '2750x1830', stock: 3 },
       { id: 3, nombre: 'Grafito Mate 15mm', texturaPng: 'grafito-mate.png', dimensiones: '2750x1830', stock: 2 }
     ];
 
-    let listaPedidos = JSON.parse(localStorage.getItem('jl_v8_pedidos')) || [
-      { id: 1001, cliente: 'Laura — Ramos Mejía', mueble: 'Mesita con Agujero Secador J&L', medidas: '600 x 335 x 320 mm', estado: 'Filo 0.15m y Lijado', precio: 64500 }
-    ];
-
-    let listaOperacionesVC = JSON.parse(localStorage.getItem('jl_v8_operaciones')) || [
-      { id: 201, tipo: 'VENTA', fecha: '18/10/2026', concepto: 'Mesita 600x335 c/ Agujero Secador', persona: 'Cliente Ramos', metodo: 'Transferencia', monto: 64500 }
-    ];
-
-    let listaStock = JSON.parse(localStorage.getItem('jl_v8_stock')) || [
-      { id: 301, nombre: 'Laterales Cortados 335x320mm', categoria: 'Piezas Cortadas', cantidad: 14, minimo: 6 }
-    ];
+    let listaPedidos = JSON.parse(localStorage.getItem('jl_v9_pedidos')) || [];
+    let listaOperacionesVC = JSON.parse(localStorage.getItem('jl_v9_operaciones')) || [];
+    let listaStock = JSON.parse(localStorage.getItem('jl_v9_stock')) || [];
 
     function mostrarToast(msg) {
       const box = document.getElementById('toastBox');
@@ -952,7 +915,7 @@
         listaPedidos.unshift({ id: Date.now(), cliente, mueble, medidas, estado, precio });
         mostrarToast('🛠️ Pedido cargado.');
       }
-      localStorage.setItem('jl_v8_pedidos', JSON.stringify(listaPedidos));
+      localStorage.setItem('jl_v9_pedidos', JSON.stringify(listaPedidos));
       document.getElementById('pedCliente').value = '';
       renderizarPedidos();
     }
@@ -978,23 +941,20 @@
 
     function eliminarPedido(id) {
       listaPedidos = listaPedidos.filter(x => x.id !== id);
-      localStorage.setItem('jl_v8_pedidos', JSON.stringify(listaPedidos));
+      localStorage.setItem('jl_v9_pedidos', JSON.stringify(listaPedidos));
       renderizarPedidos();
       mostrarToast('🗑️ Pedido eliminado.');
     }
 
-    /* Gestión de Placas y Optimizador */
     function renderizarPlacasColores() {
       const cont = document.getElementById('listaPlacasColores');
       const select = document.getElementById('selectPlacaActiva');
 
       cont.innerHTML = listaPlacas.map(pl => `
         <div class="history-list-card">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <div>
-              <div style="font-weight:800;">${pl.nombre}</div>
-              <div class="mono" style="font-size:11px; color:var(--text-muted);">Textura: ${pl.texturaPng} • Stock: ${pl.stock}</div>
-            </div>
+          <div>
+            <div style="font-weight:800;">${pl.nombre}</div>
+            <div class="mono" style="font-size:11px; color:var(--text-muted);">Textura: ${pl.texturaPng} • Stock: ${pl.stock}</div>
           </div>
           <button class="btn-danger" onclick="eliminarPlacaColor(${pl.id})">🗑️</button>
         </div>
@@ -1012,7 +972,7 @@
       if (!nombre) return mostrarToast('⚠️ Escribí el nombre de la placa.');
 
       listaPlacas.push({ id: Date.now(), nombre, texturaPng, dimensiones, stock });
-      localStorage.setItem('jl_v8_placas', JSON.stringify(listaPlacas));
+      localStorage.setItem('jl_v9_placas', JSON.stringify(listaPlacas));
       document.getElementById('placaNombre').value = '';
       renderizarPlacasColores();
       simularCortePlaca();
@@ -1022,7 +982,7 @@
     function eliminarPlacaColor(id) {
       if (listaPlacas.length <= 1) return mostrarToast('⚠️ Debe quedar al menos una placa.');
       listaPlacas = listaPlacas.filter(p => p.id !== id);
-      localStorage.setItem('jl_v8_placas', JSON.stringify(listaPlacas));
+      localStorage.setItem('jl_v9_placas', JSON.stringify(listaPlacas));
       renderizarPlacasColores();
       simularCortePlaca();
       mostrarToast('🗑️ Placa eliminada.');
@@ -1085,7 +1045,6 @@
       document.getElementById('cutMetrosFilo').textContent = `${filoM} m`;
     }
 
-    /* Finanzas y Ventanas Ocultas */
     function renderizarFinanzasYVentanasOcultas() {
       const ventas = listaOperacionesVC.filter(o => o.tipo === 'VENTA');
       const compras = listaOperacionesVC.filter(o => o.tipo === 'COMPRA');
@@ -1128,7 +1087,7 @@
       if (!concepto || isNaN(monto) || monto <= 0) return mostrarToast('⚠️ Completá concepto y monto.');
 
       listaOperacionesVC.unshift({ id: Date.now(), tipo, fecha: new Date().toLocaleDateString('es-AR'), concepto, persona, metodo, monto });
-      localStorage.setItem('jl_v8_operaciones', JSON.stringify(listaOperacionesVC));
+      localStorage.setItem('jl_v9_operaciones', JSON.stringify(listaOperacionesVC));
       document.getElementById('vcConcepto').value = ''; document.getElementById('vcPersona').value = ''; document.getElementById('vcMonto').value = '';
       renderizarFinanzasYVentanasOcultas();
       mostrarToast('✅ Movimiento registrado.');
@@ -1151,13 +1110,6 @@
       document.getElementById('gradStop2').setAttribute('offset', `${pct}%`);
       document.getElementById('gradStop3').setAttribute('offset', `${pct}%`);
     }
-
-    /* ==========================================================================
-       CARGADOR 3D REAL (THREE.JS CARGANDO GLB DE GITHUB + TEXTURAS PNG)
-       ========================================================================== */
-    let modeloActualGlbActivo = 'assets/models/mesita_400.glb';
-    let texturaActualPngActiva = 'roble-dakar.png';
-    let threeScene, threeCamera, threeRenderer, threeControls, currentLoadedMesh = null;
 
     function renderizarCatalogoBlenderGLB() {
       document.getElementById('gridCatalogoBlenderGLB').innerHTML = catalogoModelosGLB.map((m, idx) => `
@@ -1189,7 +1141,7 @@
     function iniciarVisorThreeJS(glbPath, pngTextureName) {
       const container = document.getElementById('canvas-container-3d');
       if (!container) return;
-      container.innerHTML = ''; // Limpiar canvas previo
+      container.innerHTML = '';
 
       threeScene = new THREE.Scene();
       threeScene.background = new THREE.Color(0x0b0d11);
@@ -1211,20 +1163,17 @@
       dirLight.position.set(5, 10, 7);
       threeScene.add(dirLight);
 
-      // Cargar Textura PNG desde assets/textures/
       const textureLoader = new THREE.TextureLoader();
       const texturePath = `assets/textures/${pngTextureName}`;
       const loadedTexture = textureLoader.load(texturePath, (tex) => {
         tex.encoding = THREE.sRGBEncoding;
       });
 
-      // Cargar Archivo .GLB desde assets/models/
       const gltfLoader = new THREE.GLTFLoader();
       gltfLoader.load(glbPath, (gltf) => {
         if (currentLoadedMesh) threeScene.remove(currentLoadedMesh);
         currentLoadedMesh = gltf.scene;
 
-        // Aplicar la textura PNG a todos los materiales del modelo GLB
         currentLoadedMesh.traverse((child) => {
           if (child.isMesh) {
             child.material.map = loadedTexture;
@@ -1261,76 +1210,109 @@
       const f = listaStock.filter(i => cat === 'Todos' ? true : cat === 'Critico' ? i.cantidad <= i.minimo : i.categoria === cat);
       document.getElementById('contenedorStockItems').innerHTML = f.map(i => `
         <div class="history-list-card">
-          <div>
-            <div style="font-weight:700;">${i.nombre}</div>
-            <div style="font-size:12px; color:var(--text-muted);">${i.categoria} • Mín: ${i.minimo}</div>
-          </div>
+          <div><div style="font-weight:700;">${i.nombre}</div><div style="font-size:12px; color:var(--text-muted);">${i.categoria}</div></div>
           <span class="mono" style="font-weight:800; font-size:16px;">${i.cantidad} u.</span>
         </div>
       `).join('');
     }
 
-    /* GPS con anclaje de Taller y Autocompletado de Entrega Operativo */
-    let gpsMap, gpsMarkerTaller, gpsMarkerDestino, gpsLine, destinoActualCoords = [-34.6405, -58.5648], kmActuales = 0;
-    const dirOeste = [
-      { calle: 'Av. Rivadavia 14000', loc: 'Ramos Mejía', coords: [-34.6405, -58.5648] },
-      { calle: 'Ariadna 2400', loc: 'Villa Luzuriaga', coords: [-34.6745, -58.5965] },
-      { calle: 'Dr. Ignacio Arieta 3200', loc: 'San Justo', coords: [-34.6812, -58.5612] },
-      { calle: 'Av. Pte. Perón 2100', loc: 'Haedo', coords: [-34.6410, -58.5988] },
-      { calle: 'Av. Rivadavia 18100', loc: 'Morón', coords: [-34.6492, -58.6205] }
-    ];
+    /* GPS Corregido con Autocompletado Real de Provincia de Buenos Aires (Nominatim API) y Taller Editable */
+    let gpsMap, gpsMarkerTaller, gpsMarkerDestino, gpsLine, kmActuales = 0;
+    let tallerCoords = JSON.parse(localStorage.getItem('jl_v9_taller_coords')) || [-34.6685, -58.5914];
+    let tallerDireccionTexto = localStorage.getItem('jl_v9_taller_dir') || 'Ariadna 2400, Villa Luzuriaga';
 
-    function initGPSConAnclaje() {
+    function initGPSProvincial() {
       gpsMap = L.map('map-container').setView(tallerCoords, 13);
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(gpsMap);
 
-      gpsMarkerTaller = L.marker(tallerCoords, { draggable: true }).addTo(gpsMap).bindPopup(`<b>🏠 Taller J&L (Anclado)</b><br>${tallerNombreDir}`).openPopup();
+      gpsMarkerTaller = L.marker(tallerCoords, { draggable: true }).addTo(gpsMap).bindPopup(`<b>🏠 Taller J&L</b><br>${tallerDireccionTexto}`).openPopup();
 
-      gpsMarkerTaller.on('dragend', function(e) {
+      gpsMarkerTaller.on('dragend', function() {
         const c = gpsMarkerTaller.getLatLng();
         tallerCoords = [c.lat, c.lng];
-        localStorage.setItem('jl_v8_taller_coords', JSON.stringify(tallerCoords));
-        document.getElementById('txtTallerAnclado').textContent = `Personalizado (${c.lat.toFixed(4)}, ${c.lng.toFixed(4)})`;
-        mostrarToast('📍 Taller reubicado y anclado.');
+        localStorage.setItem('jl_v9_taller_coords', JSON.stringify(tallerCoords));
+        document.getElementById('txtTallerAnclado').textContent = `${tallerDireccionTexto} (${c.lat.toFixed(4)}, ${c.lng.toFixed(4)})`;
+        mostrarToast('📍 Taller reubicado.');
       });
 
-      document.getElementById('txtTallerAnclado').textContent = `${tallerNombreDir} (${tallerCoords[0]}, ${tallerCoords[1]})`;
+      document.getElementById('txtTallerAnclado').textContent = `${tallerDireccionTexto}`;
     }
 
-    function anclarTallerEnMiUbicacionCurrent() {
-      tallerCoords = [-34.6685, -58.5914];
-      localStorage.setItem('jl_v8_taller_coords', JSON.stringify(tallerCoords));
-      gpsMarkerTaller.setLatLng(tallerCoords);
-      gpsMap.setView(tallerCoords, 14);
-      mostrarToast('📍 Taller restablecido a Villa Luzuriaga.');
+    function anclarTallerPersonalizadoPrompt() {
+      const nuevaDir = prompt('Escribí la dirección exacta de tu taller (ej: Ariadna 2400, Villa Luzuriaga):', tallerDireccionTexto);
+      if (!nuevaDir) return;
+
+      // Geocodificación automática de la dirección del taller ingresada por texto
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(nuevaDir + ', Buenos Aires, Argentina')}&limit=1`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.length > 0) {
+            tallerCoords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+            tallerDireccionTexto = nuevaDir;
+            localStorage.setItem('jl_v9_taller_coords', JSON.stringify(tallerCoords));
+            localStorage.setItem('jl_v9_taller_dir', tallerDireccionTexto);
+            gpsMarkerTaller.setLatLng(tallerCoords);
+            gpsMap.setView(tallerCoords, 14);
+            gpsMarkerTaller.bindPopup(`<b>🏠 Taller J&L</b><br>${tallerDireccionTexto}`).openPopup();
+            document.getElementById('txtTallerAnclado').textContent = tallerDireccionTexto;
+            mostrarToast('✅ Taller actualizado por dirección.');
+          } else {
+            mostrarToast('⚠️ No se encontró la dirección en el mapa. Probá con otra más detallada.');
+          }
+        })
+        .catch(() => mostrarToast('⚠️ Error de conexión al buscar dirección del taller.'));
     }
 
-    function autocompletarDireccionOeste(val) {
+    let _searchTimeout = null;
+    function autocompletarDireccionBuenosAires(val) {
       const drop = document.getElementById('gpsDropdown');
-      if (!val || val.length < 2) { drop.style.display = 'none'; return; }
-      const m = dirOeste.filter(d => d.calle.toLowerCase().includes(val.toLowerCase()) || d.loc.toLowerCase().includes(val.toLowerCase()));
-      drop.innerHTML = m.map(d => `
-        <div class="autocomplete-option" onclick="seleccionarRutaEntrega(${d.coords[0]}, ${d.coords[1]}, '${d.calle}', '${d.loc}')">
-          <span>📍 ${d.calle}</span><span class="locality-badge">${d.loc}</span>
-        </div>
-      `).join('');
-      drop.style.display = 'block';
+      clearTimeout(_searchTimeout);
+
+      if (!val || val.length < 3) { drop.style.display = 'none'; return; }
+
+      _searchTimeout = setTimeout(() => {
+        // Consulta en vivo a OpenStreetMap para toda la Provincia de Buenos Aires
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val + ', Buenos Aires, Argentina')}&limit=6&addressdetails=1`;
+        fetch(url)
+          .then(res => res.json())
+          .then(data => {
+            if (!data || data.length === 0) {
+              drop.innerHTML = `<div class="autocomplete-option"><span>Sin resultados en Buenos Aires</span></div>`;
+              drop.style.display = 'block';
+              return;
+            }
+
+            drop.innerHTML = data.map(item => {
+              const nombreLimpio = item.display_name.split(',')[0] || val;
+              const ciudad = item.address.city || item.address.town || item.address.suburb || item.address.county || 'Buenos Aires';
+              return `
+                <div class="autocomplete-option" onclick="seleccionarRutaProvincial(${item.lat}, ${item.lon}, '${nombreLimpio.replace(/'/g, "")}', '${ciudad.replace(/'/g, "")}')">
+                  <span>📍 ${nombreLimpio}</span><span class="locality-badge">${ciudad}</span>
+                </div>
+              `;
+            }).join('');
+            drop.style.display = 'block';
+          })
+          .catch(() => {
+            drop.style.display = 'none';
+          });
+      }, 300); // Retardo para evitar sobrecarga de consultas
     }
 
-    function seleccionarRutaEntrega(lat, lng, c, loc) {
-      document.getElementById('gpsInputDir').value = `${c}, ${loc}`;
+    function seleccionarRutaProvincial(lat, lng, calle, ciudad) {
+      document.getElementById('gpsInputDir').value = `${calle}, ${ciudad}`;
       document.getElementById('gpsDropdown').style.display = 'none';
-      document.getElementById('gpsLocalidadDetectada').textContent = loc;
-      destinoActualCoords = [lat, lng];
+      document.getElementById('gpsLocalidadDetectada').textContent = ciudad;
+      const destinoCoords = [lat, lng];
 
       if (gpsMarkerDestino) gpsMap.removeLayer(gpsMarkerDestino);
       if (gpsLine) gpsMap.removeLayer(gpsLine);
 
-      gpsMarkerDestino = L.marker(destinoActualCoords).addTo(gpsMap).bindPopup(`Entrega: ${c} (${loc})`).openPopup();
-      gpsLine = L.polyline([tallerCoords, destinoActualCoords], { color: '#c89d66', weight: 4 }).addTo(gpsMap);
+      gpsMarkerDestino = L.marker(destinoCoords).addTo(gpsMap).bindPopup(`Entrega: ${calle} (${ciudad})`).openPopup();
+      gpsLine = L.polyline([tallerCoords, destinoCoords], { color: '#c89d66', weight: 4 }).addTo(gpsMap);
       gpsMap.fitBounds(gpsLine.getBounds(), { padding: [30, 30] });
 
-      kmActuales = Number(((gpsMap.distance(tallerCoords, destinoActualCoords) / 1000) * 1.25).toFixed(1));
+      kmActuales = Number(((gpsMap.distance(tallerCoords, destinoCoords) / 1000) * 1.25).toFixed(1));
       recalcularCostoFlete();
     }
 
@@ -1342,7 +1324,7 @@
 
     function toggleVistaIsometricaMapa() { document.getElementById('map-container').classList.toggle('isometric-3d'); }
     function centrarEnTaller() { gpsMap.setView(tallerCoords, 14); }
-    function abrirRutaEnGoogleMaps() { window.open(`https://www.google.com/maps/dir/?api=1&origin=${tallerCoords[0]},${tallerCoords[1]}&destination=${destinoActualCoords[0]},${destinoActualCoords[1]}`, '_blank'); }
+    function abrirRutaEnGoogleMaps() { window.open(`https://www.google.com/maps/dir/?api=1&origin=${tallerCoords[0]},${tallerCoords[1]}&destination=${destinoActualCoords[0] || tallerCoords[0]},${destinoActualCoords[1] || tallerCoords[1]}`, '_blank'); }
 
     function exportarCerrarMesTxt() {
       let t = `REPORTE MUEBLES J&L\n`;
