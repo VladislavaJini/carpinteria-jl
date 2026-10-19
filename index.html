@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Carpintería J&L Mobile — Enterprise Taller OS v9.3</title>
+  <title>Carpintería J&L Mobile — Enterprise Taller OS v9.4 Final</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#090a0d">
   <link rel="apple-touch-icon" href="icon-192.png">
@@ -143,8 +143,8 @@
     .drawer-badge.danger { background: var(--danger-bg); color: var(--danger); }
 
     main { padding: 16px; max-width: 1040px; margin: 0 auto; }
-    .view-section { display: none; }
-    .view-section.active { display: block; }
+    .view-section { display: none !important; }
+    .view-section.active { display: block !important; }
 
     .card {
       background: var(--bg-card); border: 1px solid var(--border);
@@ -708,7 +708,7 @@
     <section id="view-inventario" class="view-section">
       <div class="card">
         <div class="card-title">
-          <span>📦 Stock y Punto de Reposición</span>
+          <span>📦 Stock y Reposición</span>
           <span class="mono" style="font-size:12px; color:var(--danger);" id="alertaStockHeader"></span>
         </div>
         <div class="pills-bar">
@@ -802,8 +802,8 @@
     const META_POR_CICLO = 300000;
     const APERTURA_CAJA_BASE = 125000;
 
-    let tallerCoords = JSON.parse(localStorage.getItem('jl_v93_taller_coords')) || [-34.6685, -58.5914];
-    let tallerDireccionTexto = localStorage.getItem('jl_v93_taller_dir') || 'Ariadna 2400, Villa Luzuriaga';
+    let tallerCoords = JSON.parse(localStorage.getItem('jl_v94_taller_coords')) || [-34.6685, -58.5914];
+    let tallerDireccionTexto = localStorage.getItem('jl_v94_taller_dir') || 'Ariadna 2400, Villa Luzuriaga';
 
     const CICLOS_COLORES = [
       { nivel: 1, nombre: 'Nogal Cálido', hex: '#c89d66' },
@@ -818,19 +818,20 @@
       { id: 'blender-600-secador', nombre: 'Mesita con Agujero Secador J&L', medidas: '600 x 335 x 320 mm (C/ Secador)', tieneSecador: true, acabado: 'Melamina 15mm Blanca', precio: '$64.500', texturaClase: 'melamina-blanco', desc: 'Modelo con perforación para secador.' }
     ];
 
-    let listaPlacas = JSON.parse(localStorage.getItem('jl_v93_placas')) || [
+    let listaPlacas = JSON.parse(localStorage.getItem('jl_v94_placas')) || [
       { id: 1, nombre: 'Blanco Nature 15mm', texturaClase: 'melamina-blanco', dimensiones: '2750x1830', stock: 5 },
       { id: 2, nombre: 'Roble Dakar 15mm', texturaClase: 'melamina-roble', dimensiones: '2750x1830', stock: 3 }
     ];
 
-    let listaPedidos = JSON.parse(localStorage.getItem('jl_v93_pedidos')) || [];
-    let listaOperacionesVC = JSON.parse(localStorage.getItem('jl_v93_operaciones')) || [];
-    let listaStock = JSON.parse(localStorage.getItem('jl_v93_stock')) || [
+    let listaPedidos = JSON.parse(localStorage.getItem('jl_v94_pedidos')) || [];
+    let listaOperacionesVC = JSON.parse(localStorage.getItem('jl_v94_operaciones')) || [];
+    let listaStock = JSON.parse(localStorage.getItem('jl_v94_stock')) || [
       { id: 301, nombre: 'Laterales Cortados 335x320mm', categoria: 'Piezas Cortadas', cantidad: 14, minimo: 6 }
     ];
 
     function mostrarToast(msg) {
       const box = document.getElementById('toastBox');
+      if (!box) return;
       box.textContent = msg;
       box.style.display = 'block';
       clearTimeout(window._tTimer);
@@ -838,8 +839,10 @@
     }
 
     function toggleDrawer() {
-      document.getElementById('drawer').classList.toggle('open');
-      document.getElementById('drawerOverlay').classList.toggle('open');
+      const drawer = document.getElementById('drawer');
+      const overlay = document.getElementById('drawerOverlay');
+      if (drawer) drawer.classList.toggle('open');
+      if (overlay) overlay.classList.toggle('open');
     }
 
     function toggleTallerPro() {
@@ -861,8 +864,10 @@
         tab.classList.toggle('active', tab.getAttribute('data-view') === equivalenciaMenu);
       });
 
-      document.getElementById('drawer').classList.remove('open');
-      document.getElementById('drawerOverlay').classList.remove('open');
+      const drawer = document.getElementById('drawer');
+      const overlay = document.getElementById('drawerOverlay');
+      if (drawer) drawer.classList.remove('open');
+      if (overlay) overlay.classList.remove('open');
 
       if (viewId === 'view-fletes' && gpsMap) {
         setTimeout(() => gpsMap.invalidateSize(), 200);
@@ -874,19 +879,27 @@
     }
 
     function autocompletarMedidasPedido(modelo) {
+      const inputMedidas = document.getElementById('pedMedidas');
+      const inputPrecio = document.getElementById('pedPrecio');
+      if (!inputMedidas || !inputPrecio) return;
+
       if (modelo.includes('600')) {
-        document.getElementById('pedMedidas').value = '600 x 335 x 320 mm (Agujero Secador)';
-        document.getElementById('pedPrecio').value = 64500;
+        inputMedidas.value = '600 x 335 x 320 mm (Agujero Secador)';
+        inputPrecio.value = 64500;
       } else {
-        document.getElementById('pedMedidas').value = '400 x 335 x 320 mm';
-        document.getElementById('pedPrecio').value = 48000;
+        inputMedidas.value = '400 x 335 x 320 mm';
+        inputPrecio.value = 48000;
       }
     }
 
     function renderizarPedidos() {
       const cont = document.getElementById('contenedorListaPedidos');
-      document.getElementById('resumenOrdenesActivas').textContent = `${listaPedidos.length} órdenes`;
-      document.getElementById('badgePedidosDrawer').textContent = listaPedidos.length;
+      const badgeDrawer = document.getElementById('badgePedidosDrawer');
+      const resumen = document.getElementById('resumenOrdenesActivas');
+      if (!cont) return;
+
+      if (resumen) resumen.textContent = `${listaPedidos.length} órdenes`;
+      if (badgeDrawer) badgeDrawer.textContent = listaPedidos.length;
 
       if (listaPedidos.length === 0) {
         cont.innerHTML = `<div style="padding:14px; text-align:center; color:var(--text-muted);">Sin pedidos activos.</div>`;
@@ -931,7 +944,7 @@
         listaPedidos.unshift({ id: Date.now(), cliente, mueble, medidas, estado, precio });
         mostrarToast('🛠️ Pedido cargado.');
       }
-      localStorage.setItem('jl_v93_pedidos', JSON.stringify(listaPedidos));
+      localStorage.setItem('jl_v94_pedidos', JSON.stringify(listaPedidos));
       document.getElementById('pedCliente').value = '';
       renderizarPedidos();
     }
@@ -944,20 +957,24 @@
       document.getElementById('pedMedidas').value = p.medidas;
       document.getElementById('pedEstado').value = p.estado;
       document.getElementById('pedPrecio').value = p.precio;
-      document.getElementById('formPedidoTitulo').textContent = '✏️ Corrigiendo Pedido';
-      document.getElementById('btnCancelarEdicionPedido').style.display = 'inline-flex';
+      const formTitulo = document.getElementById('formPedidoTitulo');
+      const btnCancelar = document.getElementById('btnCancelarEdicionPedido');
+      if (formTitulo) formTitulo.textContent = '✏️ Corrigiendo Pedido';
+      if (btnCancelar) btnCancelar.style.display = 'inline-flex';
     }
 
     function cancelarEdicionPedido() {
       document.getElementById('pedEditId').value = '';
       document.getElementById('pedCliente').value = '';
-      document.getElementById('formPedidoTitulo').textContent = '➕ Cargar Pedido a Producción';
-      document.getElementById('btnCancelarEdicionPedido').style.display = 'none';
+      const formTitulo = document.getElementById('formPedidoTitulo');
+      const btnCancelar = document.getElementById('btnCancelarEdicionPedido');
+      if (formTitulo) formTitulo.textContent = '➕ Cargar Pedido a Producción';
+      if (btnCancelar) btnCancelar.style.display = 'none';
     }
 
     function eliminarPedido(id) {
       listaPedidos = listaPedidos.filter(x => x.id !== id);
-      localStorage.setItem('jl_v93_pedidos', JSON.stringify(listaPedidos));
+      localStorage.setItem('jl_v94_pedidos', JSON.stringify(listaPedidos));
       renderizarPedidos();
       mostrarToast('🗑️ Pedido eliminado.');
     }
@@ -965,6 +982,7 @@
     function renderizarPlacasColores() {
       const cont = document.getElementById('listaPlacasColores');
       const select = document.getElementById('selectPlacaActiva');
+      if (!cont || !select) return;
 
       cont.innerHTML = listaPlacas.map(pl => `
         <div class="history-list-card">
@@ -991,7 +1009,7 @@
       if (!nombre) return mostrarToast('⚠️ Escribí el nombre de la placa.');
 
       listaPlacas.push({ id: Date.now(), nombre, texturaClase, dimensiones, stock });
-      localStorage.setItem('jl_v93_placas', JSON.stringify(listaPlacas));
+      localStorage.setItem('jl_v94_placas', JSON.stringify(listaPlacas));
       document.getElementById('placaNombre').value = '';
       renderizarPlacasColores();
       simularCortePlaca();
@@ -1001,25 +1019,25 @@
     function eliminarPlacaColor(id) {
       if (listaPlacas.length <= 1) return mostrarToast('⚠️ Debe quedar al menos una placa.');
       listaPlacas = listaPlacas.filter(p => p.id !== id);
-      localStorage.setItem('jl_v93_placas', JSON.stringify(listaPlacas));
+      localStorage.setItem('jl_v94_placas', JSON.stringify(listaPlacas));
       renderizarPlacasColores();
       simularCortePlaca();
       mostrarToast('🗑️ Placa eliminada.');
     }
 
     function actualizarMedidasSugeridasCorte(etiqueta) {
+      const largoInput = document.getElementById('cutLargo');
+      const anchoInput = document.getElementById('cutAncho');
+      if (!largoInput || !anchoInput) return;
+
       if (etiqueta.includes('Techo')) {
-        document.getElementById('cutLargo').value = 400;
-        document.getElementById('cutAncho').value = 335;
+        largoInput.value = 400; anchoInput.value = 335;
       } else if (etiqueta.includes('Laterales')) {
-        document.getElementById('cutLargo').value = 335;
-        document.getElementById('cutAncho').value = 320;
+        largoInput.value = 335; anchoInput.value = 320;
       } else if (etiqueta.includes('Tapa c/ Secador')) {
-        document.getElementById('cutLargo').value = 600;
-        document.getElementById('cutAncho').value = 335;
+        largoInput.value = 600; anchoInput.value = 335;
       } else {
-        document.getElementById('cutLargo').value = 400;
-        document.getElementById('cutAncho').value = 150;
+        largoInput.value = 400; anchoInput.value = 150;
       }
     }
 
@@ -1060,8 +1078,10 @@
 
       const apro = (((ubicadas * largo * ancho) / (PLACA_W * PLACA_H)) * 100).toFixed(1);
       const filoM = ((ubicadas * (largo * 2 + ancho * 2)) / 1000).toFixed(1);
-      document.getElementById('cutAprovechamiento').textContent = `${apro}% (${ubicadas} pzs)`;
-      document.getElementById('cutMetrosFilo').textContent = `${filoM} m`;
+      const elApro = document.getElementById('cutAprovechamiento');
+      const elFilo = document.getElementById('cutMetrosFilo');
+      if (elApro) elApro.textContent = `${apro}% (${ubicadas} pzs)`;
+      if (elFilo) elFilo.textContent = `${filoM} m`;
     }
 
     function renderizarFinanzasYVentanasOcultas() {
@@ -1070,28 +1090,42 @@
       const sumaV = ventas.reduce((a, b) => a + Number(b.monto), 0);
       const sumaC = compras.reduce((a, b) => a + Number(b.monto), 0);
 
-      document.getElementById('kpiTotalVentas').textContent = `$${sumaV.toLocaleString('es-AR')}`;
-      document.getElementById('kpiTotalCompras').textContent = `$${sumaC.toLocaleString('es-AR')}`;
-      document.getElementById('kpiSaldoCaja').textContent = `$${(APERTURA_CAJA_BASE + sumaV - sumaC).toLocaleString('es-AR')}`;
+      const kpiV = document.getElementById('kpiTotalVentas');
+      const kpiC = document.getElementById('kpiTotalCompras');
+      const kpiS = document.getElementById('kpiSaldoCaja');
+      if (kpiV) kpiV.textContent = `$${sumaV.toLocaleString('es-AR')}`;
+      if (kpiC) kpiC.textContent = `$${sumaC.toLocaleString('es-AR')}`;
+      if (kpiS) kpiS.textContent = `$${(APERTURA_CAJA_BASE + sumaV - sumaC).toLocaleString('es-AR')}`;
 
-      document.getElementById('countBtnVentas').textContent = ventas.length;
-      document.getElementById('countBtnCompras').textContent = compras.length;
-      document.getElementById('ventanaSumaVentas').textContent = `+$${sumaV.toLocaleString('es-AR')}`;
-      document.getElementById('ventanaSumaCompras').textContent = `-$${sumaC.toLocaleString('es-AR')}`;
+      const cntV = document.getElementById('countBtnVentas');
+      const cntC = document.getElementById('countBtnCompras');
+      const sumV = document.getElementById('ventanaSumaVentas');
+      const sumC = document.getElementById('ventanaSumaCompras');
+      if (cntV) cntV.textContent = ventas.length;
+      if (cntC) cntC.textContent = compras.length;
+      if (sumV) sumV.textContent = `+$${sumaV.toLocaleString('es-AR')}`;
+      if (sumC) sumC.textContent = `-$${sumaC.toLocaleString('es-AR')}`;
 
-      document.getElementById('contenedorTarjetasVentas').innerHTML = ventas.map(v => `
-        <div class="history-list-card">
-          <div><div style="font-weight:800;">${v.concepto}</div><div style="font-size:12px; color:var(--text-muted);">${v.fecha} • ${v.persona}</div></div>
-          <span class="mono" style="color:var(--success); font-weight:800;">+$${Number(v.monto).toLocaleString('es-AR')}</span>
-        </div>
-      `).join('');
+      const tVentas = document.getElementById('contenedorTarjetasVentas');
+      const tCompras = document.getElementById('contenedorTarjetasCompras');
 
-      document.getElementById('contenedorTarjetasCompras').innerHTML = compras.map(c => `
-        <div class="history-list-card">
-          <div><div style="font-weight:800;">${c.concepto}</div><div style="font-size:12px; color:var(--text-muted);">${c.fecha} • ${c.persona}</div></div>
-          <span class="mono" style="color:var(--danger); font-weight:800;">-$${Number(c.monto).toLocaleString('es-AR')}</span>
-        </div>
-      `).join('');
+      if (tVentas) {
+        tVentas.innerHTML = ventas.map(v => `
+          <div class="history-list-card">
+            <div><div style="font-weight:800;">${v.concepto}</div><div style="font-size:12px; color:var(--text-muted);">${v.fecha} • ${v.persona}</div></div>
+            <span class="mono" style="color:var(--success); font-weight:800;">+$${Number(v.monto).toLocaleString('es-AR')}</span>
+          </div>
+        `).join('') || '<div style="color:var(--text-muted); text-align:center;">Sin ventas registradas.</div>';
+      }
+
+      if (tCompras) {
+        tCompras.innerHTML = compras.map(c => `
+          <div class="history-list-card">
+            <div><div style="font-weight:800;">${c.concepto}</div><div style="font-size:12px; color:var(--text-muted);">${c.fecha} • ${c.persona}</div></div>
+            <span class="mono" style="color:var(--danger); font-weight:800;">-$${Number(c.monto).toLocaleString('es-AR')}</span>
+          </div>
+        `).join('') || '<div style="color:var(--text-muted); text-align:center;">Sin compras registradas.</div>';
+      }
 
       actualizarVectorMesita(sumaV);
     }
@@ -1106,7 +1140,7 @@
       if (!concepto || isNaN(monto) || monto <= 0) return mostrarToast('⚠️ Completá concepto y monto.');
 
       listaOperacionesVC.unshift({ id: Date.now(), tipo, fecha: new Date().toLocaleDateString('es-AR'), concepto, persona, metodo, monto });
-      localStorage.setItem('jl_v93_operaciones', JSON.stringify(listaOperacionesVC));
+      localStorage.setItem('jl_v94_operaciones', JSON.stringify(listaOperacionesVC));
       document.getElementById('vcConcepto').value = ''; document.getElementById('vcPersona').value = ''; document.getElementById('vcMonto').value = '';
       renderizarFinanzasYVentanasOcultas();
       mostrarToast('✅ Movimiento registrado.');
@@ -1117,21 +1151,34 @@
       const pct = Math.min(100, Math.round(((totV % META_POR_CICLO) / META_POR_CICLO) * 100));
       const col = CICLOS_COLORES[idx % CICLOS_COLORES.length];
 
-      document.getElementById('ventasMesTotalTexto').textContent = `$${totV.toLocaleString('es-AR')}`;
-      document.getElementById('porcentajeCicloTexto').textContent = `${pct}%`;
-      document.getElementById('cicloBadgeTexto').textContent = `Ciclo ${idx + 1} • ${col.nombre}`;
+      const vTxt = document.getElementById('ventasMesTotalTexto');
+      const pTxt = document.getElementById('porcentajeCicloTexto');
+      const cTxt = document.getElementById('cicloBadgeTexto');
+      if (vTxt) vTxt.textContent = `$${totV.toLocaleString('es-AR')}`;
+      if (pTxt) pTxt.textContent = `${pct}%`;
+      if (cTxt) cTxt.textContent = `Ciclo ${idx + 1} • ${col.nombre}`;
 
       const barra = document.getElementById('barraCicloFill');
-      barra.style.width = `${pct}%`; barra.style.backgroundColor = col.hex;
+      if (barra) {
+        barra.style.width = `${pct}%`;
+        barra.style.backgroundColor = col.hex;
+      }
 
-      document.getElementById('gradStop1').setAttribute('stop-color', col.hex);
-      document.getElementById('gradStop2').setAttribute('stop-color', col.hex);
-      document.getElementById('gradStop2').setAttribute('offset', `${pct}%`);
-      document.getElementById('gradStop3').setAttribute('offset', `${pct}%`);
+      const g1 = document.getElementById('gradStop1');
+      const g2 = document.getElementById('gradStop2');
+      const g3 = document.getElementById('gradStop3');
+      if (g1) g1.setAttribute('stop-color', col.hex);
+      if (g2) {
+        g2.setAttribute('stop-color', col.hex);
+        g2.setAttribute('offset', `${pct}%`);
+      }
+      if (g3) g3.setAttribute('offset', `${pct}%`);
     }
 
     function renderizarCatalogoBlenderEstable() {
-      document.getElementById('gridCatalogoMuebles').innerHTML = catalogoModelosJLEstables.map((m, idx) => `
+      const grid = document.getElementById('gridCatalogoMuebles');
+      if (!grid) return;
+      grid.innerHTML = catalogoModelosJLEstables.map((m, idx) => `
         <div class="catalog-item-card" onclick="abrirModeloEnVisorEstable(${idx})">
           <div class="catalog-thumb">
             <svg width="100" height="75" viewBox="0 0 120 90">
@@ -1152,13 +1199,19 @@
 
     function abrirModeloEnVisorEstable(idx) {
       const m = catalogoModelosJLEstables[idx];
-      document.getElementById('visor3dNombreMueble').textContent = `🧊 Visor 3D: ${m.nombre}`;
-      document.getElementById('visor3dMedidas').textContent = m.medidas;
-      document.getElementById('visor3dAcabado').textContent = m.acabado;
-      document.getElementById('visor3dPrecio').textContent = m.precio;
+      const nombre = document.getElementById('visor3dNombreMueble');
+      const medidas = document.getElementById('visor3dMedidas');
+      const acabado = document.getElementById('visor3dAcabado');
+      const precio = document.getElementById('visor3dPrecio');
+      const hole = document.getElementById('holeSecador3D');
+      const front = document.getElementById('panel3dFront');
 
-      document.getElementById('holeSecador3D').style.display = m.tieneSecador ? 'block' : 'none';
-      document.getElementById('panel3dFront').textContent = m.tieneSecador ? '600 x 335 x 32' : '400 x 335 x 32';
+      if (nombre) nombre.textContent = `🧊 Visor 3D: ${m.nombre}`;
+      if (medidas) medidas.textContent = m.medidas;
+      if (acabado) acabado.textContent = m.acabado;
+      if (precio) precio.textContent = m.precio;
+      if (hole) hole.style.display = m.tieneSecador ? 'block' : 'none';
+      if (front) front.textContent = m.tieneSecador ? '600 x 335 x 32' : '400 x 335 x 32';
 
       switchView('view-visor3d');
     }
@@ -1167,14 +1220,15 @@
       document.querySelectorAll('#assembly3d .panel-3d').forEach(p => {
         p.className = `panel-3d ${claseCss} ${p.classList.contains('top')?'top':p.classList.contains('bottom')?'bottom':p.classList.contains('left')?'left':p.classList.contains('right')?'right':'front'}`;
       });
-      document.getElementById('visor3dAcabado').textContent = nombreTextura;
+      const ac = document.getElementById('visor3dAcabado');
+      if (ac) ac.textContent = nombreTextura;
       mostrarToast(`🎨 Textura ${nombreTextura} aplicada.`);
     }
 
     let d3D = false, sx3D = 0, sy3D = 0, rx3D = -20, ry3D = 32;
     const stg3D = document.getElementById('stage3d');
     const asm3D = document.getElementById('assembly3d');
-    if (stg3D) {
+    if (stg3D && asm3D) {
       stg3D.addEventListener('pointerdown', e => { d3D = true; sx3D = e.clientX; sy3D = e.clientY; });
       window.addEventListener('pointerup', () => { d3D = false; });
       window.addEventListener('pointermove', e => {
@@ -1182,23 +1236,28 @@
         ry3D += (e.clientX - sx3D) * 0.55;
         rx3D -= (e.clientY - sy3D) * 0.55;
         asm3D.style.transform = `rotateX(${rx3D}deg) rotateY(${ry3D}deg)`;
-        sx3D = e.clientX; sy3D = e.clientY;
+        sx3D = e.clientX; sx3D = e.clientY;
       });
     }
 
     function filtrarInventario(cat, btn = null) {
       if (btn) { document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
       const cr = listaStock.filter(i => i.cantidad <= i.minimo).length;
-      document.getElementById('badgeCriticosDrawer').textContent = cr;
-      document.getElementById('alertaStockHeader').textContent = cr ? `🚨 ${cr} en reposición` : '✅ Stock al día';
+      const bCrit = document.getElementById('badgeCriticosDrawer');
+      const aH = document.getElementById('alertaStockHeader');
+      if (bCrit) bCrit.textContent = cr;
+      if (aH) aH.textContent = cr ? `🚨 ${cr} en reposición` : '✅ Stock al día';
 
       const f = listaStock.filter(i => cat === 'Todos' ? true : cat === 'Critico' ? i.cantidad <= i.minimo : i.categoria === cat);
-      document.getElementById('contenedorStockItems').innerHTML = f.map(i => `
-        <div class="history-list-card">
-          <div><div style="font-weight:700;">${i.nombre}</div><div style="font-size:12px; color:var(--text-muted);">${i.categoria}</div></div>
-          <span class="mono" style="font-weight:800; font-size:16px;">${i.cantidad} u.</span>
-        </div>
-      `).join('');
+      const cont = document.getElementById('contenedorStockItems');
+      if (cont) {
+        cont.innerHTML = f.map(i => `
+          <div class="history-list-card">
+            <div><div style="font-weight:700;">${i.nombre}</div><div style="font-size:12px; color:var(--text-muted);">${i.categoria}</div></div>
+            <span class="mono" style="font-weight:800; font-size:16px;">${i.cantidad} u.</span>
+          </div>
+        `).join('') || '<div style="color:var(--text-muted); text-align:center;">Sin insumos.</div>';
+      }
     }
 
     let gpsMap, gpsMarkerTaller, gpsMarkerDestino, gpsLine, kmActuales = 0;
@@ -1214,12 +1273,14 @@
       gpsMarkerTaller.on('dragend', function() {
         const c = gpsMarkerTaller.getLatLng();
         tallerCoords = [c.lat, c.lng];
-        localStorage.setItem('jl_v93_taller_coords', JSON.stringify(tallerCoords));
-        document.getElementById('txtTallerAnclado').textContent = `${tallerDireccionTexto} (${c.lat.toFixed(4)}, ${c.lng.toFixed(4)})`;
+        localStorage.setItem('jl_v94_taller_coords', JSON.stringify(tallerCoords));
+        const txt = document.getElementById('txtTallerAnclado');
+        if (txt) txt.textContent = `${tallerDireccionTexto} (${c.lat.toFixed(4)}, ${c.lng.toFixed(4)})`;
         mostrarToast('📍 Taller reubicado.');
       });
 
-      document.getElementById('txtTallerAnclado').textContent = `${tallerDireccionTexto}`;
+      const txt = document.getElementById('txtTallerAnclado');
+      if (txt) txt.textContent = tallerDireccionTexto;
     }
 
     function anclarTallerPersonalizadoPrompt() {
@@ -1232,12 +1293,13 @@
           if (data && data.length > 0) {
             tallerCoords = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
             tallerDireccionTexto = nuevaDir;
-            localStorage.setItem('jl_v93_taller_coords', JSON.stringify(tallerCoords));
-            localStorage.setItem('jl_v93_taller_dir', tallerDireccionTexto);
-            gpsMarkerTaller.setLatLng(tallerCoords);
-            gpsMap.setView(tallerCoords, 14);
-            gpsMarkerTaller.bindPopup(`<b>🏠 Taller J&L</b><br>${tallerDireccionTexto}`).openPopup();
-            document.getElementById('txtTallerAnclado').textContent = tallerDireccionTexto;
+            localStorage.setItem('jl_v94_taller_coords', JSON.stringify(tallerCoords));
+            localStorage.setItem('jl_v94_taller_dir', tallerDireccionTexto);
+            if (gpsMarkerTaller) gpsMarkerTaller.setLatLng(tallerCoords);
+            if (gpsMap) gpsMap.setView(tallerCoords, 14);
+            if (gpsMarkerTaller) gpsMarkerTaller.bindPopup(`<b>🏠 Taller J&L</b><br>${tallerDireccionTexto}`).openPopup();
+            const txt = document.getElementById('txtTallerAnclado');
+            if (txt) txt.textContent = tallerDireccionTexto;
             mostrarToast('✅ Taller actualizado correctamente.');
           } else {
             mostrarToast('⚠️ No se encontró la dirección.');
@@ -1251,13 +1313,14 @@
       const drop = document.getElementById('gpsDropdown');
       clearTimeout(_searchTimeout);
 
-      if (!val || val.length < 3) { drop.style.display = 'none'; return; }
+      if (!val || val.length < 3) { if (drop) drop.style.display = 'none'; return; }
 
       _searchTimeout = setTimeout(() => {
         const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val + ', Buenos Aires, Argentina')}&limit=6&addressdetails=1`;
         fetch(url)
           .then(res => res.json())
           .then(data => {
+            if (!drop) return;
             if (!data || data.length === 0) {
               drop.innerHTML = `<div class="autocomplete-option"><span>Sin resultados</span></div>`;
               drop.style.display = 'block';
@@ -1275,35 +1338,48 @@
             }).join('');
             drop.style.display = 'block';
           })
-          .catch(() => { drop.style.display = 'none'; });
+          .catch(() => { if (drop) drop.style.display = 'none'; });
       }, 300);
     }
 
     function seleccionarRutaProvincial(lat, lng, calle, ciudad) {
-      document.getElementById('gpsInputDir').value = `${calle}, ${ciudad}`;
-      document.getElementById('gpsDropdown').style.display = 'none';
-      document.getElementById('gpsLocalidadDetectada').textContent = ciudad;
+      const inputDir = document.getElementById('gpsInputDir');
+      const drop = document.getElementById('gpsDropdown');
+      const locDet = document.getElementById('gpsLocalidadDetectada');
+      if (inputDir) inputDir.value = `${calle}, ${ciudad}`;
+      if (drop) drop.style.display = 'none';
+      if (locDet) locDet.textContent = ciudad;
       const destinoCoords = [lat, lng];
 
-      if (gpsMarkerDestino) gpsMap.removeLayer(gpsMarkerDestino);
-      if (gpsLine) gpsMap.removeLayer(gpsLine);
+      if (gpsMarkerDestino && gpsMap) gpsMap.removeLayer(gpsMarkerDestino);
+      if (gpsLine && gpsMap) gpsMap.removeLayer(gpsLine);
 
-      gpsMarkerDestino = L.marker(destinoCoords).addTo(gpsMap).bindPopup(`Entrega: ${calle} (${ciudad})`).openPopup();
-      gpsLine = L.polyline([tallerCoords, destinoCoords], { color: '#c89d66', weight: 4 }).addTo(gpsMap);
-      gpsMap.fitBounds(gpsLine.getBounds(), { padding: [30, 30] });
+      if (gpsMap) {
+        gpsMarkerDestino = L.marker(destinoCoords).addTo(gpsMap).bindPopup(`Entrega: ${calle} (${ciudad})`).openPopup();
+        gpsLine = L.polyline([tallerCoords, destinoCoords], { color: '#c89d66', weight: 4 }).addTo(gpsMap);
+        gpsMap.fitBounds(gpsLine.getBounds(), { padding: [30, 30] });
+      }
 
-      kmActuales = Number(((gpsMap.distance(tallerCoords, destinoCoords) / 1000) * 1.25).toFixed(1));
+      kmActuales = Number(((L.latLng(tallerCoords).distanceTo(L.latLng(destinoCoords)) / 1000) * 1.25).toFixed(1));
       recalcularCostoFlete();
     }
 
     function recalcularCostoFlete() {
       const t = parseFloat(document.getElementById('gpsTarifaKm').value) || 1850;
-      document.getElementById('gpsKmTexto').textContent = `${kmActuales} km`;
-      document.getElementById('gpsCostoTexto').textContent = `$${Math.round(4500 + kmActuales * t).toLocaleString('es-AR')}`;
+      const kmTxt = document.getElementById('gpsKmTexto');
+      const costoTxt = document.getElementById('gpsCostoTexto');
+      if (kmTxt) kmTxt.textContent = `${kmActuales} km`;
+      if (costoTxt) costoTxt.textContent = `$${Math.round(4500 + kmActuales * t).toLocaleString('es-AR')}`;
     }
 
-    function toggleVistaIsometricaMapa() { document.getElementById('map-container').classList.toggle('isometric-3d'); }
-    function abrirRutaEnGoogleMaps() { window.open(`https://www.google.com/maps/dir/?api=1&origin=${tallerCoords[0]},${tallerCoords[1]}&destination=${tallerCoords[0]},${tallerCoords[1]}`, '_blank'); }
+    function toggleVistaIsometricaMapa() {
+      const mapContainer = document.getElementById('map-container');
+      if (mapContainer) mapContainer.classList.toggle('isometric-3d');
+    }
+
+    function abrirRutaEnGoogleMaps() {
+      window.open(`https://www.google.com/maps/dir/?api=1&origin=${tallerCoords[0]},${tallerCoords[1]}&destination=${tallerCoords[0]},${tallerCoords[1]}`, '_blank');
+    }
 
     function exportarCerrarMesTxt() {
       let t = `REPORTE MUEBLES J&L\n`;
@@ -1312,6 +1388,7 @@
       const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'Cierre_JL.txt'; a.click();
     }
 
+    // Arranque limpio con protección contra bloqueos de DOM
     window.addEventListener('DOMContentLoaded', () => {
       renderizarPedidos();
       renderizarPlacasColores();
@@ -1320,10 +1397,14 @@
       filtrarInventario('Todos');
       simularCortePlaca();
       initGPSProvincialEstable();
-      document.getElementById('listaProveedoresOeste').innerHTML = `
-        <div class="order-card"><b>Placacentro San Justo</b><br><span style="color:var(--accent);">Placas Melamina 2750x1830</span></div>
-        <div class="order-card"><b>Herrajes Ramos Mejía</b><br><span style="color:var(--accent);">Filos 0.15m y Correderas</span></div>
-      `;
+
+      const provOeste = document.getElementById('listaProveedoresOeste');
+      if (provOeste) {
+        provOeste.innerHTML = `
+          <div class="order-card"><b>Placacentro San Justo</b><br><span style="color:var(--accent);">Placas Melamina 2750x1830</span></div>
+          <div class="order-card"><b>Herrajes Ramos Mejía</b><br><span style="color:var(--accent);">Filos 0.15m y Correderas</span></div>
+        `;
+      }
     });
   </script>
 </body>
